@@ -16,8 +16,8 @@
             --transparencia-input: rgba(0, 0, 0, 0.15);
             --color-texto: #ffffff;
             --borde-difuminado: inset 0 0 100px rgba(0,0,0,1);
-            --acento: #00d2ff;
-            --dorado: #d4af37;
+            --acento: #00d2ff; /* Cyan del Logo MINOS */
+            --dorado: #d4af37; /* Dorado del Logo MINOS */
         }
 
         body, html {
@@ -114,33 +114,32 @@
     <div class="fondo-pantalla" id="fondo-actual"></div>
     <div class="capa-sombra-fondo"></div>
 
-    <button class="btn-menu" onclick="toggleMenu()">☰</button>
+    <button class="btn-menu" onclick="window.toggleMenu()">☰</button>
 
     <nav id="menu-lateral">
-        <a href="#" onclick="cambiarModulo('ventas')">💰 Terminal de Ventas</a>
-        <a href="#" onclick="cambiarModulo('caja')">💵 Corte de Caja</a>
-        <a href="#" onclick="cambiarModulo('inventario')">📦 Inventario y Kits</a>
-        <a href="#" onclick="cambiarModulo('compras')">🛒 Compras y Gastos</a>
-        <a href="#" onclick="cambiarModulo('cotizaciones')">📝 Cotizaciones</a>
-        <a href="#" onclick="cambiarModulo('clientes')">👥 Clientes y Deudas</a>
-        <a href="#" onclick="cambiarModulo('historial')">🕒 Historial de Tickets</a>
-        <a href="#" onclick="cambiarModulo('configuracion')">⚙️ Configuración PDF</a>
-        <a href="#" onclick="cambiarModulo('fondos')">🖼️ Gestor de Fondos</a>
+        <a href="#" onclick="window.cambiarModulo('ventas')">💰 Terminal de Ventas</a>
+        <a href="#" onclick="window.cambiarModulo('caja')">💵 Corte de Caja</a>
+        <a href="#" onclick="window.cambiarModulo('inventario')">📦 Inventario y Kits</a>
+        <a href="#" onclick="window.cambiarModulo('compras')">🛒 Compras y Gastos</a>
+        <a href="#" onclick="window.cambiarModulo('cotizaciones')">📝 Cotizaciones</a>
+        <a href="#" onclick="window.cambiarModulo('clientes')">👥 Clientes y Deudas</a>
+        <a href="#" onclick="window.cambiarModulo('historial')">🕒 Historial de Tickets</a>
+        <a href="#" onclick="window.cambiarModulo('configuracion')">⚙️ Configuración PDF</a>
+        <a href="#" onclick="window.cambiarModulo('fondos')">🖼️ Gestor de Fondos</a>
     </nav>
 
     <main>
         <!-- VENTAS -->
         <section id="ventas" class="modulo activo">
             <h2 style="color: var(--dorado);">Terminal de Ventas</h2>
-            
             <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <label for="select-cliente-venta" style="font-weight: bold; color: var(--acento);">Cliente:</label>
-                <select id="select-cliente-venta" onchange="alSeleccionarClienteVenta()" style="flex: 1; max-width: 250px;">
+                <select id="select-cliente-venta" onchange="window.alSeleccionarClienteVenta()" style="flex: 1; max-width: 250px;">
                     <option value="">Público en General (Sin crédito)</option>
                 </select>
 
                 <label for="nivel-precio-global" style="font-weight: bold; color: var(--acento); margin-left: 10px;">Aplicar Precio:</label>
-                <select id="nivel-precio-global" onchange="cambiarNivelPrecioGlobal()" style="flex: 1; max-width: 200px;">
+                <select id="nivel-precio-global" onchange="window.cambiarNivelPrecioGlobal()" style="flex: 1; max-width: 200px;">
                     <option value="pub">Público</option>
                     <option value="may1">Mayoreo 1</option>
                     <option value="may2">Mayoreo 2</option>
@@ -148,35 +147,29 @@
                     <option value="dueno">Dueño / Especial</option>
                 </select>
             </div>
-
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <input type="text" id="buscador-articulo" placeholder="Escribe el código o nombre y presiona Enter" style="flex: 1;" onkeypress="buscarArticuloVenta(event)">
-                <button onclick="iniciarEscaner()">📷 Escanear Código</button>
+                <input type="text" id="buscador-articulo" placeholder="Escribe el código o nombre y presiona Enter" style="flex: 1;" onkeypress="window.buscarArticuloVenta(event)">
+                <button onclick="window.iniciarEscaner()">📷 Escanear Código</button>
             </div>
-            
             <table>
                 <thead>
                     <tr><th>Cód.</th><th>Artículo</th><th>Cant.</th><th>Precio U.</th><th>Total</th><th>Acción</th></tr>
                 </thead>
                 <tbody id="lista-carrito"></tbody>
             </table>
-            
             <div class="seccion-flotante" style="margin-top: 20px; text-align: right;">
                 <h2 style="margin-top: 0; color: var(--acento);">Total a Pagar: $<span id="total-venta">0.00</span></h2>
-                
                 <h4 style="color: var(--dorado);">Ingresa el dinero recibido</h4>
                 <div class="grid-auto" style="margin-bottom: 15px;">
-                    <input type="number" id="pago-efectivo" placeholder="Efectivo" oninput="calcularPagos()">
-                    <input type="number" id="pago-debito" placeholder="T. Débito (-4.18%)" oninput="calcularPagos()">
-                    <input type="number" id="pago-credito" placeholder="T. Crédito (-4.18%)" oninput="calcularPagos()">
-                    <input type="number" id="pago-transferencia" placeholder="Transferencia" oninput="calcularPagos()">
+                    <input type="number" id="pago-efectivo" placeholder="Efectivo" oninput="window.calcularPagos()">
+                    <input type="number" id="pago-debito" placeholder="T. Débito (-4.18%)" oninput="window.calcularPagos()">
+                    <input type="number" id="pago-credito" placeholder="T. Crédito (-4.18%)" oninput="window.calcularPagos()">
+                    <input type="number" id="pago-transferencia" placeholder="Transferencia" oninput="window.calcularPagos()">
                 </div>
-                
                 <div style="display: flex; justify-content: flex-end; gap: 20px; margin-bottom: 15px;">
                     <p style="font-size: 1.1em; color: #ffb74d;">Falta (A Crédito): $<span id="restante-venta">0.00</span></p>
                     <p style="color: var(--acento); font-size: 1.3em; font-weight: bold; text-shadow: 2px 2px 4px #000;">Cambio a devolver: $<span id="cambio-venta">0.00</span></p>
                 </div>
-                
                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 15px; align-items: center;">
                     <label>Formato de Ticket:</label>
                     <select id="formato-impresion" style="width: 150px;">
@@ -184,86 +177,8 @@
                         <option value="carta">Hoja Carta</option>
                     </select>
                 </div>
-
                 <input type="text" id="nombre-cliente" placeholder="Nombre del Cliente (Opcional si no está registrado)">
-                <button class="btn-accion" onclick="procesarVenta()">💰 Cobrar e Imprimir Ticket</button>
-            </div>
-        </section>
-
-        <!-- CONFIGURACIÓN DE TICKET Y COTIZACIÓN -->
-        <section id="configuracion" class="modulo">
-            <h2 style="color: var(--dorado);">⚙️ Configuración de Documentos (PDF)</h2>
-            <div class="seccion-flotante">
-                <p>Configura los datos de tu empresa y sube tu logo (se usará en tickets y cotizaciones).</p>
-                <div class="grid-2">
-                    <div>
-                        <label>Logo de la Empresa (PNG/JPG sin fondo):</label>
-                        <input type="file" id="conf-logo-upload" accept="image/*" onchange="cargarLogoLocal(event)" style="width:100%;">
-                        <img id="conf-logo-preview" style="max-height: 100px; display: block; margin-top: 10px; border-radius: 5px;" src="">
-                        
-                        <label style="margin-top: 10px;">Nombre del Negocio / Empresa:</label>
-                        <input type="text" id="conf-nombre" placeholder="Ej. MINOS" style="width:100%;">
-                        
-                        <label>RFC:</label>
-                        <input type="text" id="conf-rfc" placeholder="Opcional" style="width:100%;">
-                    </div>
-                    <div>
-                        <label>Teléfono de Contacto:</label>
-                        <input type="text" id="conf-tel" placeholder="Tu número" style="width:100%;">
-                        
-                        <label>Correo Electrónico:</label>
-                        <input type="text" id="conf-correo" placeholder="correo@empresa.com" style="width:100%;">
-
-                        <label>Domicilio / Dirección:</label>
-                        <textarea id="conf-direccion" placeholder="Dirección completa" style="width:100%; height: 60px;"></textarea>
-                        
-                        <label>Notas de Cotización (Condiciones, Vigencia, etc):</label>
-                        <textarea id="conf-notas" placeholder="Ej. Precios en pesos..." style="width:100%; height: 80px;"></textarea>
-                    </div>
-                </div>
-                <button class="btn-accion" style="width: 100%; margin-top: 15px;" onclick="guardarConfiguracion()">💾 Guardar Configuración</button>
-            </div>
-        </section>
-
-        <!-- COTIZACIONES -->
-        <section id="cotizaciones" class="modulo">
-            <h2 style="color: var(--dorado);">Cotizaciones</h2>
-            <div class="seccion-flotante">
-                <h3 id="titulo-cotizacion-actual">Crear Nueva Cotización</h3>
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <input type="text" id="buscador-cotizacion" placeholder="Escribe el código o nombre y presiona Enter" style="flex: 1;" onkeypress="buscarArticuloCotizacion(event)">
-                </div>
-                <table>
-                    <thead>
-                        <tr><th>Cód.</th><th>Artículo</th><th>Cant.</th><th>Precio U.</th><th>Total</th><th>Acción</th></tr>
-                    </thead>
-                    <tbody id="lista-carrito-cotizacion"></tbody>
-                </table>
-                <div style="margin-top: 20px; text-align: right;">
-                    <h2 style="margin-top: 0; color: var(--acento);">Subtotal: $<span id="total-cotizacion">0.00</span></h2>
-                    
-                    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-bottom: 10px;">
-                        <label>Añadir IVA (16%):</label>
-                        <input type="checkbox" id="check-iva" onchange="renderizarCarritoCotizacion()" style="transform: scale(1.5); margin-right: 15px;">
-                        
-                        <label for="select-cliente-cotizacion" style="font-weight: bold;">Cliente:</label>
-                        <select id="select-cliente-cotizacion" onchange="alSeleccionarClienteCotizacion()" style="width: 250px;">
-                            <option value="">Público Libre (Escribir nombre)</option>
-                        </select>
-                        <input type="text" id="nombre-cliente-cotizacion" placeholder="O escribe el nombre libremente">
-                    </div>
-                    <button class="btn-accion" onclick="guardarCotizacion()">💾 Guardar Cotización</button>
-                    <button onclick="limpiarCotizacion()" style="margin-left: 10px;">Limpiar</button>
-                </div>
-            </div>
-            <div class="seccion-flotante">
-                <h3>Historial de Cotizaciones Guardadas</h3>
-                <table>
-                    <thead>
-                        <tr><th>Fecha</th><th>Cliente</th><th>Total Final</th><th>Acciones</th></tr>
-                    </thead>
-                    <tbody id="lista-cotizaciones-guardadas"></tbody>
-                </table>
+                <button class="btn-accion" onclick="window.procesarVenta()">💰 Cobrar e Imprimir Ticket</button>
             </div>
         </section>
 
@@ -274,10 +189,9 @@
                 <div>
                     <h3 style="color: var(--acento);">1. Control de Efectivo</h3>
                     <label>Fondo Inicial en Caja:</label>
-                    <input type="number" id="fondo-caja" value="500" style="width: 100%; font-size: 18px;" oninput="actualizarVistaCaja()">
-                    
+                    <input type="number" id="fondo-caja" value="500" style="width: 100%; font-size: 18px;" oninput="window.actualizarVistaCaja()">
                     <label style="margin-top: 15px; display: block;">Dinero Físico Contado (Tu Caja):</label>
-                    <input type="number" id="corte-efectivo-fisico" value="0" style="width: 100%; font-size: 18px; border-color:var(--dorado);" oninput="actualizarVistaCaja()">
+                    <input type="number" id="corte-efectivo-fisico" value="0" style="width: 100%; font-size: 18px; border-color:var(--dorado);" oninput="window.actualizarVistaCaja()">
                 </div>
                 <div>
                     <h3 style="color: var(--acento);">2. Movimientos del Día</h3>
@@ -293,82 +207,9 @@
                     <p>Efectivo Esperado (Sistema): <br><strong style="font-size: 1.2em;">$<span id="corte-efectivo-esperado">0.00</span></strong></p>
                     <p>Diferencia Físico vs Sistema: <br><strong id="corte-diferencia" style="font-size: 1.4em;">$0.00</strong></p>
                     <hr style="border-color: rgba(255,255,255,0.3);">
-                    <p style="font-size: 0.9em; margin-bottom: 5px;">Ganancia Neta Total (Todas las formas de pago):</p>
+                    <p style="font-size: 0.9em; margin-bottom: 5px;">Ganancia Neta Total:</p>
                     <h2 style="color: var(--acento); margin-top: 0;">$<span id="corte-total-real">0.00</span></h2>
-                    
-                    <button class="btn-accion" style="width: 100%; margin-top: 10px;" onclick="realizarCorteDefinitivo()">✂️ Guardar Corte y Generar PDF</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- HISTORIAL DE TICKETS -->
-        <section id="historial" class="modulo">
-            <h2 style="color: var(--dorado);">Historial de Tickets</h2>
-            <div class="seccion-flotante">
-                <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
-                    <label style="font-weight: bold; color: var(--acento);">Filtrar por Fecha:</label>
-                    <input type="date" id="filtro-fecha-historial" onchange="renderizarHistorial()" style="width: 200px;">
-                    <button onclick="document.getElementById('filtro-fecha-historial').value=''; renderizarHistorial();">Mostrar Todos</button>
-                </div>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead><tr><th>Folio</th><th>Fecha y Hora</th><th>Cliente</th><th>Total</th><th>Acciones</th></tr></thead>
-                        <tbody id="lista-historial"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- CLIENTES -->
-        <section id="clientes" class="modulo">
-            <h2 style="color: var(--dorado);">Gestión de Clientes, Deudas y Precios</h2>
-            <div class="seccion-flotante">
-                <h3 id="titulo-form-cliente">Registrar Nuevo Cliente</h3>
-                <p style="font-size: 0.9em;">Crea un registro de tus clientes, asígnales un nivel de precio por defecto y controla sus pagos o saldos pendientes.</p>
-                <div class="grid-auto">
-                    <input type="text" id="cliente-nombre" placeholder="Nombre del Cliente">
-                    <select id="cliente-nivel">
-                        <option value="pub">Precio Público</option><option value="may1">Mayoreo 1</option><option value="may2">Mayoreo 2</option><option value="may3">Mayoreo 3</option><option value="dueno">Dueño / Especial</option>
-                    </select>
-                    <input type="number" id="cliente-deuda" placeholder="Deuda Inicial ($)" value="0">
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button class="btn-accion" id="btn-guardar-cliente" onclick="guardarCliente()">+ Agregar Cliente</button>
-                    <button id="btn-cancelar-edicion-cliente" onclick="cancelarEdicionCliente()" style="display:none;">Cancelar Edición</button>
-                </div>
-            </div>
-            <div class="seccion-flotante">
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead><tr><th>Nombre</th><th>Nivel Precio</th><th>Deuda Actual</th><th>Acciones Rápidas</th></tr></thead>
-                        <tbody id="lista-clientes"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- COMPRAS -->
-        <section id="compras" class="modulo">
-            <h2 style="color: var(--dorado);">Registro de Compras de Mercancía e Insumos</h2>
-            <div class="seccion-flotante" style="background: rgba(0, 210, 255, 0.1); padding: 15px; border-radius: 8px; border: 1px solid var(--acento);">
-                <label style="font-weight: bold; color: var(--acento);">🤖 Asistente de Lectura de Tickets:</label>
-                <p style="font-size: 0.9em;">Abre Gemini y sube la foto de tu ticket/factura para extraer los artículos y precios, y luego regístralos manualmente en la tabla de abajo.</p>
-                <a href="https://gemini.google.com" target="_blank" class="btn-accion" style="display: inline-block; text-align: center; text-decoration: none; width: 100%; padding: 10px; border-radius: 5px; box-sizing: border-box;">Abrir Inteligencia Artificial Gemini</a>
-            </div>
-            
-            <div class="seccion-flotante">
-                <h3 style="color: #81c784;">Ingreso Manual de Mercancía</h3>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr><th>Código</th><th>Nombre del Artículo</th><th>Destino</th><th>Cant.</th><th>Costo Total ($)</th><th>Acción</th></tr>
-                        </thead>
-                        <tbody id="lista-articulos-compra"></tbody>
-                    </table>
-                </div>
-                <div style="margin-top: 15px; display: flex; gap: 10px;">
-                    <button onclick="agregarFilaCompraManual()">+ Añadir Fila de Compra</button>
-                    <button class="btn-accion" style="flex: 1;" onclick="confirmarCompra()">✅ Ingresar al Inventario y Registrar Gasto</button>
+                    <button class="btn-accion" style="width: 100%; margin-top: 10px;" onclick="window.realizarCorteDefinitivo()">✂️ Guardar Corte y Generar PDF</button>
                 </div>
             </div>
         </section>
@@ -381,7 +222,7 @@
                     <input type="text" id="inv-nombre" placeholder="Nombre del Artículo">
                     <input type="text" id="inv-codigo" placeholder="Código de Barras">
                     <input type="number" id="inv-stock" placeholder="Existencias">
-                    <select id="inv-tipo" onchange="toggleConfigKit()">
+                    <select id="inv-tipo" onchange="window.toggleConfigKit()">
                         <option value="venta">Para Venta Normal</option>
                         <option value="consumo">Insumo (Solo consumo)</option>
                         <option value="kit">Kit (Descuenta Insumos)</option>
@@ -391,7 +232,7 @@
                     <div style="display: flex; gap: 10px;">
                         <select id="sel-insumo-kit" style="flex: 1;"></select>
                         <input type="number" id="cant-insumo-kit" placeholder="Cant." style="width: 80px;">
-                        <button onclick="agregarInsumoAlKitDraft()">+ Agregar Insumo</button>
+                        <button onclick="window.agregarInsumoAlKitDraft()">+ Agregar Insumo</button>
                     </div>
                     <ul id="lista-draft-kit" style="list-style: none; padding: 0; margin-top: 10px;"></ul>
                 </div>
@@ -403,20 +244,149 @@
                     <input type="number" id="inv-precio-may3" placeholder="Mayoreo 3">
                     <input type="number" id="inv-precio-dueno" placeholder="Dueño">
                 </div>
-                <button class="btn-accion" style="margin-top: 15px; width: 100%;" onclick="guardarArticulo()">Guardar en Inventario</button>
+                <button class="btn-accion" style="margin-top: 15px; width: 100%;" onclick="window.guardarArticulo()">Guardar en Inventario</button>
             </div>
-            <h3>Artículos Registrados</h3>
             <table>
                 <thead><tr><th>Cód.</th><th>Nombre</th><th>Tipo</th><th>Stock</th><th>P. Público</th><th>P. Dueño</th><th>Acciones</th></tr></thead>
                 <tbody id="lista-inventario"></tbody>
             </table>
         </section>
 
+        <!-- COMPRAS -->
+        <section id="compras" class="modulo">
+            <h2 style="color: var(--dorado);">Registro de Compras de Mercancía e Insumos</h2>
+            <div class="seccion-flotante" style="background: rgba(0, 210, 255, 0.1); padding: 15px; border-radius: 8px; border: 1px solid var(--acento);">
+                <label style="font-weight: bold; color: var(--acento);">🤖 Asistente de Lectura de Tickets:</label>
+                <p style="font-size: 0.9em;">Abre Gemini y sube la foto de tu ticket/factura para extraer los artículos y precios, y luego regístralos manualmente en la tabla de abajo.</p>
+                <a href="https://gemini.google.com" target="_blank" class="btn-accion" style="display: inline-block; text-align: center; text-decoration: none; width: 100%; padding: 10px; border-radius: 5px; box-sizing: border-box;">Abrir Inteligencia Artificial Gemini</a>
+            </div>
+            <div class="seccion-flotante">
+                <h3 style="color: #81c784;">Ingreso Manual de Mercancía</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead><tr><th>Código</th><th>Nombre del Artículo</th><th>Destino</th><th>Cant.</th><th>Costo Total ($)</th><th>Acción</th></tr></thead>
+                        <tbody id="lista-articulos-compra"></tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <button onclick="window.agregarFilaCompraManual()">+ Añadir Fila de Compra</button>
+                    <button class="btn-accion" style="flex: 1;" onclick="window.confirmarCompra()">✅ Ingresar al Inventario y Registrar Gasto en Caja</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- COTIZACIONES -->
+        <section id="cotizaciones" class="modulo">
+            <h2 style="color: var(--dorado);">Cotizaciones</h2>
+            <div class="seccion-flotante">
+                <h3 id="titulo-cotizacion-actual">Crear Nueva Cotización</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" id="buscador-cotizacion" placeholder="Escribe el código o nombre y presiona Enter" style="flex: 1;" onkeypress="window.buscarArticuloCotizacion(event)">
+                </div>
+                <table>
+                    <thead><tr><th>Cód.</th><th>Artículo</th><th>Cant.</th><th>Precio U.</th><th>Total</th><th>Acción</th></tr></thead>
+                    <tbody id="lista-carrito-cotizacion"></tbody>
+                </table>
+                <div style="margin-top: 20px; text-align: right;">
+                    <h2 style="margin-top: 0; color: var(--acento);">Subtotal: $<span id="total-cotizacion">0.00</span></h2>
+                    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <label>Añadir IVA (16%):</label>
+                        <input type="checkbox" id="check-iva" onchange="window.renderizarCarritoCotizacion()" style="transform: scale(1.5); margin-right: 15px;">
+                        <label for="select-cliente-cotizacion" style="font-weight: bold;">Cliente:</label>
+                        <select id="select-cliente-cotizacion" onchange="window.alSeleccionarClienteCotizacion()" style="width: 250px;">
+                            <option value="">Público Libre (Escribir nombre)</option>
+                        </select>
+                        <input type="text" id="nombre-cliente-cotizacion" placeholder="O escribe el nombre libremente">
+                    </div>
+                    <button class="btn-accion" onclick="window.guardarCotizacion()">💾 Guardar Cotización</button>
+                    <button onclick="window.limpiarCotizacion()" style="margin-left: 10px;">Limpiar</button>
+                </div>
+            </div>
+            <div class="seccion-flotante">
+                <h3>Historial de Cotizaciones Guardadas</h3>
+                <table>
+                    <thead><tr><th>Fecha</th><th>Cliente</th><th>Total Final</th><th>Acciones</th></tr></thead>
+                    <tbody id="lista-cotizaciones-guardadas"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CLIENTES -->
+        <section id="clientes" class="modulo">
+            <h2 style="color: var(--dorado);">Gestión de Clientes, Deudas y Precios</h2>
+            <div class="seccion-flotante">
+                <h3 id="titulo-form-cliente">Registrar Nuevo Cliente</h3>
+                <div class="grid-auto">
+                    <input type="text" id="cliente-nombre" placeholder="Nombre del Cliente">
+                    <select id="cliente-nivel">
+                        <option value="pub">Precio Público</option><option value="may1">Mayoreo 1</option><option value="may2">Mayoreo 2</option><option value="may3">Mayoreo 3</option><option value="dueno">Dueño / Especial</option>
+                    </select>
+                    <input type="number" id="cliente-deuda" placeholder="Deuda Inicial ($)" value="0">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button class="btn-accion" id="btn-guardar-cliente" onclick="window.guardarCliente()">+ Agregar Cliente</button>
+                    <button id="btn-cancelar-edicion-cliente" onclick="window.cancelarEdicionCliente()" style="display:none;">Cancelar Edición</button>
+                </div>
+            </div>
+            <div class="seccion-flotante">
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead><tr><th>Nombre</th><th>Nivel Precio</th><th>Deuda Actual</th><th>Acciones Rápidas</th></tr></thead>
+                        <tbody id="lista-clientes"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- HISTORIAL DE TICKETS -->
+        <section id="historial" class="modulo">
+            <h2 style="color: var(--dorado);">Historial de Tickets</h2>
+            <div class="seccion-flotante">
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                    <label style="font-weight: bold; color: var(--acento);">Filtrar por Fecha:</label>
+                    <input type="date" id="filtro-fecha-historial" onchange="window.renderizarHistorial()" style="width: 200px;">
+                    <button onclick="document.getElementById('filtro-fecha-historial').value=''; window.renderizarHistorial();">Mostrar Todos</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead><tr><th>Folio</th><th>Fecha y Hora</th><th>Cliente</th><th>Total</th><th>Acciones</th></tr></thead>
+                        <tbody id="lista-historial"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONFIGURACIÓN DE TICKET Y COTIZACIÓN -->
+        <section id="configuracion" class="modulo">
+            <h2 style="color: var(--dorado);">⚙️ Configuración de Documentos (PDF)</h2>
+            <div class="seccion-flotante">
+                <p>Configura los datos de tu empresa y sube tu logo (se usará en tickets y cotizaciones).</p>
+                <div class="grid-2">
+                    <div>
+                        <label>Logo de la Empresa (PNG/JPG sin fondo):</label>
+                        <input type="file" id="conf-logo-upload" accept="image/*" onchange="window.cargarLogoLocal(event)" style="width:100%;">
+                        <img id="conf-logo-preview" style="max-height: 100px; display: block; margin-top: 10px; border-radius: 5px;" src="">
+                        <label style="margin-top: 10px;">Nombre del Negocio / Empresa:</label>
+                        <input type="text" id="conf-nombre" placeholder="Ej. MINOS" style="width:100%;">
+                        <label>RFC:</label><input type="text" id="conf-rfc" placeholder="Opcional" style="width:100%;">
+                    </div>
+                    <div>
+                        <label>Teléfono de Contacto:</label><input type="text" id="conf-tel" placeholder="Tu número" style="width:100%;">
+                        <label>Correo Electrónico:</label><input type="text" id="conf-correo" placeholder="correo@empresa.com" style="width:100%;">
+                        <label>Domicilio / Dirección:</label><textarea id="conf-direccion" placeholder="Dirección completa" style="width:100%; height: 60px;"></textarea>
+                        <label>Notas de Cotización (Condiciones, Vigencia, etc):</label><textarea id="conf-notas" placeholder="Ej. Precios en pesos..." style="width:100%; height: 80px;"></textarea>
+                    </div>
+                </div>
+                <button class="btn-accion" style="width: 100%; margin-top: 15px;" onclick="window.guardarConfiguracion()">💾 Guardar Configuración</button>
+            </div>
+        </section>
+
         <!-- GESTOR DE FONDOS -->
         <section id="fondos" class="modulo">
             <h2 style="color: var(--dorado);">Gestor de Fondos de Pantalla</h2>
             <div class="seccion-flotante">
-                <p style="font-size: 0.9em;">Sube una imagen o video para personalizar el fondo de cada módulo. <em>(Nota: Se guardan localmente en tu navegador)</em>.</p>
+                <p style="font-size: 0.9em;">Sube una imagen o video para personalizar el fondo de cada módulo. <em>Al subirlo se guardará en tu nube de Firebase y se sincronizará automáticamente en tus otros dispositivos (celular, PC, etc).</em></p>
+                <p id="estado-carga-fondos" style="display:none; color: var(--acento); font-weight:bold; font-size: 1.1em;">⏳ Subiendo archivo a la nube, por favor no cierres la página...</p>
                 <div id="lista-gestor-fondos" class="grid-auto" style="margin-top: 20px;"></div>
             </div>
         </section>
@@ -424,80 +394,62 @@
 
     <script>
         // ==========================================
+        // VARIABLES GLOBALES DE DATOS
+        // ==========================================
+        window.nombresPrecios = { 'pub': 'Público', 'may1': 'Mayoreo 1', 'may2': 'Mayoreo 2', 'may3': 'Mayoreo 3', 'dueno': 'Dueño' };
+        window.configuracionApp = JSON.parse(localStorage.getItem('pos_configuracion')) || { nombreNegocio: 'MINOS', rfc: '', telefono: '', correo: '', direccion: '', notasCotizacion: 'Precios expresados en pesos mexicanos.\nCotización sujeta a disponibilidad de mercancía.\nForma de pago:\nObservaciones:' };
+        window.inventario = JSON.parse(localStorage.getItem('pos_inventario')) || [ { codigo: '101', nombre: 'Paquete Cupcakes Especial', tipo: 'venta', stock: 15, precios: { pub: 180, may1: 170, may2: 160, may3: 150, dueno: 140 } }, { codigo: '102', nombre: 'Mini Donitas Decoradas', tipo: 'venta', stock: 30, precios: { pub: 120, may1: 110, may2: 100, may3: 90, dueno: 80 } } ];
+        window.totalesDia = JSON.parse(localStorage.getItem('pos_totales_dia')) || { efectivo: 0, debito: 0, credito: 0, transferencia: 0, gastos: 0 };
+        window.historialTickets = JSON.parse(localStorage.getItem('pos_historial_tickets')) || [];
+        window.clientesGuardados = JSON.parse(localStorage.getItem('pos_clientes')) || [];
+        window.cotizacionesGuardadas = JSON.parse(localStorage.getItem('pos_cotizaciones')) || [];
+        window.carrito = []; window.nivelPrecioGlobalActual = 'pub';
+        window.carritoCotizacion = []; window.idCotizacionEditando = null;
+        window.compraDraft = []; window.kitDraftComponentes = []; window.indexClienteEditando = null;
+
+        const modulosFondo = [ { id: 'global', nombre: 'Fondo General' }, { id: 'ventas', nombre: 'Terminal de Ventas' }, { id: 'caja', nombre: 'Corte de Caja' }, { id: 'inventario', nombre: 'Inventario y Kits' }, { id: 'compras', nombre: 'Compras y Gastos' }, { id: 'cotizaciones', nombre: 'Cotizaciones' }, { id: 'clientes', nombre: 'Clientes y Deudas' }, { id: 'historial', nombre: 'Historial de Tickets' }, { id: 'configuracion', nombre: 'Configuración PDF' }, { id: 'fondos', nombre: 'Gestor de Fondos' } ];
+
+        // ==========================================
         // FUNCIONES GENERALES Y MENÚ
         // ==========================================
-        function toggleMenu() { 
+        window.toggleMenu = function() { 
             document.getElementById('menu-lateral').classList.toggle('abierto'); 
-        }
+        };
 
-        function cambiarModulo(id) {
+        window.cambiarModulo = function(id) {
             document.querySelectorAll('.modulo').forEach(m => m.classList.remove('activo'));
             document.getElementById(id).classList.add('activo');
             document.getElementById('menu-lateral').classList.remove('abierto');
-            if (id === 'inventario') renderizarInventario(); 
-            if (id === 'cotizaciones') renderizarCotizacionesGuardadas();
-            if (id === 'clientes') renderizarClientes();
-            if (id === 'historial') renderizarHistorial();
-            if (id === 'fondos') renderizarGestorFondos();
-            if (id === 'caja') actualizarVistaCaja();
-            if (id === 'configuracion') cargarConfiguracionDOM();
-            if (id === 'compras' && compraDraft.length === 0) agregarFilaCompraManual();
-            aplicarFondo(id);
-        }
-
-        // ==========================================
-        // VARIABLES GLOBALES DE DATOS
-        // ==========================================
-        const nombresPrecios = { 'pub': 'Público', 'may1': 'Mayoreo 1', 'may2': 'Mayoreo 2', 'may3': 'Mayoreo 3', 'dueno': 'Dueño' };
-        
-        let configuracionApp = JSON.parse(localStorage.getItem('pos_configuracion')) || { nombreNegocio: 'MINOS', rfc: '', telefono: '', correo: '', direccion: '', notasCotizacion: 'Precios expresados en pesos mexicanos.\nCotización sujeta a disponibilidad de mercancía.\nForma de pago:\nObservaciones:' };
-        let inventario = JSON.parse(localStorage.getItem('pos_inventario')) || [ { codigo: '101', nombre: 'Paquete Cupcakes Especial', tipo: 'venta', stock: 15, precios: { pub: 180, may1: 170, may2: 160, may3: 150, dueno: 140 } }, { codigo: '102', nombre: 'Mini Donitas Decoradas', tipo: 'venta', stock: 30, precios: { pub: 120, may1: 110, may2: 100, may3: 90, dueno: 80 } } ];
-        let totalesDia = JSON.parse(localStorage.getItem('pos_totales_dia')) || { efectivo: 0, debito: 0, credito: 0, transferencia: 0, gastos: 0 };
-        let historialTickets = JSON.parse(localStorage.getItem('pos_historial_tickets')) || [];
-        let clientesGuardados = JSON.parse(localStorage.getItem('pos_clientes')) || [];
-        let cotizacionesGuardadas = JSON.parse(localStorage.getItem('pos_cotizaciones')) || [];
-        
-        let carrito = []; let nivelPrecioGlobalActual = 'pub';
-        let carritoCotizacion = []; let idCotizacionEditando = null;
-        let compraDraft = []; let kitDraftComponentes = []; let indexClienteEditando = null;
+            if (id === 'inventario') window.renderizarInventario(); 
+            if (id === 'cotizaciones') window.renderizarCotizacionesGuardadas();
+            if (id === 'clientes') window.renderizarClientes();
+            if (id === 'historial') window.renderizarHistorial();
+            if (id === 'fondos') window.renderizarGestorFondos();
+            if (id === 'caja') window.actualizarVistaCaja();
+            if (id === 'configuracion') window.cargarConfiguracionDOM();
+            if (id === 'compras' && window.compraDraft.length === 0) window.agregarFilaCompraManual();
+            window.aplicarFondo(id);
+        };
 
         window.addEventListener('DOMContentLoaded', () => {
-            aplicarFondo('ventas');
-            cargarConfiguracionDOM();
-            renderizarInventario(); 
-            renderizarCotizacionesGuardadas(); 
-            renderizarClientes(); 
-            renderizarHistorial();
+            window.aplicarFondo('ventas'); window.cargarConfiguracionDOM(); window.renderizarInventario(); window.renderizarCotizacionesGuardadas(); window.renderizarClientes(); window.renderizarHistorial();
         });
 
         // ==========================================
         // CONFIGURACIÓN (PDF Y LOGO)
         // ==========================================
-        function cargarConfiguracionDOM() {
-            document.getElementById('conf-nombre').value = configuracionApp.nombreNegocio;
-            document.getElementById('conf-rfc').value = configuracionApp.rfc;
-            document.getElementById('conf-tel').value = configuracionApp.telefono;
-            document.getElementById('conf-correo').value = configuracionApp.correo;
-            document.getElementById('conf-direccion').value = configuracionApp.direccion;
-            document.getElementById('conf-notas').value = configuracionApp.notasCotizacion;
-            const logoData = localStorage.getItem('pos_logo_base64');
-            if(logoData) document.getElementById('conf-logo-preview').src = logoData;
-        }
+        window.cargarConfiguracionDOM = function() {
+            document.getElementById('conf-nombre').value = window.configuracionApp.nombreNegocio; document.getElementById('conf-rfc').value = window.configuracionApp.rfc; document.getElementById('conf-tel').value = window.configuracionApp.telefono; document.getElementById('conf-correo').value = window.configuracionApp.correo; document.getElementById('conf-direccion').value = window.configuracionApp.direccion; document.getElementById('conf-notas').value = window.configuracionApp.notasCotizacion;
+            const logoData = localStorage.getItem('pos_logo_base64'); if(logoData) document.getElementById('conf-logo-preview').src = logoData;
+        };
 
-        function guardarConfiguracion() {
-            configuracionApp.nombreNegocio = document.getElementById('conf-nombre').value || 'MINOS';
-            configuracionApp.rfc = document.getElementById('conf-rfc').value;
-            configuracionApp.telefono = document.getElementById('conf-tel').value;
-            configuracionApp.correo = document.getElementById('conf-correo').value;
-            configuracionApp.direccion = document.getElementById('conf-direccion').value;
-            configuracionApp.notasCotizacion = document.getElementById('conf-notas').value;
-            localStorage.setItem('pos_configuracion', JSON.stringify(configuracionApp));
-            alert("Configuración Guardada.");
-        }
+        window.guardarConfiguracion = function() {
+            window.configuracionApp.nombreNegocio = document.getElementById('conf-nombre').value || 'MINOS'; window.configuracionApp.rfc = document.getElementById('conf-rfc').value; window.configuracionApp.telefono = document.getElementById('conf-tel').value; window.configuracionApp.correo = document.getElementById('conf-correo').value; window.configuracionApp.direccion = document.getElementById('conf-direccion').value; window.configuracionApp.notasCotizacion = document.getElementById('conf-notas').value;
+            localStorage.setItem('pos_configuracion', JSON.stringify(window.configuracionApp)); alert("Configuración Guardada.");
+        };
 
-        function cargarLogoLocal(event) {
-            const file = event.target.files[0]; if(!file) return;
-            const reader = new FileReader();
+        window.cargarLogoLocal = function(event) {
+            const file = event.target.files[0]; if(!file) return; const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
@@ -509,201 +461,228 @@
                 img.src = e.target.result;
             }
             reader.readAsDataURL(file);
-        }
+        };
+
+        // ==========================================
+        // GESTOR DE FONDOS (FIREBASE STORAGE SYNC)
+        // ==========================================
+        window.guardarFondo = function(moduloId, fileInputId) {
+            const fileInput = document.getElementById(fileInputId); const file = fileInput.files[0];
+            if(!file) return alert("Selecciona una imagen o video primero.");
+            if (window.subirFondoNube) { window.subirFondoNube(moduloId, file, fileInput); } 
+            else { alert("Firebase no está conectado o cargando aún. Intenta en unos segundos."); }
+        };
+        
+        window.eliminarFondo = function(moduloId) {
+            if(!confirm(`¿Restablecer el fondo para ${moduloId}?`)) return;
+            let fondos = JSON.parse(localStorage.getItem('pos_fondos')) || {}; delete fondos[moduloId];
+            localStorage.setItem('pos_fondos', JSON.stringify(fondos)); alert("Fondo removido. Sincronizando con la nube...");
+            const moduloActual = document.querySelector('.modulo.activo') ? document.querySelector('.modulo.activo').id : 'ventas'; window.aplicarFondo(moduloActual);
+        };
+        
+        window.aplicarFondo = function(moduloId) {
+            let fondos = JSON.parse(localStorage.getItem('pos_fondos')) || {}; let f = fondos[moduloId]; if (!f) f = fondos['global'];
+            if (f && f.url) { window.mostrarFondoGrafico(f.url, f.isVideo); } else { window.mostrarFondoDefault(); }
+        };
+        
+        window.mostrarFondoGrafico = function(url, isVideo) {
+            const divBg = document.getElementById('fondo-actual'); const vidBg = document.getElementById('fondo-video');
+            if (isVideo) { divBg.style.display = 'none'; vidBg.style.display = 'block'; vidBg.src = url; vidBg.load(); let playPromise = vidBg.play(); if (playPromise !== undefined) { playPromise.catch(e => console.log("Bloqueo autoplay")); } } 
+            else { vidBg.style.display = 'none'; vidBg.pause(); divBg.style.display = 'block'; divBg.style.backgroundImage = `url('${url}')`; }
+        };
+        
+        window.mostrarFondoDefault = function() {
+            const divBg = document.getElementById('fondo-actual'); const vidBg = document.getElementById('fondo-video'); vidBg.style.display = 'none'; vidBg.pause(); divBg.style.display = 'block'; divBg.style.backgroundImage = "url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=1920&auto=format&fit=crop')";
+        };
+
+        window.renderizarGestorFondos = function() {
+            const contenedor = document.getElementById('lista-gestor-fondos'); contenedor.innerHTML = '';
+            modulosFondo.forEach(mod => { contenedor.innerHTML += `<div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; border: 1px solid var(--dorado);"><h4 style="margin-top:0; color:var(--acento);">${mod.nombre}</h4><input type="file" id="file-${mod.id}" accept="image/*, video/*" style="width: 100%; font-size: 0.8em; margin-bottom: 10px;"><div style="display: flex; gap: 5px;"><button class="btn-accion" style="flex:1; padding: 5px;" onclick="window.guardarFondo('${mod.id}', 'file-${mod.id}')">💾 Asignar</button><button style="padding: 5px;" onclick="window.eliminarFondo('${mod.id}')">🗑️ Restablecer</button></div></div>`; });
+        };
 
         // ==========================================
         // MÓDULO CLIENTES
         // ==========================================
-        function guardarCliente() { 
+        window.guardarCliente = function() { 
             const nombre = document.getElementById('cliente-nombre').value; const nivel = document.getElementById('cliente-nivel').value; const deuda = parseFloat(document.getElementById('cliente-deuda').value) || 0; 
             if(!nombre) return alert("Nombre obligatorio"); 
-            if (indexClienteEditando !== null) { 
-                clientesGuardados[indexClienteEditando].nombre = nombre; clientesGuardados[indexClienteEditando].nivelPrecio = nivel; clientesGuardados[indexClienteEditando].deuda = deuda; alert("Cliente actualizado."); 
-            } else { clientesGuardados.push({ id: Date.now(), nombre: nombre, deuda: deuda, nivelPrecio: nivel }); alert("Cliente agregado."); } 
-            localStorage.setItem('pos_clientes', JSON.stringify(clientesGuardados)); cancelarEdicionCliente(); renderizarClientes(); 
-        }
-        function editarInfoCliente(index) { const c = clientesGuardados[index]; document.getElementById('cliente-nombre').value = c.nombre; document.getElementById('cliente-nivel').value = c.nivelPrecio || 'pub'; document.getElementById('cliente-deuda').value = c.deuda; indexClienteEditando = index; document.getElementById('titulo-form-cliente').innerText = `Editando Cliente: ${c.nombre}`; document.getElementById('btn-guardar-cliente').innerText = "💾 Actualizar Cliente"; document.getElementById('btn-cancelar-edicion-cliente').style.display = 'inline-block'; document.getElementById('clientes').scrollTo(0,0); }
-        function cancelarEdicionCliente() { indexClienteEditando = null; document.getElementById('cliente-nombre').value = ''; document.getElementById('cliente-nivel').value = 'pub'; document.getElementById('cliente-deuda').value = '0'; document.getElementById('titulo-form-cliente').innerText = "Registrar Nuevo Cliente"; document.getElementById('btn-guardar-cliente').innerText = "+ Agregar Cliente"; document.getElementById('btn-cancelar-edicion-cliente').style.display = 'none'; }
-        function renderizarClientes() { 
+            if (window.indexClienteEditando !== null) { window.clientesGuardados[window.indexClienteEditando].nombre = nombre; window.clientesGuardados[window.indexClienteEditando].nivelPrecio = nivel; window.clientesGuardados[window.indexClienteEditando].deuda = deuda; alert("Cliente actualizado."); } 
+            else { window.clientesGuardados.push({ id: Date.now(), nombre: nombre, deuda: deuda, nivelPrecio: nivel }); alert("Cliente agregado."); } 
+            localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados)); window.cancelarEdicionCliente(); window.renderizarClientes(); 
+        };
+        window.editarInfoCliente = function(index) { const c = window.clientesGuardados[index]; document.getElementById('cliente-nombre').value = c.nombre; document.getElementById('cliente-nivel').value = c.nivelPrecio || 'pub'; document.getElementById('cliente-deuda').value = c.deuda; window.indexClienteEditando = index; document.getElementById('titulo-form-cliente').innerText = `Editando Cliente: ${c.nombre}`; document.getElementById('btn-guardar-cliente').innerText = "💾 Actualizar Cliente"; document.getElementById('btn-cancelar-edicion-cliente').style.display = 'inline-block'; document.getElementById('clientes').scrollTo(0,0); };
+        window.cancelarEdicionCliente = function() { window.indexClienteEditando = null; document.getElementById('cliente-nombre').value = ''; document.getElementById('cliente-nivel').value = 'pub'; document.getElementById('cliente-deuda').value = '0'; document.getElementById('titulo-form-cliente').innerText = "Registrar Nuevo Cliente"; document.getElementById('btn-guardar-cliente').innerText = "+ Agregar Cliente"; document.getElementById('btn-cancelar-edicion-cliente').style.display = 'none'; };
+        window.renderizarClientes = function() { 
             const tbody = document.getElementById('lista-clientes'); tbody.innerHTML = ''; 
-            clientesGuardados.forEach((c, index) => { 
-                let colorDeuda = c.deuda > 0 ? '#ef5350' : '#81c784'; let textoDeuda = c.deuda > 0 ? `$${c.deuda.toFixed(2)}` : 'Sin Deuda'; let textoNivel = nombresPrecios[c.nivelPrecio || 'pub']; 
-                tbody.innerHTML += `<tr><td>${c.nombre}</td><td>${textoNivel}</td><td style="color: ${colorDeuda}; font-weight: bold;">${textoDeuda}</td><td style="display: flex; gap: 5px;"><button onclick="abonarDeuda(${index})" style="background: rgba(76, 175, 80, 0.4);">💵 Abonar</button><button onclick="editarInfoCliente(${index})">✏️ Editar</button><button onclick="eliminarCliente(${index})">❌</button></td></tr>`; 
+            window.clientesGuardados.forEach((c, index) => { 
+                let colorDeuda = c.deuda > 0 ? '#ef5350' : '#81c784'; let textoDeuda = c.deuda > 0 ? `$${c.deuda.toFixed(2)}` : 'Sin Deuda'; let textoNivel = window.nombresPrecios[c.nivelPrecio || 'pub']; 
+                tbody.innerHTML += `<tr><td>${c.nombre}</td><td>${textoNivel}</td><td style="color: ${colorDeuda}; font-weight: bold;">${textoDeuda}</td><td style="display: flex; gap: 5px;"><button onclick="window.abonarDeuda(${index})" style="background: rgba(76, 175, 80, 0.4);">💵 Abonar</button><button onclick="window.editarInfoCliente(${index})">✏️ Editar</button><button onclick="window.eliminarCliente(${index})">❌</button></td></tr>`; 
             }); 
-            actualizarSelectsClientes(); 
-        }
-        function actualizarSelectsClientes() { 
+            window.actualizarSelectsClientes(); 
+        };
+        window.actualizarSelectsClientes = function() { 
             const selVenta = document.getElementById('select-cliente-venta'); let valVentaActual = selVenta.value; selVenta.innerHTML = '<option value="">Público en General</option>'; 
             const selCot = document.getElementById('select-cliente-cotizacion'); let valCotActual = selCot.value; selCot.innerHTML = '<option value="">Público Libre</option>'; 
-            clientesGuardados.forEach(c => { selVenta.innerHTML += `<option value="${c.id}">${c.nombre}</option>`; selCot.innerHTML += `<option value="${c.id}">${c.nombre}</option>`; }); 
+            window.clientesGuardados.forEach(c => { selVenta.innerHTML += `<option value="${c.id}">${c.nombre}</option>`; selCot.innerHTML += `<option value="${c.id}">${c.nombre}</option>`; }); 
             if(valVentaActual) selVenta.value = valVentaActual; if(valCotActual) selCot.value = valCotActual; 
-        }
-        function abonarDeuda(index) { const monto = parseFloat(prompt(`Abonar a ${clientesGuardados[index].nombre}:`)); if(monto && monto > 0) { if(monto > clientesGuardados[index].deuda) return alert("No puede ser mayor a la deuda."); clientesGuardados[index].deuda -= monto; localStorage.setItem('pos_clientes', JSON.stringify(clientesGuardados)); totalesDia.efectivo += monto; localStorage.setItem('pos_totales_dia', JSON.stringify(totalesDia)); actualizarVistaCaja(); renderizarClientes(); alert("Abono registrado."); } }
-        function eliminarCliente(index) { if(confirm("¿Eliminar a este cliente?")) { clientesGuardados.splice(index, 1); localStorage.setItem('pos_clientes', JSON.stringify(clientesGuardados)); renderizarClientes(); } }
+        };
+        window.abonarDeuda = function(index) { const monto = parseFloat(prompt(`Abonar a ${window.clientesGuardados[index].nombre}:`)); if(monto && monto > 0) { if(monto > window.clientesGuardados[index].deuda) return alert("No puede ser mayor a la deuda."); window.clientesGuardados[index].deuda -= monto; localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados)); window.totalesDia.efectivo += monto; localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); window.actualizarVistaCaja(); window.renderizarClientes(); alert("Abono registrado."); } };
+        window.eliminarCliente = function(index) { if(confirm("¿Eliminar a este cliente?")) { window.clientesGuardados.splice(index, 1); localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados)); window.renderizarClientes(); } };
 
         // ==========================================
         // INVENTARIO
         // ==========================================
-        function toggleConfigKit() { const tipo = document.getElementById('inv-tipo').value; const panel = document.getElementById('config-kit'); if(tipo === 'kit') { panel.style.display = 'block'; llenarSelectInsumos(); kitDraftComponentes = []; actualizarListaDraftKit(); } else { panel.style.display = 'none'; } }
-        function llenarSelectInsumos() { const sel = document.getElementById('sel-insumo-kit'); sel.innerHTML = '<option value="">Selecciona un insumo...</option>'; inventario.filter(i => i.tipo !== 'kit').forEach(i => { sel.innerHTML += `<option value="${i.codigo}">${i.nombre} (Stock: ${i.stock})</option>`; }); }
-        function agregarInsumoAlKitDraft() { const cod = document.getElementById('sel-insumo-kit').value; const cant = parseInt(document.getElementById('cant-insumo-kit').value); if(!cod || !cant || cant <= 0) return alert("Selecciona un insumo y cantidad."); const insumo = inventario.find(i => i.codigo === cod); kitDraftComponentes.push({ codigoInsumo: cod, nombre: insumo.nombre, cant: cant }); actualizarListaDraftKit(); }
-        function actualizarListaDraftKit() { const ul = document.getElementById('lista-draft-kit'); ul.innerHTML = ''; kitDraftComponentes.forEach((c, idx) => { ul.innerHTML += `<li>${c.cant}x ${c.nombre} <button onclick="kitDraftComponentes.splice(${idx},1); actualizarListaDraftKit()" style="padding: 2px 5px; font-size:10px;">❌</button></li>`; }); }
-        function guardarArticulo() {
+        window.toggleConfigKit = function() { const tipo = document.getElementById('inv-tipo').value; const panel = document.getElementById('config-kit'); if(tipo === 'kit') { panel.style.display = 'block'; window.llenarSelectInsumos(); window.kitDraftComponentes = []; window.actualizarListaDraftKit(); } else { panel.style.display = 'none'; } };
+        window.llenarSelectInsumos = function() { const sel = document.getElementById('sel-insumo-kit'); sel.innerHTML = '<option value="">Selecciona un insumo...</option>'; window.inventario.filter(i => i.tipo !== 'kit').forEach(i => { sel.innerHTML += `<option value="${i.codigo}">${i.nombre} (Stock: ${i.stock})</option>`; }); };
+        window.agregarInsumoAlKitDraft = function() { const cod = document.getElementById('sel-insumo-kit').value; const cant = parseInt(document.getElementById('cant-insumo-kit').value); if(!cod || !cant || cant <= 0) return alert("Selecciona un insumo y cantidad."); const insumo = window.inventario.find(i => i.codigo === cod); window.kitDraftComponentes.push({ codigoInsumo: cod, nombre: insumo.nombre, cant: cant }); window.actualizarListaDraftKit(); };
+        window.actualizarListaDraftKit = function() { const ul = document.getElementById('lista-draft-kit'); ul.innerHTML = ''; window.kitDraftComponentes.forEach((c, idx) => { ul.innerHTML += `<li>${c.cant}x ${c.nombre} <button onclick="window.kitDraftComponentes.splice(${idx},1); window.actualizarListaDraftKit()" style="padding: 2px 5px; font-size:10px;">❌</button></li>`; }); };
+        window.guardarArticulo = function() {
             const art = { codigo: document.getElementById('inv-codigo').value, nombre: document.getElementById('inv-nombre').value, tipo: document.getElementById('inv-tipo').value, stock: parseInt(document.getElementById('inv-stock').value) || 0, precios: { pub: parseFloat(document.getElementById('inv-precio-pub').value) || 0, may1: parseFloat(document.getElementById('inv-precio-may1').value) || 0, may2: parseFloat(document.getElementById('inv-precio-may2').value) || 0, may3: parseFloat(document.getElementById('inv-precio-may3').value) || 0, dueno: parseFloat(document.getElementById('inv-precio-dueno').value) || 0 } };
             if(!art.nombre || !art.codigo) return alert("Nombre y Código obligatorios");
-            if(art.tipo === 'kit') { if(kitDraftComponentes.length === 0) return alert("Un kit debe tener componentes."); art.componentes = [...kitDraftComponentes]; art.stock = 0; }
-            inventario.push(art); localStorage.setItem('pos_inventario', JSON.stringify(inventario)); alert("Artículo guardado."); renderizarInventario();
+            if(art.tipo === 'kit') { if(window.kitDraftComponentes.length === 0) return alert("Un kit debe tener componentes."); art.componentes = [...window.kitDraftComponentes]; art.stock = 0; }
+            window.inventario.push(art); localStorage.setItem('pos_inventario', JSON.stringify(window.inventario)); alert("Artículo guardado."); window.renderizarInventario();
             document.getElementById('inv-codigo').value = ''; document.getElementById('inv-nombre').value = ''; document.getElementById('inv-stock').value = '';
-        }
-        function renderizarInventario() { const tbody = document.getElementById('lista-inventario'); tbody.innerHTML = ''; inventario.forEach(art => { let infoExtra = art.tipo === 'kit' ? '<br><small style="color:#ffb74d;">(Kit)</small>' : ''; tbody.innerHTML += `<tr><td>${art.codigo}</td><td>${art.nombre} ${infoExtra}</td><td>${art.tipo}</td><td>${art.tipo === 'kit' ? '-' : art.stock}</td><td>$${art.precios.pub}</td><td>$${art.precios.dueno}</td><td><button onclick="eliminarArticulo('${art.codigo}')">❌</button></td></tr>`; }); }
-        function eliminarArticulo(codigo) { inventario = inventario.filter(a => a.codigo !== codigo); localStorage.setItem('pos_inventario', JSON.stringify(inventario)); renderizarInventario(); }
+        };
+        window.renderizarInventario = function() { const tbody = document.getElementById('lista-inventario'); tbody.innerHTML = ''; window.inventario.forEach(art => { let infoExtra = art.tipo === 'kit' ? '<br><small style="color:#ffb74d;">(Kit)</small>' : ''; tbody.innerHTML += `<tr><td>${art.codigo}</td><td>${art.nombre} ${infoExtra}</td><td>${art.tipo}</td><td>${art.tipo === 'kit' ? '-' : art.stock}</td><td>$${art.precios.pub}</td><td>$${art.precios.dueno}</td><td><button onclick="window.eliminarArticulo('${art.codigo}')">❌</button></td></tr>`; }); };
+        window.eliminarArticulo = function(codigo) { window.inventario = window.inventario.filter(a => a.codigo !== codigo); localStorage.setItem('pos_inventario', JSON.stringify(window.inventario)); window.renderizarInventario(); };
 
         // ==========================================
         // COMPRAS MANUALES
         // ==========================================
-        function renderizarTablaCompra() { const tbody = document.getElementById('lista-articulos-compra'); tbody.innerHTML = ''; compraDraft.forEach((item, index) => { tbody.innerHTML += `<tr><td><input type="text" placeholder="Código" value="${item.codigo}" onchange="compraDraft[${index}].codigo = this.value" style="width: 80px;"></td><td><input type="text" placeholder="Nombre" value="${item.nombre}" onchange="compraDraft[${index}].nombre = this.value" style="width: 150px;"></td><td><select onchange="compraDraft[${index}].tipo = this.value"><option value="venta" ${item.tipo==='venta'?'selected':''}>Venta</option><option value="consumo" ${item.tipo==='consumo'?'selected':''}>Consumo/Insumo</option></select></td><td><input type="number" value="${item.cant}" style="width: 60px;" onchange="compraDraft[${index}].cant = parseInt(this.value)"></td><td><input type="number" value="${item.costo}" style="width: 80px;" onchange="compraDraft[${index}].costo = parseFloat(this.value)"></td><td><button onclick="removerFilaCompra(${index})">❌</button></td></tr>`; }); }
-        function agregarFilaCompraManual() { compraDraft.push({ id: Date.now(), nombre: "", codigo: "", tipo: "consumo", cant: 1, costo: 0 }); renderizarTablaCompra(); }
-        function removerFilaCompra(index) { compraDraft.splice(index, 1); renderizarTablaCompra(); }
-        function confirmarCompra() { if(compraDraft.length === 0) return alert("No hay artículos."); let agregados = 0; let totalGasto = 0; compraDraft.forEach(item => { if(!item.nombre || !item.codigo) return; let existente = inventario.find(i => i.codigo === item.codigo); totalGasto += item.costo; if (existente) existente.stock += item.cant; else inventario.push({ codigo: item.codigo, nombre: item.nombre, tipo: item.tipo, stock: item.cant, precios: { pub: (item.costo/item.cant) * 1.5, may1: (item.costo/item.cant) * 1.4, may2: (item.costo/item.cant) * 1.3, may3: (item.costo/item.cant) * 1.2, dueno: (item.costo/item.cant) } }); agregados++; }); if(agregados === 0) return alert("Llenar Código y Nombre."); totalesDia.gastos += totalGasto; localStorage.setItem('pos_totales_dia', JSON.stringify(totalesDia)); localStorage.setItem('pos_inventario', JSON.stringify(inventario)); alert(`Compra registrada.\nGasto restado de caja: $${totalGasto.toFixed(2)}`); compraDraft = []; renderizarInventario(); actualizarVistaCaja(); cambiarModulo('inventario'); }
+        window.renderizarTablaCompra = function() { const tbody = document.getElementById('lista-articulos-compra'); tbody.innerHTML = ''; window.compraDraft.forEach((item, index) => { tbody.innerHTML += `<tr><td><input type="text" placeholder="Código" value="${item.codigo}" onchange="window.compraDraft[${index}].codigo = this.value" style="width: 80px;"></td><td><input type="text" placeholder="Nombre" value="${item.nombre}" onchange="window.compraDraft[${index}].nombre = this.value" style="width: 150px;"></td><td><select onchange="window.compraDraft[${index}].tipo = this.value"><option value="venta" ${item.tipo==='venta'?'selected':''}>Venta</option><option value="consumo" ${item.tipo==='consumo'?'selected':''}>Consumo/Insumo</option></select></td><td><input type="number" value="${item.cant}" style="width: 60px;" onchange="window.compraDraft[${index}].cant = parseInt(this.value)"></td><td><input type="number" value="${item.costo}" style="width: 80px;" onchange="window.compraDraft[${index}].costo = parseFloat(this.value)"></td><td><button onclick="window.removerFilaCompra(${index})">❌</button></td></tr>`; }); };
+        window.agregarFilaCompraManual = function() { window.compraDraft.push({ id: Date.now(), nombre: "", codigo: "", tipo: "consumo", cant: 1, costo: 0 }); window.renderizarTablaCompra(); };
+        window.removerFilaCompra = function(index) { window.compraDraft.splice(index, 1); window.renderizarTablaCompra(); };
+        window.confirmarCompra = function() { if(window.compraDraft.length === 0) return alert("No hay artículos."); let agregados = 0; let totalGasto = 0; window.compraDraft.forEach(item => { if(!item.nombre || !item.codigo) return; let existente = window.inventario.find(i => i.codigo === item.codigo); totalGasto += item.costo; if (existente) existente.stock += item.cant; else window.inventario.push({ codigo: item.codigo, nombre: item.nombre, tipo: item.tipo, stock: item.cant, precios: { pub: (item.costo/item.cant) * 1.5, may1: (item.costo/item.cant) * 1.4, may2: (item.costo/item.cant) * 1.3, may3: (item.costo/item.cant) * 1.2, dueno: (item.costo/item.cant) } }); agregados++; }); if(agregados === 0) return alert("Llenar Código y Nombre."); window.totalesDia.gastos += totalGasto; localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); localStorage.setItem('pos_inventario', JSON.stringify(window.inventario)); alert(`Compra registrada.
+Gasto restado de caja: $${totalGasto.toFixed(2)}`); window.compraDraft = []; window.renderizarInventario(); window.actualizarVistaCaja(); window.cambiarModulo('inventario'); };
 
         // ==========================================
         // COTIZACIONES Y PDF
         // ==========================================
-        function alSeleccionarClienteCotizacion() {
+        window.alSeleccionarClienteCotizacion = function() {
             const clienteId = document.getElementById('select-cliente-cotizacion').value; let nivel = 'pub';
-            if(clienteId) { const cliente = clientesGuardados.find(c => c.id == clienteId); if(cliente && cliente.nivelPrecio) nivel = cliente.nivelPrecio; document.getElementById('nombre-cliente-cotizacion').value = cliente.nombre; }
-            carritoCotizacion.forEach(item => { item.precioAplicado = item.precios[nivel]; }); renderizarCarritoCotizacion();
-        }
-        function buscarArticuloCotizacion(e) {
-            if (e.key === 'Enter') { const query = document.getElementById('buscador-cotizacion').value.toLowerCase(); const art = inventario.find(a => a.codigo.toLowerCase() === query || a.nombre.toLowerCase().includes(query));
-                if (art && art.tipo !== 'consumo') { const existente = carritoCotizacion.find(c => c.codigo === art.codigo); let nivel = 'pub'; const clienteId = document.getElementById('select-cliente-cotizacion').value; if(clienteId) { const cliente = clientesGuardados.find(c => c.id == clienteId); if(cliente && cliente.nivelPrecio) nivel = cliente.nivelPrecio; } if (existente) existente.cantidad++; else carritoCotizacion.push({ ...art, cantidad: 1, precioAplicado: art.precios[nivel] }); document.getElementById('buscador-cotizacion').value = ''; renderizarCarritoCotizacion(); } else alert("Artículo no encontrado."); }
-        }
-        function renderizarCarritoCotizacion() {
+            if(clienteId) { const cliente = window.clientesGuardados.find(c => c.id == clienteId); if(cliente && cliente.nivelPrecio) nivel = cliente.nivelPrecio; document.getElementById('nombre-cliente-cotizacion').value = cliente.nombre; }
+            window.carritoCotizacion.forEach(item => { item.precioAplicado = item.precios[nivel]; }); window.renderizarCarritoCotizacion();
+        };
+        window.buscarArticuloCotizacion = function(e) {
+            if (e.key === 'Enter') { const query = document.getElementById('buscador-cotizacion').value.toLowerCase(); const art = window.inventario.find(a => a.codigo.toLowerCase() === query || a.nombre.toLowerCase().includes(query));
+                if (art && art.tipo !== 'consumo') { const existente = window.carritoCotizacion.find(c => c.codigo === art.codigo); let nivel = 'pub'; const clienteId = document.getElementById('select-cliente-cotizacion').value; if(clienteId) { const cliente = window.clientesGuardados.find(c => c.id == clienteId); if(cliente && cliente.nivelPrecio) nivel = cliente.nivelPrecio; } if (existente) existente.cantidad++; else window.carritoCotizacion.push({ ...art, cantidad: 1, precioAplicado: art.precios[nivel] }); document.getElementById('buscador-cotizacion').value = ''; window.renderizarCarritoCotizacion(); } else alert("Artículo no encontrado."); }
+        };
+        window.renderizarCarritoCotizacion = function() {
             const tbody = document.getElementById('lista-carrito-cotizacion'); tbody.innerHTML = ''; let subtotal = 0;
-            carritoCotizacion.forEach((item, index) => { const sub = item.cantidad * item.precioAplicado; subtotal += sub; tbody.innerHTML += `<tr><td>${item.codigo}</td><td>${item.nombre}</td><td><input type="number" value="${item.cantidad}" style="width: 60px;" onchange="actualizarCantCotizacion(${index}, this.value)"></td><td><input type="number" value="${item.precioAplicado}" style="width: 80px;" onchange="actualizarPrecioCotizacion(${index}, this.value)"></td><td>$${sub.toFixed(2)}</td><td><button onclick="removerDeCotizacion(${index})">❌</button></td></tr>`; });
+            window.carritoCotizacion.forEach((item, index) => { const sub = item.cantidad * item.precioAplicado; subtotal += sub; tbody.innerHTML += `<tr><td>${item.codigo}</td><td>${item.nombre}</td><td><input type="number" value="${item.cantidad}" style="width: 60px;" onchange="window.actualizarCantCotizacion(${index}, this.value)"></td><td><input type="number" value="${item.precioAplicado}" style="width: 80px;" onchange="window.actualizarPrecioCotizacion(${index}, this.value)"></td><td>$${sub.toFixed(2)}</td><td><button onclick="window.removerDeCotizacion(${index})">❌</button></td></tr>`; });
             const aplicaIva = document.getElementById('check-iva').checked; const iva = aplicaIva ? (subtotal * 0.16) : 0; const totalFinal = subtotal + iva;
             document.getElementById('total-cotizacion').innerHTML = `${subtotal.toFixed(2)} <span style="font-size:0.6em; color:var(--texto-color); display:block;">(IVA: $${iva.toFixed(2)} | Total Final: $${totalFinal.toFixed(2)})</span>`;
-        }
+        };
 
-        function actualizarCantCotizacion(index, cant) { carritoCotizacion[index].cantidad = parseInt(cant); renderizarCarritoCotizacion(); }
-        function actualizarPrecioCotizacion(index, precio) { carritoCotizacion[index].precioAplicado = parseFloat(precio); renderizarCarritoCotizacion(); }
-        function removerDeCotizacion(index) { carritoCotizacion.splice(index, 1); renderizarCarritoCotizacion(); }
+        window.actualizarCantCotizacion = function(index, cant) { window.carritoCotizacion[index].cantidad = parseInt(cant); window.renderizarCarritoCotizacion(); };
+        window.actualizarPrecioCotizacion = function(index, precio) { window.carritoCotizacion[index].precioAplicado = parseFloat(precio); window.renderizarCarritoCotizacion(); };
+        window.removerDeCotizacion = function(index) { window.carritoCotizacion.splice(index, 1); window.renderizarCarritoCotizacion(); };
 
-        function guardarCotizacion() {
-            if (carritoCotizacion.length === 0) return alert("La cotización está vacía.");
+        window.guardarCotizacion = function() {
+            if (window.carritoCotizacion.length === 0) return alert("La cotización está vacía.");
             const selectCli = document.getElementById('select-cliente-cotizacion'); let cliente = document.getElementById('nombre-cliente-cotizacion').value;
-            if(selectCli.value) { const cObj = clientesGuardados.find(c => c.id == selectCli.value); if(cObj) cliente = cObj.nombre; } if(!cliente) cliente = 'Público en General'; 
-            let subtotal = 0; carritoCotizacion.forEach(i => subtotal += (i.cantidad * i.precioAplicado)); const aplicaIva = document.getElementById('check-iva').checked; const iva = aplicaIva ? (subtotal * 0.16) : 0; const totalFinal = subtotal + iva;
-            const cotizacionObj = { id: idCotizacionEditando || Date.now(), fecha: new Date().toLocaleDateString(), cliente: cliente, subtotal: subtotal, iva: iva, total: totalFinal, items: [...carritoCotizacion] };
-            if (idCotizacionEditando) { const idx = cotizacionesGuardadas.findIndex(c => c.id === idCotizacionEditando); if(idx !== -1) cotizacionesGuardadas[idx] = cotizacionObj; } else { cotizacionesGuardadas.push(cotizacionObj); }
-            localStorage.setItem('pos_cotizaciones', JSON.stringify(cotizacionesGuardadas)); alert("Cotización guardada."); limpiarCotizacion(); renderizarCotizacionesGuardadas();
-        }
+            if(selectCli.value) { const cObj = window.clientesGuardados.find(c => c.id == selectCli.value); if(cObj) cliente = cObj.nombre; } if(!cliente) cliente = 'Público en General'; 
+            let subtotal = 0; window.carritoCotizacion.forEach(i => subtotal += (i.cantidad * i.precioAplicado)); const aplicaIva = document.getElementById('check-iva').checked; const iva = aplicaIva ? (subtotal * 0.16) : 0; const totalFinal = subtotal + iva;
+            const cotizacionObj = { id: window.idCotizacionEditando || Date.now(), fecha: new Date().toLocaleDateString(), cliente: cliente, subtotal: subtotal, iva: iva, total: totalFinal, items: [...window.carritoCotizacion] };
+            if (window.idCotizacionEditando) { const idx = window.cotizacionesGuardadas.findIndex(c => c.id === window.idCotizacionEditando); if(idx !== -1) window.cotizacionesGuardadas[idx] = cotizacionObj; } else { window.cotizacionesGuardadas.push(cotizacionObj); }
+            localStorage.setItem('pos_cotizaciones', JSON.stringify(window.cotizacionesGuardadas)); alert("Cotización guardada."); window.limpiarCotizacion(); window.renderizarCotizacionesGuardadas();
+        };
 
-        function generarPDFCotizacionIndividual(id) {
-            try {
-                const cot = cotizacionesGuardadas.find(c => c.id === id); if(!cot) return alert("Cotización no encontrada");
-                const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
-                const marginX = 15; const cyan = [0, 210, 255]; const gold = [212, 175, 55];
-                
-                doc.setFillColor(...cyan); doc.rect(0, 0, 220, 35, 'F');
-                const logoData = localStorage.getItem('pos_logo_base64');
-                if(logoData) { 
-                    try { doc.addImage(logoData, 'PNG', marginX, 5, 25, 25); } catch(e) { console.log(e); } 
-                    doc.setFontSize(22); doc.setTextColor(...gold); doc.text(configuracionApp.nombreNegocio.toUpperCase(), marginX + 30, 22); 
-                } else { doc.setFontSize(22); doc.setTextColor(...gold); doc.text(configuracionApp.nombreNegocio.toUpperCase(), marginX, 22); }
-                doc.setTextColor(255, 255, 255); doc.setFontSize(24); doc.text("COTIZACIÓN", 150, 22);
+        window.generarPDFCotizacionIndividual = function(id) {
+            const cot = window.cotizacionesGuardadas.find(c => c.id === id); if(!cot) return alert("Cotización no encontrada");
+            const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+            const marginX = 15; const cyan = [0, 210, 255]; const gold = [212, 175, 55];
+            
+            doc.setFillColor(...cyan); doc.rect(0, 0, 220, 35, 'F');
+            const logoData = localStorage.getItem('pos_logo_base64');
+            if(logoData) { try { doc.addImage(logoData, 'PNG', marginX, 5, 25, 25); } catch(e) {} doc.setFontSize(22); doc.setTextColor(...gold); doc.text(window.configuracionApp.nombreNegocio.toUpperCase(), marginX + 30, 22); } 
+            else { doc.setFontSize(22); doc.setTextColor(...gold); doc.text(window.configuracionApp.nombreNegocio.toUpperCase(), marginX, 22); }
+            doc.setTextColor(255, 255, 255); doc.setFontSize(24); doc.text("COTIZACIÓN", 150, 22);
 
-                doc.setTextColor(50, 50, 50); doc.setFontSize(10); let y = 45;
-                if(configuracionApp.rfc) { doc.text(`RFC: ${configuracionApp.rfc}`, marginX, y); y+=5; }
-                if(configuracionApp.telefono) { doc.text(`Tel: ${configuracionApp.telefono}`, marginX, y); y+=5; }
-                if(configuracionApp.correo) { doc.text(`Correo: ${configuracionApp.correo}`, marginX, y); y+=5; }
-                
-                doc.text(`No. de cotización: ${cot.id.toString().slice(-6)}`, 140, 45); doc.text(`Fecha: ${cot.fecha}`, 140, 50);
+            doc.setTextColor(50, 50, 50); doc.setFontSize(10); let y = 45;
+            if(window.configuracionApp.rfc) { doc.text(`RFC: ${window.configuracionApp.rfc}`, marginX, y); y+=5; }
+            if(window.configuracionApp.telefono) { doc.text(`Tel: ${window.configuracionApp.telefono}`, marginX, y); y+=5; }
+            if(window.configuracionApp.correo) { doc.text(`Correo: ${window.configuracionApp.correo}`, marginX, y); y+=5; }
+            
+            doc.text(`No. de cotización: ${cot.id.toString().slice(-6)}`, 140, 45); doc.text(`Fecha: ${cot.fecha}`, 140, 50);
 
-                doc.setFillColor(240, 240, 240); doc.rect(marginX, 65, 185, 8, 'F'); doc.setTextColor(...cyan); doc.setFontSize(11); doc.text("DATOS DEL CLIENTE", marginX + 2, 70.5);
-                doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.text(`Cliente / Empresa: ${cot.cliente}`, marginX, 80); doc.text(`Domicilio / Dirección de entrega: A convenir`, marginX, 85);
+            doc.setFillColor(240, 240, 240); doc.rect(marginX, 65, 185, 8, 'F'); doc.setTextColor(...cyan); doc.setFontSize(11); doc.text("DATOS DEL CLIENTE", marginX + 2, 70.5);
+            doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.text(`Cliente / Empresa: ${cot.cliente}`, marginX, 80); doc.text(`Domicilio / Dirección de entrega: A convenir`, marginX, 85);
 
-                const tableColumn = ["Cant.", "Descripción de mercancía", "Precio unitario", "Importe"]; const tableRows = [];
-                cot.items.forEach(item => { tableRows.push([item.cantidad, item.nombre, `$${item.precioAplicado.toFixed(2)}`, `$${(item.cantidad * item.precioAplicado).toFixed(2)}`]); });
-                doc.autoTable({ startY: 95, head: [tableColumn], body: tableRows, theme: 'grid', headStyles: { fillColor: cyan, textColor: [255, 255, 255] }, styles: { fontSize: 10, cellPadding: 3 }, alternateRowStyles: { fillColor: [245, 245, 245] } });
+            const tableColumn = ["Cant.", "Descripción de mercancía", "Precio unitario", "Importe"]; const tableRows = [];
+            cot.items.forEach(item => { tableRows.push([item.cantidad, item.nombre, `$${item.precioAplicado.toFixed(2)}`, `$${(item.cantidad * item.precioAplicado).toFixed(2)}`]); });
+            doc.autoTable({ startY: 95, head: [tableColumn], body: tableRows, theme: 'grid', headStyles: { fillColor: cyan, textColor: [255, 255, 255] }, styles: { fontSize: 10, cellPadding: 3 }, alternateRowStyles: { fillColor: [245, 245, 245] } });
 
-                let finalY = doc.lastAutoTable.finalY + 10;
-                doc.setFontSize(9); doc.setTextColor(100, 100, 100); 
-                const notaSplit = configuracionApp.notasCotizacion.split('\n');
-                doc.text("Notas/condiciones:", marginX, finalY);
-                finalY += 5;
-                notaSplit.forEach(line => { doc.text(line, marginX, finalY); finalY += 4; });
+            let finalY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(9); doc.setTextColor(100, 100, 100); const notasLines = doc.splitTextToSize(`Notas/condiciones:
+${window.configuracionApp.notasCotizacion}`, 100); doc.text(notasLines, marginX, finalY);
+            doc.setTextColor(50, 50, 50); doc.setFontSize(11); let ty = doc.lastAutoTable.finalY + 10; doc.text(`Subtotal:`, 140, ty); doc.text(`$${(cot.subtotal || 0).toFixed(2)}`, 175, ty);
+            if(cot.iva > 0) { ty += 7; doc.text(`IVA (16%):`, 140, ty); doc.text(`$${cot.iva.toFixed(2)}`, 175, ty); }
+            ty += 8; doc.setFontSize(12); doc.setTextColor(...gold); doc.text(`TOTAL:`, 140, ty); doc.text(`$${cot.total.toFixed(2)}`, 175, ty);
+            
+            finalY = Math.max(finalY, ty) + 30;
+            doc.setDrawColor(...cyan); doc.line(30, finalY, 80, finalY); doc.line(130, finalY, 180, finalY); 
+            doc.setFontSize(9); doc.setTextColor(100, 100, 100); doc.text("Elaboró/Vendedor", 42, finalY + 5); doc.text("Aceptación del cliente", 140, finalY + 5);
+            finalY += 15; doc.setFontSize(8); const footerText = doc.splitTextToSize("Esta cotización es una propuesta comercial y no constituye una factura. Los precios y condiciones podrán modificarse de acuerdo con la disponibilidad y los términos acordados.", 185); doc.text(footerText, marginX, finalY);
 
-                doc.setTextColor(50, 50, 50); doc.setFontSize(11); 
-                let ty = doc.lastAutoTable.finalY + 10;
-                doc.text(`Subtotal:`, 140, ty); doc.text(`$${(cot.subtotal || 0).toFixed(2)}`, 175, ty);
-                if(cot.iva > 0) { ty += 7; doc.text(`IVA (16%):`, 140, ty); doc.text(`$${cot.iva.toFixed(2)}`, 175, ty); }
-                ty += 8; doc.setFontSize(12); doc.setTextColor(...gold); doc.text(`TOTAL:`, 140, ty); doc.text(`$${cot.total.toFixed(2)}`, 175, ty);
-                
-                finalY = Math.max(finalY, ty) + 30;
-                doc.setDrawColor(...cyan); doc.line(30, finalY, 80, finalY); doc.line(130, finalY, 180, finalY); 
-                doc.setFontSize(9); doc.setTextColor(100, 100, 100); doc.text("Elaboró/Vendedor", 42, finalY + 5); doc.text("Aceptación del cliente", 140, finalY + 5);
-                finalY += 15; doc.setFontSize(8); const footerText = doc.splitTextToSize("Esta cotización es una propuesta comercial y no constituye una factura. Los precios y condiciones podrán modificarse de acuerdo con la disponibilidad y los términos acordados.", 185); doc.text(footerText, marginX, finalY);
+            doc.save(`Cotizacion_${cot.id.toString().slice(-6)}_${cot.cliente}.pdf`);
+        };
 
-                doc.save(`Cotizacion_${cot.id.toString().slice(-6)}_${cot.cliente}.pdf`);
-            } catch(e) { console.error(e); alert("Error al generar PDF."); }
-        }
-
-        function limpiarCotizacion() { carritoCotizacion = []; idCotizacionEditando = null; document.getElementById('nombre-cliente-cotizacion').value = ''; document.getElementById('select-cliente-cotizacion').value = ''; document.getElementById('titulo-cotizacion-actual').innerText = 'Crear Nueva Cotización'; renderizarCarritoCotizacion(); }
-        function renderizarCotizacionesGuardadas() {
+        window.limpiarCotizacion = function() { window.carritoCotizacion = []; window.idCotizacionEditando = null; document.getElementById('nombre-cliente-cotizacion').value = ''; document.getElementById('select-cliente-cotizacion').value = ''; document.getElementById('titulo-cotizacion-actual').innerText = 'Crear Nueva Cotización'; window.renderizarCarritoCotizacion(); };
+        window.renderizarCotizacionesGuardadas = function() {
             const tbody = document.getElementById('lista-cotizaciones-guardadas'); tbody.innerHTML = '';
-            cotizacionesGuardadas.forEach(cot => { tbody.innerHTML += `<tr><td>${cot.fecha}</td><td>${cot.cliente}</td><td>$${cot.total.toFixed(2)}</td><td style="display: flex; gap: 5px; flex-wrap: wrap;"><button onclick="generarPDFCotizacionIndividual(${cot.id})" style="background: rgba(0, 210, 255, 0.4);">📄 PDF Formato</button><button onclick="editarCotizacion(${cot.id})">✏️ Editar</button><button onclick="eliminarCotizacion(${cot.id})">❌</button></td></tr>`; });
-        }
-        function editarCotizacion(id) { const cot = cotizacionesGuardadas.find(c => c.id === id); if(cot) { carritoCotizacion = [...cot.items]; idCotizacionEditando = id; document.getElementById('nombre-cliente-cotizacion').value = cot.cliente; document.getElementById('select-cliente-cotizacion').value = ''; document.getElementById('titulo-cotizacion-actual').innerText = 'Editando Cotización: ' + id.toString().slice(-6); renderizarCarritoCotizacion(); document.getElementById('cotizaciones').scrollTo(0,0); } }
-        function eliminarCotizacion(id) { if(confirm("¿Eliminar cotización?")) { cotizacionesGuardadas = cotizacionesGuardadas.filter(c => c.id !== id); localStorage.setItem('pos_cotizaciones', JSON.stringify(cotizacionesGuardadas)); renderizarCotizacionesGuardadas(); } }
+            window.cotizacionesGuardadas.forEach(cot => { tbody.innerHTML += `<tr><td>${cot.fecha}</td><td>${cot.cliente}</td><td>$${cot.total.toFixed(2)}</td><td style="display: flex; gap: 5px; flex-wrap: wrap;"><button onclick="window.generarPDFCotizacionIndividual(${cot.id})" style="background: rgba(0, 210, 255, 0.4);">📄 PDF Formato</button><button onclick="window.editarCotizacion(${cot.id})">✏️ Editar</button><button onclick="window.eliminarCotizacion(${cot.id})">❌</button></td></tr>`; });
+        };
+        window.editarCotizacion = function(id) { const cot = window.cotizacionesGuardadas.find(c => c.id === id); if(cot) { window.carritoCotizacion = [...cot.items]; window.idCotizacionEditando = id; document.getElementById('nombre-cliente-cotizacion').value = cot.cliente; document.getElementById('select-cliente-cotizacion').value = ''; document.getElementById('titulo-cotizacion-actual').innerText = 'Editando Cotización: ' + id.toString().slice(-6); window.renderizarCarritoCotizacion(); document.getElementById('cotizaciones').scrollTo(0,0); } };
+        window.eliminarCotizacion = function(id) { if(confirm("¿Eliminar cotización?")) { window.cotizacionesGuardadas = window.cotizacionesGuardadas.filter(c => c.id !== id); localStorage.setItem('pos_cotizaciones', JSON.stringify(window.cotizacionesGuardadas)); window.renderizarCotizacionesGuardadas(); } };
 
 
         // ==========================================
         // VENTAS Y TICKETS
         // ==========================================
-        function alSeleccionarClienteVenta() {
+        window.alSeleccionarClienteVenta = function() {
             const clienteId = document.getElementById('select-cliente-venta').value;
-            if(clienteId) { const cliente = clientesGuardados.find(c => c.id == clienteId); if(cliente && cliente.nivelPrecio) { document.getElementById('nivel-precio-global').value = cliente.nivelPrecio; cambiarNivelPrecioGlobal(); } } 
-            else { document.getElementById('nivel-precio-global').value = 'pub'; cambiarNivelPrecioGlobal(); }
-        }
-        function cambiarNivelPrecioGlobal() { nivelPrecioGlobalActual = document.getElementById('nivel-precio-global').value; carrito.forEach(item => { item.precioAplicado = item.precios[nivelPrecioGlobalActual]; }); renderizarCarrito(); }
-        function buscarArticuloVenta(e) { if (e.key === 'Enter') { const query = document.getElementById('buscador-articulo').value.toLowerCase(); const art = inventario.find(a => a.codigo.toLowerCase() === query || a.nombre.toLowerCase().includes(query)); if (art && art.tipo !== 'consumo') { const existente = carrito.find(c => c.codigo === art.codigo); if (existente) existente.cantidad++; else carrito.push({ ...art, cantidad: 1, precioAplicado: art.precios[nivelPrecioGlobalActual] }); document.getElementById('buscador-articulo').value = ''; renderizarCarrito(); } else alert("Artículo no encontrado."); } }
-        function renderizarCarrito() { const tbody = document.getElementById('lista-carrito'); tbody.innerHTML = ''; let total = 0; const etiquetaNivel = nombresPrecios[nivelPrecioGlobalActual] ? `(${nombresPrecios[nivelPrecioGlobalActual]})` : ''; carrito.forEach((item, index) => { const subtotal = item.cantidad * item.precioAplicado; total += subtotal; tbody.innerHTML += `<tr><td>${item.codigo}</td><td>${item.nombre}</td><td><input type="number" value="${item.cantidad}" style="width: 60px;" onchange="actualizarCantCarrito(${index}, this.value)"></td><td>$${item.precioAplicado} <small style="color:#ffb74d">${etiquetaNivel}</small></td><td>$${subtotal.toFixed(2)}</td><td><button onclick="removerDelCarrito(${index})">❌</button></td></tr>`; }); document.getElementById('total-venta').innerText = total.toFixed(2); calcularPagos(); }
-        function actualizarCantCarrito(index, cant) { carrito[index].cantidad = parseInt(cant); renderizarCarrito(); }
-        function removerDelCarrito(index) { carrito.splice(index, 1); renderizarCarrito(); }
-        function calcularPagos() { const total = parseFloat(document.getElementById('total-venta').innerText); const efe = parseFloat(document.getElementById('pago-efectivo').value) || 0; const deb = parseFloat(document.getElementById('pago-debito').value) || 0; const cred = parseFloat(document.getElementById('pago-credito').value) || 0; const trans = parseFloat(document.getElementById('pago-transferencia').value) || 0; const sumaPagos = efe + deb + cred + trans; let restante = total - sumaPagos; let cambio = 0; if (restante < 0) { cambio = Math.abs(restante); restante = 0; } document.getElementById('restante-venta').innerText = restante.toFixed(2); document.getElementById('cambio-venta').innerText = cambio.toFixed(2); }
+            if(clienteId) { const cliente = window.clientesGuardados.find(c => c.id == clienteId); if(cliente && cliente.nivelPrecio) { document.getElementById('nivel-precio-global').value = cliente.nivelPrecio; window.cambiarNivelPrecioGlobal(); } } 
+            else { document.getElementById('nivel-precio-global').value = 'pub'; window.cambiarNivelPrecioGlobal(); }
+        };
+        window.cambiarNivelPrecioGlobal = function() { window.nivelPrecioGlobalActual = document.getElementById('nivel-precio-global').value; window.carrito.forEach(item => { item.precioAplicado = item.precios[window.nivelPrecioGlobalActual]; }); window.renderizarCarrito(); };
+        window.buscarArticuloVenta = function(e) { if (e.key === 'Enter') { const query = document.getElementById('buscador-articulo').value.toLowerCase(); const art = window.inventario.find(a => a.codigo.toLowerCase() === query || a.nombre.toLowerCase().includes(query)); if (art && art.tipo !== 'consumo') { const existente = window.carrito.find(c => c.codigo === art.codigo); if (existente) existente.cantidad++; else window.carrito.push({ ...art, cantidad: 1, precioAplicado: art.precios[window.nivelPrecioGlobalActual] }); document.getElementById('buscador-articulo').value = ''; window.renderizarCarrito(); } else alert("Artículo no encontrado."); } };
+        window.renderizarCarrito = function() { const tbody = document.getElementById('lista-carrito'); tbody.innerHTML = ''; let total = 0; const etiquetaNivel = window.nombresPrecios[window.nivelPrecioGlobalActual] ? `(${window.nombresPrecios[window.nivelPrecioGlobalActual]})` : ''; window.carrito.forEach((item, index) => { const subtotal = item.cantidad * item.precioAplicado; total += subtotal; tbody.innerHTML += `<tr><td>${item.codigo}</td><td>${item.nombre}</td><td><input type="number" value="${item.cantidad}" style="width: 60px;" onchange="window.actualizarCantCarrito(${index}, this.value)"></td><td>$${item.precioAplicado} <small style="color:#ffb74d">${etiquetaNivel}</small></td><td>$${subtotal.toFixed(2)}</td><td><button onclick="window.removerDelCarrito(${index})">❌</button></td></tr>`; }); document.getElementById('total-venta').innerText = total.toFixed(2); window.calcularPagos(); };
+        window.actualizarCantCarrito = function(index, cant) { window.carrito[index].cantidad = parseInt(cant); window.renderizarCarrito(); };
+        window.removerDelCarrito = function(index) { window.carrito.splice(index, 1); window.renderizarCarrito(); };
+        window.calcularPagos = function() { const total = parseFloat(document.getElementById('total-venta').innerText); const efe = parseFloat(document.getElementById('pago-efectivo').value) || 0; const deb = parseFloat(document.getElementById('pago-debito').value) || 0; const cred = parseFloat(document.getElementById('pago-credito').value) || 0; const trans = parseFloat(document.getElementById('pago-transferencia').value) || 0; const sumaPagos = efe + deb + cred + trans; let restante = total - sumaPagos; let cambio = 0; if (restante < 0) { cambio = Math.abs(restante); restante = 0; } document.getElementById('restante-venta').innerText = restante.toFixed(2); document.getElementById('cambio-venta').innerText = cambio.toFixed(2); };
 
-        function procesarVenta() {
-            try {
-                if (carrito.length === 0) return alert("El carrito está vacío");
-                const total = parseFloat(document.getElementById('total-venta').innerText); const efe = parseFloat(document.getElementById('pago-efectivo').value) || 0; const deb = parseFloat(document.getElementById('pago-debito').value) || 0; const cred = parseFloat(document.getElementById('pago-credito').value) || 0; const trans = parseFloat(document.getElementById('pago-transferencia').value) || 0; const sumaPagos = efe + deb + cred + trans; let restante = total - sumaPagos; let aCredito = 0; const clienteId = document.getElementById('select-cliente-venta').value; let clienteObj = null; let clienteNombre = document.getElementById('nombre-cliente').value || "Público en General";
-                if (clienteId) { clienteObj = clientesGuardados.find(c => c.id == clienteId); if (clienteObj) clienteNombre = clienteObj.nombre; }
-                if (restante > 0) { if (!clienteObj) return alert("El monto no cubre el total. Selecciona un Cliente Registrado para crédito."); if(!confirm(`Faltan $${restante.toFixed(2)}. ¿Agregar a la deuda de ${clienteNombre}?`)) return; aCredito = restante; }
-                
-                carrito.forEach(item => { if (item.tipo === 'venta') { const dbArt = inventario.find(i => i.codigo === item.codigo); if(dbArt) dbArt.stock -= item.cantidad; } else if (item.tipo === 'kit') { if(item.componentes){ item.componentes.forEach(comp => { const dbInsumo = inventario.find(i => i.codigo === comp.codigoInsumo); if(dbInsumo) dbInsumo.stock -= (comp.cant * item.cantidad); }); } } });
-                localStorage.setItem('pos_inventario', JSON.stringify(inventario)); 
-                
-                if (aCredito > 0) { clienteObj.deuda += aCredito; localStorage.setItem('pos_clientes', JSON.stringify(clientesGuardados)); renderizarClientes(); }
-                
-                let cambio = 0; if (restante < 0) cambio = Math.abs(restante); let efectivoNeto = efe > 0 ? efe - cambio : 0;
-                totalesDia.efectivo += efectivoNeto; totalesDia.debito += deb; totalesDia.credito += cred; totalesDia.transferencia += trans; localStorage.setItem('pos_totales_dia', JSON.stringify(totalesDia)); actualizarVistaCaja();
+        window.procesarVenta = function() {
+            if (window.carrito.length === 0) return alert("El carrito está vacío");
+            const total = parseFloat(document.getElementById('total-venta').innerText); const efe = parseFloat(document.getElementById('pago-efectivo').value) || 0; const deb = parseFloat(document.getElementById('pago-debito').value) || 0; const cred = parseFloat(document.getElementById('pago-credito').value) || 0; const trans = parseFloat(document.getElementById('pago-transferencia').value) || 0; const sumaPagos = efe + deb + cred + trans; let restante = total - sumaPagos; let aCredito = 0; const clienteId = document.getElementById('select-cliente-venta').value; let clienteObj = null; let clienteNombre = document.getElementById('nombre-cliente').value || "Público en General";
+            if (clienteId) { clienteObj = window.clientesGuardados.find(c => c.id == clienteId); if (clienteObj) clienteNombre = clienteObj.nombre; }
+            if (restante > 0) { if (!clienteObj) return alert("El monto no cubre el total. Selecciona un Cliente Registrado para crédito."); if(!confirm(`Faltan $${restante.toFixed(2)}. ¿Agregar a la deuda de ${clienteNombre}?`)) return; aCredito = restante; }
+            
+            window.carrito.forEach(item => { if (item.tipo === 'venta') { const dbArt = window.inventario.find(i => i.codigo === item.codigo); if(dbArt) dbArt.stock -= item.cantidad; } else if (item.tipo === 'kit') { if(item.componentes){ item.componentes.forEach(comp => { const dbInsumo = window.inventario.find(i => i.codigo === comp.codigoInsumo); if(dbInsumo) dbInsumo.stock -= (comp.cant * item.cantidad); }); } } });
+            localStorage.setItem('pos_inventario', JSON.stringify(window.inventario)); 
+            
+            if (aCredito > 0) { clienteObj.deuda += aCredito; localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados)); window.renderizarClientes(); }
+            
+            let cambio = 0; if (restante < 0) cambio = Math.abs(restante); let efectivoNeto = efe > 0 ? efe - cambio : 0;
+            window.totalesDia.efectivo += efectivoNeto; window.totalesDia.debito += deb; window.totalesDia.credito += cred; window.totalesDia.transferencia += trans; localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); window.actualizarVistaCaja();
 
-                const idTicket = Date.now().toString().slice(-6); const hoy = new Date(); const fechaString = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
-                const tiempo = hoy.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                const formatoImp = document.getElementById('formato-impresion').value;
+            const idTicket = Date.now().toString().slice(-6); const hoy = new Date(); const fechaString = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+            const tiempo = hoy.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const formatoImp = document.getElementById('formato-impresion').value;
 
-                const nuevoTicket = { id: idTicket, fecha: hoy.toLocaleDateString(), hora: tiempo, fechaFiltro: fechaString, cliente: clienteNombre, telefonoCli: (clienteObj ? clienteObj.telefono : ''), total: total, sumaPagos: sumaPagos, aCredito: aCredito, cambio: cambio, efe: efe, deb: deb, cred: cred, trans: trans, nivelPrecio: nombresPrecios[nivelPrecioGlobalActual] || 'Público', items: [...carrito] };
-                historialTickets.push(nuevoTicket); localStorage.setItem('pos_historial_tickets', JSON.stringify(historialTickets));
-                
-                try{ reimprimirTicket(idTicket, formatoImp); }catch(e){ console.error(e); alert("Venta guardada pero hubo un error generando el PDF."); }
+            const nuevoTicket = { id: idTicket, fecha: hoy.toLocaleDateString(), hora: tiempo, fechaFiltro: fechaString, cliente: clienteNombre, telefonoCli: (clienteObj ? clienteObj.telefono : ''), total: total, sumaPagos: sumaPagos, aCredito: aCredito, cambio: cambio, efe: efe, deb: deb, cred: cred, trans: trans, nivelPrecio: window.nombresPrecios[window.nivelPrecioGlobalActual] || 'Público', items: [...window.carrito] };
+            window.historialTickets.push(nuevoTicket); localStorage.setItem('pos_historial_tickets', JSON.stringify(window.historialTickets));
+            
+            try{ window.reimprimirTicket(idTicket, formatoImp); }catch(e){ console.error(e); alert("Venta guardada pero hubo error generando PDF."); }
 
-                carrito = []; document.getElementById('pago-efectivo').value = ''; document.getElementById('pago-debito').value = ''; document.getElementById('pago-credito').value = ''; document.getElementById('pago-transferencia').value = ''; document.getElementById('nombre-cliente').value = ''; document.getElementById('select-cliente-venta').value = ''; alSeleccionarClienteVenta(); renderizarCarrito(); renderizarInventario(); 
-                let mjs = "Venta procesada."; if(aCredito > 0) mjs += `\nCargado $${aCredito.toFixed(2)} a ${clienteNombre}.`; if(cambio > 0) mjs += `\nEntregar $${cambio.toFixed(2)} de cambio.`; alert(mjs);
-            } catch (err) { console.error(err); alert("Error: " + err.message); }
-        }
+            window.carrito = []; document.getElementById('pago-efectivo').value = ''; document.getElementById('pago-debito').value = ''; document.getElementById('pago-credito').value = ''; document.getElementById('pago-transferencia').value = ''; document.getElementById('nombre-cliente').value = ''; document.getElementById('select-cliente-venta').value = ''; window.alSeleccionarClienteVenta(); window.renderizarCarrito(); window.renderizarInventario(); 
+            let mjs = "Venta procesada."; if(aCredito > 0) mjs += `
+Cargado $${aCredito.toFixed(2)} a ${clienteNombre}.`; if(cambio > 0) mjs += `
+Entregar $${cambio.toFixed(2)} de cambio.`; alert(mjs);
+        };
 
-        function reimprimirTicket(id, formatoForzado = null) {
-            const t = historialTickets.find(x => x.id === id); if(!t) return alert("Ticket no encontrado");
+        window.reimprimirTicket = function(id, formatoForzado = null) {
+            const t = window.historialTickets.find(x => x.id === id); if(!t) return alert("Ticket no encontrado");
             const elemFormato = document.getElementById('formato-impresion');
             const formato = formatoForzado || (elemFormato ? elemFormato.value : '80mm');
             const { jsPDF } = window.jspdf; const logoData = localStorage.getItem('pos_logo_base64'); const cyan = [0, 210, 255];
@@ -711,7 +690,7 @@
             if(formato === '80mm') {
                 const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [80, 250] }); let y = 10;
                 if(logoData) { try{ doc.addImage(logoData, 'PNG', 25, y, 30, 30); y += 35; }catch(e){console.log(e);} }
-                doc.setFontSize(16); doc.text(configuracionApp.nombreNegocio.toUpperCase(), 40, y, { align: "center" }); y+=6;
+                doc.setFontSize(16); doc.text(window.configuracionApp.nombreNegocio.toUpperCase(), 40, y, { align: "center" }); y+=6;
                 doc.setFontSize(8); doc.text("DETALLES QUE HACEN LA DIFERENCIA", 40, y, { align: "center" }); y+=8;
                 
                 doc.setFontSize(9); doc.text(`Ticket: ${t.id}`, 5, y); doc.text(`Fecha: ${t.fecha}`, 45, y); y+=5; doc.text(`Hora: ${t.hora || ''}`, 5, y); doc.text(`Cajero: Admin`, 45, y); y+=8;
@@ -731,22 +710,22 @@
                 if(t.trans > 0) { doc.text(`Transferencia`, 5, y); doc.text(`$${t.trans.toFixed(2)}`, 60, y); y+=5; }
                 if(t.aCredito > 0) { doc.text(`Crédito`, 5, y); doc.text(`$${t.aCredito.toFixed(2)}`, 60, y); y+=5; }
                 
-                y+=2; doc.text(`Recibido:`, 5, y); doc.text(`$${t.sumaPagos.toFixed(2)}`, 60, y); y+=5; doc.text(`Cambio:`, 5, y); doc.text(`$${t.cambio.toFixed(2)}`, 60, y); y+=10;
+                y+=2; doc.text(`Recibido:`, 5, y); doc.text(`$${(t.sumaPagos || 0).toFixed(2)}`, 60, y); y+=5; doc.text(`Cambio:`, 5, y); doc.text(`$${(t.cambio || 0).toFixed(2)}`, 60, y); y+=10;
                 
                 doc.setFontSize(10); doc.text("Gracias por tu compra", 40, y, {align:"center"}); y+=5; doc.setFontSize(8); doc.text("Conserva este ticket como comprobante.", 40, y, {align:"center"}); y+=8;
-                doc.setFontSize(11); doc.text(configuracionApp.nombreNegocio.toUpperCase(), 40, y, {align:"center"}); y+=5; doc.setFontSize(8); doc.text("Productos, detalles y más", 40, y, {align:"center"}); y+=5; doc.text("Entrega a domicilio en ventas mayores a $160", 40, y, {align:"center"}); y+=8;
+                doc.setFontSize(11); doc.text(window.configuracionApp.nombreNegocio.toUpperCase(), 40, y, {align:"center"}); y+=5; doc.setFontSize(8); doc.text("Productos, detalles y más", 40, y, {align:"center"}); y+=5; doc.text("Entrega a domicilio en ventas mayores a $160", 40, y, {align:"center"}); y+=8;
                 const notasLines = doc.splitTextToSize("NOTAS: Los productos están sujetos a disponibilidad. Los cambios y devoluciones aplican conforme a las condiciones establecidas por el negocio.", 70); doc.text(notasLines, 5, y);
                 doc.save(`Ticket_${t.id}_${t.cliente.replace(/\s+/g, '')}.pdf`);
             } else {
                 const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' }); const marginX = 15;
                 doc.setFillColor(...cyan); doc.rect(0, 0, 220, 35, 'F');
-                if(logoData) { try{doc.addImage(logoData, 'PNG', marginX, 5, 25, 25);}catch(e){} doc.setFontSize(22); doc.setTextColor(212, 175, 55); doc.text(configuracionApp.nombreNegocio.toUpperCase(), marginX + 30, 22); } 
-                else { doc.setFontSize(22); doc.setTextColor(212, 175, 55); doc.text(configuracionApp.nombreNegocio.toUpperCase(), marginX, 22); }
+                if(logoData) { try{doc.addImage(logoData, 'PNG', marginX, 5, 25, 25);}catch(e){} doc.setFontSize(22); doc.setTextColor(212, 175, 55); doc.text(window.configuracionApp.nombreNegocio.toUpperCase(), marginX + 30, 22); } 
+                else { doc.setFontSize(22); doc.setTextColor(212, 175, 55); doc.text(window.configuracionApp.nombreNegocio.toUpperCase(), marginX, 22); }
                 doc.setTextColor(255, 255, 255); doc.setFontSize(24); doc.text("NOTA DE VENTA", 135, 22);
                 doc.setTextColor(50, 50, 50); doc.setFontSize(10); let y = 45;
-                if(configuracionApp.rfc) { doc.text(`RFC: ${configuracionApp.rfc}`, marginX, y); y+=5; }
-                if(configuracionApp.telefono) { doc.text(`Tel: ${configuracionApp.telefono}`, marginX, y); y+=5; }
-                if(configuracionApp.correo) { doc.text(`Correo: ${configuracionApp.correo}`, marginX, y); y+=5; }
+                if(window.configuracionApp.rfc) { doc.text(`RFC: ${window.configuracionApp.rfc}`, marginX, y); y+=5; }
+                if(window.configuracionApp.telefono) { doc.text(`Tel: ${window.configuracionApp.telefono}`, marginX, y); y+=5; }
+                if(window.configuracionApp.correo) { doc.text(`Correo: ${window.configuracionApp.correo}`, marginX, y); y+=5; }
                 doc.text(`Folio Ticket: ${t.id}`, 140, 45); doc.text(`Fecha: ${t.fecha} ${t.hora || ''}`, 140, 50);
                 doc.setFillColor(240, 240, 240); doc.rect(marginX, 65, 185, 8, 'F'); doc.setTextColor(...cyan); doc.setFontSize(11); doc.text("DATOS DEL CLIENTE", marginX + 2, 70.5);
                 doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.text(`Cliente: ${t.cliente}`, marginX, 80); doc.text(`Teléfono: ${t.telefonoCli || 'N/A'}`, marginX, 85);
@@ -758,118 +737,254 @@
                 if (t.cambio > 0) { doc.text(`Cambio: $${t.cambio.toFixed(2)}`, 140, finalY); }
                 doc.save(`NotaVenta_${t.id}_${t.cliente.replace(/\s+/g, '')}.pdf`);
             }
-        }
-        function eliminarTicketLogica(id) {
-            const index = historialTickets.findIndex(t => t.id === id);
+        };
+
+        // ==========================================
+        // HISTORIAL: EDITAR / ELIMINAR TICKETS
+        // ==========================================
+        window.eliminarTicketLogica = function(id) {
+            const index = window.historialTickets.findIndex(t => t.id === id);
             if(index === -1) return null;
-            const t = historialTickets[index];
+            const t = window.historialTickets[index];
             
             t.items.forEach(item => {
                 if (item.tipo === 'venta') { 
-                    const dbArt = inventario.find(i => i.codigo === item.codigo); 
+                    const dbArt = window.inventario.find(i => i.codigo === item.codigo); 
                     if(dbArt) dbArt.stock += item.cantidad; 
                 } else if (item.tipo === 'kit') { 
                     if(item.componentes){
                         item.componentes.forEach(comp => { 
-                            const dbInsumo = inventario.find(i => i.codigo === comp.codigoInsumo); 
+                            const dbInsumo = window.inventario.find(i => i.codigo === comp.codigoInsumo); 
                             if(dbInsumo) dbInsumo.stock += (comp.cant * item.cantidad); 
                         }); 
                     }
                 }
             });
-            localStorage.setItem('pos_inventario', JSON.stringify(inventario)); 
+            localStorage.setItem('pos_inventario', JSON.stringify(window.inventario)); 
             
             let efectivoNeto = t.efe > 0 ? t.efe - t.cambio : 0;
-            totalesDia.efectivo -= efectivoNeto;
-            totalesDia.debito -= (t.deb || 0);
-            totalesDia.credito -= (t.cred || 0);
-            totalesDia.transferencia -= (t.trans || 0);
+            window.totalesDia.efectivo -= efectivoNeto;
+            window.totalesDia.debito -= (t.deb || 0);
+            window.totalesDia.credito -= (t.cred || 0);
+            window.totalesDia.transferencia -= (t.trans || 0);
             
             if (t.aCredito > 0) {
-                const clienteObj = clientesGuardados.find(c => c.nombre === t.cliente);
+                const clienteObj = window.clientesGuardados.find(c => c.nombre === t.cliente);
                 if (clienteObj) {
                     clienteObj.deuda -= t.aCredito;
                     if(clienteObj.deuda < 0) clienteObj.deuda = 0;
-                    localStorage.setItem('pos_clientes', JSON.stringify(clientesGuardados));
+                    localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados));
                 }
             }
-            localStorage.setItem('pos_totales_dia', JSON.stringify(totalesDia));
+            localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia));
             
-            historialTickets.splice(index, 1);
-            localStorage.setItem('pos_historial_tickets', JSON.stringify(historialTickets));
+            window.historialTickets.splice(index, 1);
+            localStorage.setItem('pos_historial_tickets', JSON.stringify(window.historialTickets));
             return t;
-        }
+        };
 
-        function eliminarTicket(id) {
+        window.eliminarTicket = function(id) {
             if(!confirm("¿Estás seguro de cancelar esta venta? Se devolverá el stock al inventario y se restará el dinero del corte de caja actual.")) return;
-            eliminarTicketLogica(id);
-            renderizarHistorial(); renderizarInventario(); renderizarClientes(); actualizarVistaCaja();
+            window.eliminarTicketLogica(id);
+            window.renderizarHistorial(); window.renderizarInventario(); window.renderizarClientes(); window.actualizarVistaCaja();
             alert("Venta cancelada exitosamente.");
-        }
+        };
 
-        function editarTicket(id) {
+        window.editarTicket = function(id) {
             if(!confirm("¿Deseas editar este ticket? Se cancelará la venta original (devolviendo stock y dinero) y los artículos volverán a la terminal de ventas para cobrar de nuevo.")) return;
-            const t = eliminarTicketLogica(id);
+            const t = window.eliminarTicketLogica(id);
             if(!t) return;
             
-            carrito = JSON.parse(JSON.stringify(t.items));
+            window.carrito = JSON.parse(JSON.stringify(t.items));
             const selectCli = document.getElementById('select-cliente-venta');
             const cliOpt = Array.from(selectCli.options).find(opt => opt.text === t.cliente);
             if(cliOpt) { selectCli.value = cliOpt.value; } else { selectCli.value = ""; document.getElementById('nombre-cliente').value = (t.cliente !== 'Público en General') ? t.cliente : ''; }
             
             const selectNivel = document.getElementById('nivel-precio-global');
             const levelOpt = Array.from(selectNivel.options).find(opt => opt.text === t.nivelPrecio);
-            if(levelOpt) { selectNivel.value = levelOpt.value; nivelPrecioGlobalActual = levelOpt.value; }
+            if(levelOpt) { selectNivel.value = levelOpt.value; window.nivelPrecioGlobalActual = levelOpt.value; }
             
-            renderizarHistorial(); renderizarInventario(); renderizarClientes(); actualizarVistaCaja();
-            cambiarModulo('ventas'); renderizarCarrito();
-        }
+            window.renderizarHistorial(); window.renderizarInventario(); window.renderizarClientes(); window.actualizarVistaCaja();
+            window.cambiarModulo('ventas'); window.renderizarCarrito();
+        };
 
-        function renderizarHistorial() { 
-            const tbody = document.getElementById('lista-historial'); tbody.innerHTML = ''; const fechaFiltro = document.getElementById('filtro-fecha-historial').value; let filtrados = historialTickets; if(fechaFiltro) filtrados = historialTickets.filter(t => t.fechaFiltro === fechaFiltro); 
+        window.renderizarHistorial = function() { 
+            const tbody = document.getElementById('lista-historial'); tbody.innerHTML = ''; const fechaFiltro = document.getElementById('filtro-fecha-historial').value; let filtrados = window.historialTickets; if(fechaFiltro) filtrados = window.historialTickets.filter(t => t.fechaFiltro === fechaFiltro); 
             filtrados.slice().reverse().forEach(t => { 
-                tbody.innerHTML += `<tr><td style="font-weight:bold;">${t.id}</td><td>${t.fecha}</td><td>${t.cliente}</td><td style="color:#81c784;">$${t.total.toFixed(2)}</td><td style="display:flex; gap:5px;"><button onclick="reimprimirTicket('${t.id}')" style="background: rgba(0, 210, 255, 0.4);">📄 PDF</button><button onclick="editarTicket('${t.id}')">✏️ Editar</button><button onclick="eliminarTicket('${t.id}')">❌</button></td></tr>`; 
+                tbody.innerHTML += `<tr><td style="font-weight:bold;">${t.id}</td><td>${t.fecha}</td><td>${t.cliente}</td><td style="color:#81c784;">$${t.total.toFixed(2)}</td><td style="display:flex; gap:5px;"><button onclick="window.reimprimirTicket('${t.id}')" style="background: rgba(0, 210, 255, 0.4);">📄 PDF</button><button onclick="window.editarTicket('${t.id}')">✏️ Editar</button><button onclick="window.eliminarTicket('${t.id}')">❌</button></td></tr>`; 
             }); 
         };
-                req.onsuccess = (e) => resolve(e.target.result); req.onerror = (e) => reject(e);
-            });
-        }
-        async function guardarFondo(moduloId, fileInputId) {
-            const fileInput = document.getElementById(fileInputId); const file = fileInput.files[0];
-            if(!file) return alert("Selecciona una imagen o video primero.");
+        
+        // ==========================================
+        // CAJA
+        // ==========================================
+        window.actualizarVistaCaja = function() {
+            const comision = 0.0418; 
+            document.getElementById('corte-efectivo').innerText = window.totalesDia.efectivo.toFixed(2); document.getElementById('corte-transf').innerText = window.totalesDia.transferencia.toFixed(2); 
+            document.getElementById('corte-deb-bruto').innerText = window.totalesDia.debito.toFixed(2); const debNeto = window.totalesDia.debito - (window.totalesDia.debito * comision); document.getElementById('corte-deb-neto').innerText = debNeto.toFixed(2); 
+            document.getElementById('corte-cred-bruto').innerText = window.totalesDia.credito.toFixed(2); const credNeto = window.totalesDia.credito - (window.totalesDia.credito * comision); document.getElementById('corte-cred-neto').innerText = credNeto.toFixed(2); 
+            document.getElementById('corte-gastos').innerText = window.totalesDia.gastos.toFixed(2);
+            
+            const totalReal = (window.totalesDia.efectivo + window.totalesDia.transferencia + debNeto + credNeto) - window.totalesDia.gastos; document.getElementById('corte-total-real').innerText = totalReal.toFixed(2);
+            
+            const fondo = parseFloat(document.getElementById('fondo-caja').value) || 0; const fisico = parseFloat(document.getElementById('corte-efectivo-fisico').value) || 0; const esperado = fondo + window.totalesDia.efectivo - window.totalesDia.gastos; document.getElementById('corte-efectivo-esperado').innerText = esperado.toFixed(2); const diferencia = fisico - esperado; const diffSpan = document.getElementById('corte-diferencia'); diffSpan.innerText = `$${diferencia.toFixed(2)}`; if (diferencia < 0) diffSpan.style.color = '#ef5350'; else diffSpan.style.color = '#81c784'; 
+        };
+
+        window.realizarCorteDefinitivo = function() {
+            const fondo = parseFloat(document.getElementById('fondo-caja').value) || 0; const fisico = parseFloat(document.getElementById('corte-efectivo-fisico').value) || 0; const esperado = fondo + window.totalesDia.efectivo - window.totalesDia.gastos; const diferencia = fisico - esperado;
+            if(!confirm(`Se generará el Corte de Caja.
+Diferencia: $${diferencia.toFixed(2)}.
+¿Deseas continuar y reiniciar los totales?`)) return;
+            const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [80, 200] });
+            doc.setFontSize(14); doc.text("CORTE DE CAJA", 40, 10, { align: "center" }); doc.setFontSize(10); doc.text(`Fecha: ${new Date().toLocaleString()}`, 5, 20); doc.text("------------------------------------------", 5, 25);
+            let y = 30; doc.text(`Fondo Inicial: $${fondo.toFixed(2)}`, 5, y); y+=5; doc.text(`Ingresos Efectivo: $${window.totalesDia.efectivo.toFixed(2)}`, 5, y); y+=5; doc.text(`Gastos Efectivo: -$${window.totalesDia.gastos.toFixed(2)}`, 5, y); y+=5; doc.text(`Transferencias: $${window.totalesDia.transferencia.toFixed(2)}`, 5, y); y+=5; doc.text(`T. Débito (Bruto): $${window.totalesDia.debito.toFixed(2)}`, 5, y); y+=5; doc.text(`T. Crédito (Bruto): $${window.totalesDia.credito.toFixed(2)}`, 5, y); y+=5; doc.text("------------------------------------------", 5, y); y+=5; doc.setFontSize(12); doc.text(`EFECTIVO SISTEMA: $${esperado.toFixed(2)}`, 5, y); y+=7; doc.text(`EFECTIVO FISICO: $${fisico.toFixed(2)}`, 5, y); y+=7; if (diferencia < 0) doc.text(`FALTANTE: $${Math.abs(diferencia).toFixed(2)}`, 5, y); else doc.text(`SOBRANTE: $${diferencia.toFixed(2)}`, 5, y); y+=10; doc.text("------------------------------------------", 5, y); y+=5; const totalReal = document.getElementById('corte-total-real').innerText; doc.text(`GANANCIA NETA: $${totalReal}`, 5, y);
+            doc.save(`CorteCaja_${Date.now().toString().slice(-6)}.pdf`);
+            window.totalesDia = { efectivo: 0, debito: 0, credito: 0, transferencia: 0, gastos: 0 }; localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); document.getElementById('corte-efectivo-fisico').value = 0; window.actualizarVistaCaja(); alert("Corte realizado con éxito.");
+        };
+    </script>
+
+    <!-- ========================================== -->
+    <!-- INTEGACIÓN FIREBASE (SINCRONIZACIÓN EN LA NUBE) -->
+    <!-- ========================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+
+        // Credenciales proporcionadas
+        const firebaseConfig = {
+          apiKey: "AIzaSyDQZblX-pisdzKcx6tK7DBkVrHa1b-8mTs",
+          authDomain: "mi-punto-de-venta-a6d5d.firebaseapp.com",
+          projectId: "mi-punto-de-venta-a6d5d",
+          storageBucket: "mi-punto-de-venta-a6d5d.firebasestorage.app",
+          messagingSenderId: "1050662715107",
+          appId: "1:1050662715107:web:6854b8ba078f9947f18fd6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        
+        // Documento central donde se guardará todo el sistema
+        const docRef = doc(db, "minos_pos_db", "datos_globales");
+
+        let isSyncing = false;
+
+        // FONDOS A FIREBASE STORAGE
+        window.subirFondoNube = async function(moduloId, file, fileInput) {
+            const statusMsg = document.getElementById('estado-carga-fondos');
+            if(statusMsg) statusMsg.style.display = 'block';
+            
             try {
-                const db = await getDB(); const tx = db.transaction('fondos', 'readwrite'); const isVideo = file.type.startsWith('video/'); const blob = new Blob([file], { type: file.type });
-                tx.objectStore('fondos').put({ blob: blob, isVideo: isVideo }, moduloId);
-                tx.oncomplete = () => { alert(`Fondo asignado a: ${moduloId}`); fileInput.value = ''; const moduloActual = document.querySelector('.modulo.activo') ? document.querySelector('.modulo.activo').id : 'ventas'; if(moduloActual === moduloId || moduloId === 'global') aplicarFondo(moduloActual); };
-            } catch (err) { console.error(err); }
-        }
-        async function eliminarFondo(moduloId) {
-            if(!confirm(`¿Restablecer el fondo para ${moduloId}?`)) return;
-            try { const db = await getDB(); const tx = db.transaction('fondos', 'readwrite'); tx.objectStore('fondos').delete(moduloId); tx.oncomplete = () => { alert("Fondo removido."); aplicarFondo(document.querySelector('.modulo.activo') ? document.querySelector('.modulo.activo').id : 'ventas'); }; } catch (err) { console.error(err); }
-        }
-        async function aplicarFondo(moduloId) {
-            try {
-                const db = await getDB(); const tx = db.transaction('fondos', 'readonly'); const req = tx.objectStore('fondos').get(moduloId);
-                req.onsuccess = () => {
-                    if (req.result) mostrarFondoGrafico(req.result.blob, req.result.isVideo);
-                    else { const reqGlob = db.transaction('fondos', 'readonly').objectStore('fondos').get('global'); reqGlob.onsuccess = () => { if(reqGlob.result) mostrarFondoGrafico(reqGlob.result.blob, reqGlob.result.isVideo); else mostrarFondoDefault(); }; }
+                const extension = file.name.split('.').pop();
+                const storageRef = ref(storage, `fondos_minos/${moduloId}_${Date.now()}.${extension}`);
+                await uploadBytes(storageRef, file);
+                const downloadURL = await getDownloadURL(storageRef);
+                
+                let fondos = JSON.parse(localStorage.getItem('pos_fondos')) || {};
+                fondos[moduloId] = {
+                    url: downloadURL,
+                    isVideo: file.type.startsWith('video/')
                 };
-            } catch (err) { console.error(err); }
-        }
-        function mostrarFondoGrafico(blob, isVideo) {
-            const divBg = document.getElementById('fondo-actual'); const vidBg = document.getElementById('fondo-video');
-            if (currentObjUrl) { URL.revokeObjectURL(currentObjUrl); currentObjUrl = null; }
-            if (!blob) return mostrarFondoDefault(); currentObjUrl = URL.createObjectURL(blob);
-            if (isVideo) { divBg.style.display = 'none'; vidBg.style.display = 'block'; vidBg.src = currentObjUrl; vidBg.load(); let playPromise = vidBg.play(); if (playPromise !== undefined) { playPromise.catch(e => console.log("Bloqueo autoplay", e)); } } 
-            else { vidBg.style.display = 'none'; vidBg.pause(); divBg.style.display = 'block'; divBg.style.backgroundImage = `url('${currentObjUrl}')`; }
-        }
-        function mostrarFondoDefault() {
-            const divBg = document.getElementById('fondo-actual'); const vidBg = document.getElementById('fondo-video'); vidBg.style.display = 'none'; vidBg.pause(); divBg.style.display = 'block'; divBg.style.backgroundImage = "url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=1920&auto=format&fit=crop')";
-        }
-        function renderizarGestorFondos() {
-            const contenedor = document.getElementById('lista-gestor-fondos'); contenedor.innerHTML = '';
-            modulosFondo.forEach(mod => { contenedor.innerHTML += `<div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; border: 1px solid var(--dorado);"><h4 style="margin-top:0; color:var(--acento);">${mod.nombre}</h4><input type="file" id="file-${mod.id}" accept="image/*, video/*" style="width: 100%; font-size: 0.8em; margin-bottom: 10px;"><div style="display: flex; gap: 5px;"><button class="btn-accion" style="flex:1; padding: 5px;" onclick="guardarFondo('${mod.id}', 'file-${mod.id}')">💾 Asignar</button><button style="padding: 5px;" onclick="eliminarFondo('${mod.id}')">🗑️</button></div></div>`; });
-        }
+                localStorage.setItem('pos_fondos', JSON.stringify(fondos));
+                
+                alert(`¡Fondo subido y sincronizado exitosamente a la nube!`);
+                if(fileInput) fileInput.value = '';
+                
+                const moduloActual = document.querySelector('.modulo.activo') ? document.querySelector('.modulo.activo').id : 'ventas';
+                if(moduloActual === moduloId || moduloId === 'global') {
+                    window.aplicarFondo(moduloActual);
+                }
+            } catch(error) {
+                console.error(error);
+                alert("Hubo un error al subir a la nube. Revisa que Firebase Storage tenga los permisos de lectura/escritura activados.");
+            } finally {
+                if(statusMsg) statusMsg.style.display = 'none';
+            }
+        };
+
+        // Función que empuja datos locales a Firestore
+        window.syncToFirebase = async function() {
+            if(isSyncing) return;
+            isSyncing = true;
+            try {
+                const data = {
+                    pos_inventario: localStorage.getItem('pos_inventario') || '[]',
+                    pos_clientes: localStorage.getItem('pos_clientes') || '[]',
+                    pos_totales_dia: localStorage.getItem('pos_totales_dia') || '{}',
+                    pos_historial_tickets: localStorage.getItem('pos_historial_tickets') || '[]',
+                    pos_cotizaciones: localStorage.getItem('pos_cotizaciones') || '[]',
+                    pos_configuracion: localStorage.getItem('pos_configuracion') || '{}',
+                    pos_logo_base64: localStorage.getItem('pos_logo_base64') || '',
+                    pos_fondos: localStorage.getItem('pos_fondos') || '{}'
+                };
+                await setDoc(docRef, data);
+                console.log("☁️ Guardado en la nube exitoso.");
+            } catch(e) {
+                console.error("Error sincronizando con Firebase:", e);
+            } finally {
+                isSyncing = false;
+            }
+        };
+
+        // INTERCEPTOR DE GUARDADO (Magia): Cada vez que el sistema guarda algo localmente, 
+        // espera 1.5 segundos y hace un respaldo automático en la nube.
+        const originalSetItem = localStorage.setItem;
+        localStorage.setItem = function(key, value) {
+            originalSetItem.apply(this, arguments);
+            if(key.startsWith('pos_')) {
+                 clearTimeout(window.syncTimeout);
+                 window.syncTimeout = setTimeout(() => { window.syncToFirebase(); }, 1500);
+            }
+        };
+
+        // DESCARGA DESDE LA NUBE AL ABRIR LA APP
+        window.loadFromFirebase = async function() {
+            try {
+                console.log("Descargando base de datos de la nube...");
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    // Sobreescribir el almacenamiento local con los datos de la nube
+                    if(data.pos_inventario) originalSetItem.call(localStorage, 'pos_inventario', data.pos_inventario);
+                    if(data.pos_clientes) originalSetItem.call(localStorage, 'pos_clientes', data.pos_clientes);
+                    if(data.pos_totales_dia) originalSetItem.call(localStorage, 'pos_totales_dia', data.pos_totales_dia);
+                    if(data.pos_historial_tickets) originalSetItem.call(localStorage, 'pos_historial_tickets', data.pos_historial_tickets);
+                    if(data.pos_cotizaciones) originalSetItem.call(localStorage, 'pos_cotizaciones', data.pos_cotizaciones);
+                    if(data.pos_configuracion) originalSetItem.call(localStorage, 'pos_configuracion', data.pos_configuracion);
+                    if(data.pos_logo_base64) originalSetItem.call(localStorage, 'pos_logo_base64', data.pos_logo_base64);
+                    if(data.pos_fondos) originalSetItem.call(localStorage, 'pos_fondos', data.pos_fondos);
+                    
+                    // Recargar variables globales de la ventana principal
+                    window.inventario = JSON.parse(localStorage.getItem('pos_inventario')) || window.inventario;
+                    window.totalesDia = JSON.parse(localStorage.getItem('pos_totales_dia')) || window.totalesDia;
+                    window.historialTickets = JSON.parse(localStorage.getItem('pos_historial_tickets')) || window.historialTickets;
+                    window.clientesGuardados = JSON.parse(localStorage.getItem('pos_clientes')) || window.clientesGuardados;
+                    window.cotizacionesGuardadas = JSON.parse(localStorage.getItem('pos_cotizaciones')) || window.cotizacionesGuardadas;
+                    window.configuracionApp = JSON.parse(localStorage.getItem('pos_configuracion')) || window.configuracionApp;
+
+                    // Refrescar toda la Interfaz
+                    if(window.renderizarInventario) window.renderizarInventario(); 
+                    if(window.renderizarCotizacionesGuardadas) window.renderizarCotizacionesGuardadas(); 
+                    if(window.renderizarClientes) window.renderizarClientes(); 
+                    if(window.renderizarHistorial) window.renderizarHistorial();
+                    if(window.cargarConfiguracionDOM) window.cargarConfiguracionDOM();
+                    if(window.actualizarVistaCaja) window.actualizarVistaCaja();
+                    
+                    const moduloAct = document.querySelector('.modulo.activo');
+                    if(moduloAct && window.aplicarFondo) window.aplicarFondo(moduloAct.id);
+                    
+                    console.log("☁️ Nube cargada y sistema actualizado.");
+                }
+            } catch(e) {
+                console.error("Error leyendo de Firebase:", e);
+            }
+        };
+
+        // Ejecutar carga inicial
+        window.loadFromFirebase();
     </script>
 </body>
 </html>
