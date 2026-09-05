@@ -16,8 +16,8 @@
             --transparencia-input: rgba(0, 0, 0, 0.15);
             --color-texto: #ffffff;
             --borde-difuminado: inset 0 0 100px rgba(0,0,0,1);
-            --acento: #00d2ff; /* Cyan del Logo MINOS */
-            --dorado: #d4af37; /* Dorado del Logo MINOS */
+            --acento: #00d2ff;
+            --dorado: #d4af37;
         }
 
         body, html {
@@ -312,9 +312,7 @@
                 </div>
                 <div style="overflow-x: auto;">
                     <table>
-                        <thead>
-                            <tr><th>Folio</th><th>Fecha y Hora</th><th>Cliente</th><th>Total</th><th>Acciones</th></tr>
-                        </thead>
+                        <thead><tr><th>Folio</th><th>Fecha y Hora</th><th>Cliente</th><th>Total</th><th>Acciones</th></tr></thead>
                         <tbody id="lista-historial"></tbody>
                     </table>
                 </div>
@@ -330,11 +328,7 @@
                 <div class="grid-auto">
                     <input type="text" id="cliente-nombre" placeholder="Nombre del Cliente">
                     <select id="cliente-nivel">
-                        <option value="pub">Precio Público</option>
-                        <option value="may1">Mayoreo 1</option>
-                        <option value="may2">Mayoreo 2</option>
-                        <option value="may3">Mayoreo 3</option>
-                        <option value="dueno">Dueño / Especial</option>
+                        <option value="pub">Precio Público</option><option value="may1">Mayoreo 1</option><option value="may2">Mayoreo 2</option><option value="may3">Mayoreo 3</option><option value="dueno">Dueño / Especial</option>
                     </select>
                     <input type="number" id="cliente-deuda" placeholder="Deuda Inicial ($)" value="0">
                 </div>
@@ -344,12 +338,9 @@
                 </div>
             </div>
             <div class="seccion-flotante">
-                <h3>Lista de Clientes</h3>
                 <div style="overflow-x: auto;">
                     <table>
-                        <thead>
-                            <tr><th>Nombre</th><th>Nivel Precio</th><th>Deuda Actual</th><th>Acciones Rápidas</th></tr>
-                        </thead>
+                        <thead><tr><th>Nombre</th><th>Nivel Precio</th><th>Deuda Actual</th><th>Acciones Rápidas</th></tr></thead>
                         <tbody id="lista-clientes"></tbody>
                     </table>
                 </div>
@@ -443,7 +434,6 @@
             document.querySelectorAll('.modulo').forEach(m => m.classList.remove('activo'));
             document.getElementById(id).classList.add('activo');
             document.getElementById('menu-lateral').classList.remove('abierto');
-            
             if (id === 'inventario') renderizarInventario(); 
             if (id === 'cotizaciones') renderizarCotizacionesGuardadas();
             if (id === 'clientes') renderizarClientes();
@@ -519,54 +509,6 @@
                 img.src = e.target.result;
             }
             reader.readAsDataURL(file);
-        }
-
-        // ==========================================
-        // GESTOR DE FONDOS
-        // ==========================================
-        function getDB() {
-            return new Promise((resolve, reject) => {
-                const req = indexedDB.open("POSFondosDB_V4", 1);
-                req.onupgradeneeded = (e) => { const db = e.target.result; if(!db.objectStoreNames.contains('fondos')) { db.createObjectStore('fondos'); } };
-                req.onsuccess = (e) => resolve(e.target.result); req.onerror = (e) => reject(e);
-            });
-        }
-        async function guardarFondo(moduloId, fileInputId) {
-            const fileInput = document.getElementById(fileInputId); const file = fileInput.files[0];
-            if(!file) return alert("Selecciona una imagen o video primero.");
-            try {
-                const db = await getDB(); const tx = db.transaction('fondos', 'readwrite'); const isVideo = file.type.startsWith('video/'); const blob = new Blob([file], { type: file.type });
-                tx.objectStore('fondos').put({ blob: blob, isVideo: isVideo }, moduloId);
-                tx.oncomplete = () => { alert(`Fondo asignado a: ${moduloId}`); fileInput.value = ''; const moduloActual = document.querySelector('.modulo.activo') ? document.querySelector('.modulo.activo').id : 'ventas'; if(moduloActual === moduloId || moduloId === 'global') aplicarFondo(moduloActual); };
-            } catch (err) { console.error(err); }
-        }
-        async function eliminarFondo(moduloId) {
-            if(!confirm(`¿Restablecer el fondo para ${moduloId}?`)) return;
-            try { const db = await getDB(); const tx = db.transaction('fondos', 'readwrite'); tx.objectStore('fondos').delete(moduloId); tx.oncomplete = () => { alert("Fondo removido."); aplicarFondo(document.querySelector('.modulo.activo') ? document.querySelector('.modulo.activo').id : 'ventas'); }; } catch (err) { console.error(err); }
-        }
-        async function aplicarFondo(moduloId) {
-            try {
-                const db = await getDB(); const tx = db.transaction('fondos', 'readonly'); const req = tx.objectStore('fondos').get(moduloId);
-                req.onsuccess = () => {
-                    if (req.result) mostrarFondoGrafico(req.result.blob, req.result.isVideo);
-                    else { const reqGlob = db.transaction('fondos', 'readonly').objectStore('fondos').get('global'); reqGlob.onsuccess = () => { if(reqGlob.result) mostrarFondoGrafico(reqGlob.result.blob, reqGlob.result.isVideo); else mostrarFondoDefault(); }; }
-                };
-            } catch (err) { console.error(err); }
-        }
-        function mostrarFondoGrafico(blob, isVideo) {
-            const divBg = document.getElementById('fondo-actual'); const vidBg = document.getElementById('fondo-video');
-            if (currentObjUrl) { URL.revokeObjectURL(currentObjUrl); currentObjUrl = null; }
-            if (!blob) return mostrarFondoDefault(); currentObjUrl = URL.createObjectURL(blob);
-            if (isVideo) { divBg.style.display = 'none'; vidBg.style.display = 'block'; vidBg.src = currentObjUrl; vidBg.load(); let playPromise = vidBg.play(); if (playPromise !== undefined) { playPromise.catch(e => console.log("Bloqueo autoplay", e)); } } 
-            else { vidBg.style.display = 'none'; vidBg.pause(); divBg.style.display = 'block'; divBg.style.backgroundImage = `url('${currentObjUrl}')`; }
-        }
-        function mostrarFondoDefault() {
-            const divBg = document.getElementById('fondo-actual'); const vidBg = document.getElementById('fondo-video'); vidBg.style.display = 'none'; vidBg.pause(); divBg.style.display = 'block'; divBg.style.backgroundImage = "url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=1920&auto=format&fit=crop')";
-        }
-        function renderizarGestorFondos() {
-            const contenedor = document.getElementById('lista-gestor-fondos'); contenedor.innerHTML = '';
-            const m = [ { id: 'global', nombre: 'Fondo General' }, { id: 'ventas', nombre: 'Terminal de Ventas' }, { id: 'caja', nombre: 'Corte de Caja' }, { id: 'inventario', nombre: 'Inventario y Kits' }, { id: 'compras', nombre: 'Compras y Gastos' }, { id: 'cotizaciones', nombre: 'Cotizaciones' }, { id: 'clientes', nombre: 'Clientes y Deudas' }, { id: 'historial', nombre: 'Historial de Tickets' }, { id: 'configuracion', nombre: 'Configuración PDF' }, { id: 'fondos', nombre: 'Gestor de Fondos' } ];
-            m.forEach(mod => { contenedor.innerHTML += `<div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; border: 1px solid var(--dorado);"><h4 style="margin-top:0; color:var(--acento);">${mod.nombre}</h4><input type="file" id="file-${mod.id}" accept="image/*, video/*" style="width: 100%; font-size: 0.8em; margin-bottom: 10px;"><div style="display: flex; gap: 5px;"><button class="btn-accion" style="flex:1; padding: 5px;" onclick="guardarFondo('${mod.id}', 'file-${mod.id}')">💾 Asignar</button><button style="padding: 5px;" onclick="eliminarFondo('${mod.id}')">🗑️</button></div></div>`; });
         }
 
         // ==========================================
@@ -658,41 +600,53 @@
         }
 
         function generarPDFCotizacionIndividual(id) {
-            const cot = cotizacionesGuardadas.find(c => c.id === id); if(!cot) return alert("Cotización no encontrada");
-            const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
-            const marginX = 15; const cyan = [0, 210, 255]; const gold = [212, 175, 55];
-            
-            doc.setFillColor(...cyan); doc.rect(0, 0, 220, 35, 'F');
-            const logoData = localStorage.getItem('pos_logo_base64');
-            if(logoData) { doc.addImage(logoData, 'PNG', marginX, 5, 25, 25); doc.setFontSize(22); doc.setTextColor(...gold); doc.text(configuracionApp.nombreNegocio.toUpperCase(), marginX + 30, 22); } 
-            else { doc.setFontSize(22); doc.setTextColor(...gold); doc.text(configuracionApp.nombreNegocio.toUpperCase(), marginX, 22); }
-            doc.setTextColor(255, 255, 255); doc.setFontSize(24); doc.text("COTIZACIÓN", 150, 22);
+            try {
+                const cot = cotizacionesGuardadas.find(c => c.id === id); if(!cot) return alert("Cotización no encontrada");
+                const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+                const marginX = 15; const cyan = [0, 210, 255]; const gold = [212, 175, 55];
+                
+                doc.setFillColor(...cyan); doc.rect(0, 0, 220, 35, 'F');
+                const logoData = localStorage.getItem('pos_logo_base64');
+                if(logoData) { 
+                    try { doc.addImage(logoData, 'PNG', marginX, 5, 25, 25); } catch(e) { console.log(e); } 
+                    doc.setFontSize(22); doc.setTextColor(...gold); doc.text(configuracionApp.nombreNegocio.toUpperCase(), marginX + 30, 22); 
+                } else { doc.setFontSize(22); doc.setTextColor(...gold); doc.text(configuracionApp.nombreNegocio.toUpperCase(), marginX, 22); }
+                doc.setTextColor(255, 255, 255); doc.setFontSize(24); doc.text("COTIZACIÓN", 150, 22);
 
-            doc.setTextColor(50, 50, 50); doc.setFontSize(10); let y = 45;
-            if(configuracionApp.rfc) { doc.text(`RFC: ${configuracionApp.rfc}`, marginX, y); y+=5; }
-            if(configuracionApp.telefono) { doc.text(`Tel: ${configuracionApp.telefono}`, marginX, y); y+=5; }
-            if(configuracionApp.correo) { doc.text(`Correo: ${configuracionApp.correo}`, marginX, y); y+=5; }
-            
-            doc.text(`No. de cotización: ${cot.id.toString().slice(-6)}`, 140, 45); doc.text(`Fecha: ${cot.fecha}`, 140, 50);
+                doc.setTextColor(50, 50, 50); doc.setFontSize(10); let y = 45;
+                if(configuracionApp.rfc) { doc.text(`RFC: ${configuracionApp.rfc}`, marginX, y); y+=5; }
+                if(configuracionApp.telefono) { doc.text(`Tel: ${configuracionApp.telefono}`, marginX, y); y+=5; }
+                if(configuracionApp.correo) { doc.text(`Correo: ${configuracionApp.correo}`, marginX, y); y+=5; }
+                
+                doc.text(`No. de cotización: ${cot.id.toString().slice(-6)}`, 140, 45); doc.text(`Fecha: ${cot.fecha}`, 140, 50);
 
-            doc.setFillColor(240, 240, 240); doc.rect(marginX, 65, 185, 8, 'F'); doc.setTextColor(...cyan); doc.setFontSize(11); doc.text("DATOS DEL CLIENTE", marginX + 2, 70.5);
-            doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.text(`Cliente / Empresa: ${cot.cliente}`, marginX, 80); doc.text(`Domicilio / Dirección de entrega: A convenir`, marginX, 85);
+                doc.setFillColor(240, 240, 240); doc.rect(marginX, 65, 185, 8, 'F'); doc.setTextColor(...cyan); doc.setFontSize(11); doc.text("DATOS DEL CLIENTE", marginX + 2, 70.5);
+                doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.text(`Cliente / Empresa: ${cot.cliente}`, marginX, 80); doc.text(`Domicilio / Dirección de entrega: A convenir`, marginX, 85);
 
-            const tableColumn = ["Cant.", "Descripción de mercancía", "Precio unitario", "Importe"]; const tableRows = [];
-            cot.items.forEach(item => { tableRows.push([item.cantidad, item.nombre, `$${item.precioAplicado.toFixed(2)}`, `$${(item.cantidad * item.precioAplicado).toFixed(2)}`]); });
-            doc.autoTable({ startY: 95, head: [tableColumn], body: tableRows, theme: 'grid', headStyles: { fillColor: cyan, textColor: [255, 255, 255] }, styles: { fontSize: 10, cellPadding: 3 }, alternateRowStyles: { fillColor: [245, 245, 245] } });
+                const tableColumn = ["Cant.", "Descripción de mercancía", "Precio unitario", "Importe"]; const tableRows = [];
+                cot.items.forEach(item => { tableRows.push([item.cantidad, item.nombre, `$${item.precioAplicado.toFixed(2)}`, `$${(item.cantidad * item.precioAplicado).toFixed(2)}`]); });
+                doc.autoTable({ startY: 95, head: [tableColumn], body: tableRows, theme: 'grid', headStyles: { fillColor: cyan, textColor: [255, 255, 255] }, styles: { fontSize: 10, cellPadding: 3 }, alternateRowStyles: { fillColor: [245, 245, 245] } });
 
-            let finalY = doc.lastAutoTable.finalY + 10;
-            doc.setFontSize(9); doc.setTextColor(100, 100, 100); 
-            const notasLines = doc.splitTextToSize(`Notas/condiciones:\n${configuracionApp.notasCotizacion}`, 100); doc.text(notasLines, marginX, finalY);
-            doc.setTextColor(50, 50, 50); doc.setFontSize(11); doc.text(`Subtotal:`, 140, finalY); doc.text(`$${(cot.subtotal || 0).toFixed(2)}`, 175, finalY);
-            if(cot.iva > 0) { finalY += 7; doc.text(`IVA (16%):`, 140, finalY); doc.text(`$${cot.iva.toFixed(2)}`, 175, finalY); }
-            finalY += 8; doc.setFontSize(12); doc.setTextColor(...gold); doc.text(`TOTAL:`, 140, finalY); doc.text(`$${cot.total.toFixed(2)}`, 175, finalY);
-            finalY += 40; doc.setDrawColor(...cyan); doc.line(30, finalY, 80, finalY); doc.line(130, finalY, 180, finalY); 
-            doc.setFontSize(9); doc.setTextColor(100, 100, 100); doc.text("Elaboró/Vendedor", 42, finalY + 5); doc.text("Aceptación del cliente", 140, finalY + 5);
-            finalY += 15; doc.setFontSize(8); const footerText = doc.splitTextToSize("Esta cotización es una propuesta comercial y no constituye una factura. Los precios y condiciones podrán modificarse de acuerdo con la disponibilidad y los términos acordados.", 185); doc.text(footerText, marginX, finalY);
+                let finalY = doc.lastAutoTable.finalY + 10;
+                doc.setFontSize(9); doc.setTextColor(100, 100, 100); 
+                const notaSplit = configuracionApp.notasCotizacion.split('\n');
+                doc.text("Notas/condiciones:", marginX, finalY);
+                finalY += 5;
+                notaSplit.forEach(line => { doc.text(line, marginX, finalY); finalY += 4; });
 
-            doc.save(`Cotizacion_${cot.id.toString().slice(-6)}_${cot.cliente}.pdf`);
+                doc.setTextColor(50, 50, 50); doc.setFontSize(11); 
+                let ty = doc.lastAutoTable.finalY + 10;
+                doc.text(`Subtotal:`, 140, ty); doc.text(`$${(cot.subtotal || 0).toFixed(2)}`, 175, ty);
+                if(cot.iva > 0) { ty += 7; doc.text(`IVA (16%):`, 140, ty); doc.text(`$${cot.iva.toFixed(2)}`, 175, ty); }
+                ty += 8; doc.setFontSize(12); doc.setTextColor(...gold); doc.text(`TOTAL:`, 140, ty); doc.text(`$${cot.total.toFixed(2)}`, 175, ty);
+                
+                finalY = Math.max(finalY, ty) + 30;
+                doc.setDrawColor(...cyan); doc.line(30, finalY, 80, finalY); doc.line(130, finalY, 180, finalY); 
+                doc.setFontSize(9); doc.setTextColor(100, 100, 100); doc.text("Elaboró/Vendedor", 42, finalY + 5); doc.text("Aceptación del cliente", 140, finalY + 5);
+                finalY += 15; doc.setFontSize(8); const footerText = doc.splitTextToSize("Esta cotización es una propuesta comercial y no constituye una factura. Los precios y condiciones podrán modificarse de acuerdo con la disponibilidad y los términos acordados.", 185); doc.text(footerText, marginX, finalY);
+
+                doc.save(`Cotizacion_${cot.id.toString().slice(-6)}_${cot.cliente}.pdf`);
+            } catch(e) { console.error(e); alert("Error al generar PDF."); }
         }
 
         function limpiarCotizacion() { carritoCotizacion = []; idCotizacionEditando = null; document.getElementById('nombre-cliente-cotizacion').value = ''; document.getElementById('select-cliente-cotizacion').value = ''; document.getElementById('titulo-cotizacion-actual').innerText = 'Crear Nueva Cotización'; renderizarCarritoCotizacion(); }
@@ -720,30 +674,32 @@
         function calcularPagos() { const total = parseFloat(document.getElementById('total-venta').innerText); const efe = parseFloat(document.getElementById('pago-efectivo').value) || 0; const deb = parseFloat(document.getElementById('pago-debito').value) || 0; const cred = parseFloat(document.getElementById('pago-credito').value) || 0; const trans = parseFloat(document.getElementById('pago-transferencia').value) || 0; const sumaPagos = efe + deb + cred + trans; let restante = total - sumaPagos; let cambio = 0; if (restante < 0) { cambio = Math.abs(restante); restante = 0; } document.getElementById('restante-venta').innerText = restante.toFixed(2); document.getElementById('cambio-venta').innerText = cambio.toFixed(2); }
 
         function procesarVenta() {
-            if (carrito.length === 0) return alert("El carrito está vacío");
-            const total = parseFloat(document.getElementById('total-venta').innerText); const efe = parseFloat(document.getElementById('pago-efectivo').value) || 0; const deb = parseFloat(document.getElementById('pago-debito').value) || 0; const cred = parseFloat(document.getElementById('pago-credito').value) || 0; const trans = parseFloat(document.getElementById('pago-transferencia').value) || 0; const sumaPagos = efe + deb + cred + trans; let restante = total - sumaPagos; let aCredito = 0; const clienteId = document.getElementById('select-cliente-venta').value; let clienteObj = null; let clienteNombre = document.getElementById('nombre-cliente').value || "Público en General";
-            if (clienteId) { clienteObj = clientesGuardados.find(c => c.id == clienteId); if (clienteObj) clienteNombre = clienteObj.nombre; }
-            if (restante > 0) { if (!clienteObj) return alert("El monto no cubre el total. Selecciona un Cliente Registrado para crédito."); if(!confirm(`Faltan $${restante.toFixed(2)}. ¿Agregar a la deuda de ${clienteNombre}?`)) return; aCredito = restante; }
-            
-            carrito.forEach(item => { if (item.tipo === 'venta') { const dbArt = inventario.find(i => i.codigo === item.codigo); if(dbArt) dbArt.stock -= item.cantidad; } else if (item.tipo === 'kit') { item.componentes.forEach(comp => { const dbInsumo = inventario.find(i => i.codigo === comp.codigoInsumo); if(dbInsumo) dbInsumo.stock -= (comp.cant * item.cantidad); }); } });
-            localStorage.setItem('pos_inventario', JSON.stringify(inventario)); 
-            
-            if (aCredito > 0) { clienteObj.deuda += aCredito; localStorage.setItem('pos_clientes', JSON.stringify(clientesGuardados)); renderizarClientes(); }
-            
-            let cambio = 0; if (restante < 0) cambio = Math.abs(restante); let efectivoNeto = efe > 0 ? efe - cambio : 0;
-            totalesDia.efectivo += efectivoNeto; totalesDia.debito += deb; totalesDia.credito += cred; totalesDia.transferencia += trans; localStorage.setItem('pos_totales_dia', JSON.stringify(totalesDia)); actualizarVistaCaja();
+            try {
+                if (carrito.length === 0) return alert("El carrito está vacío");
+                const total = parseFloat(document.getElementById('total-venta').innerText); const efe = parseFloat(document.getElementById('pago-efectivo').value) || 0; const deb = parseFloat(document.getElementById('pago-debito').value) || 0; const cred = parseFloat(document.getElementById('pago-credito').value) || 0; const trans = parseFloat(document.getElementById('pago-transferencia').value) || 0; const sumaPagos = efe + deb + cred + trans; let restante = total - sumaPagos; let aCredito = 0; const clienteId = document.getElementById('select-cliente-venta').value; let clienteObj = null; let clienteNombre = document.getElementById('nombre-cliente').value || "Público en General";
+                if (clienteId) { clienteObj = clientesGuardados.find(c => c.id == clienteId); if (clienteObj) clienteNombre = clienteObj.nombre; }
+                if (restante > 0) { if (!clienteObj) return alert("El monto no cubre el total. Selecciona un Cliente Registrado para crédito."); if(!confirm(`Faltan $${restante.toFixed(2)}. ¿Agregar a la deuda de ${clienteNombre}?`)) return; aCredito = restante; }
+                
+                carrito.forEach(item => { if (item.tipo === 'venta') { const dbArt = inventario.find(i => i.codigo === item.codigo); if(dbArt) dbArt.stock -= item.cantidad; } else if (item.tipo === 'kit') { if(item.componentes){ item.componentes.forEach(comp => { const dbInsumo = inventario.find(i => i.codigo === comp.codigoInsumo); if(dbInsumo) dbInsumo.stock -= (comp.cant * item.cantidad); }); } } });
+                localStorage.setItem('pos_inventario', JSON.stringify(inventario)); 
+                
+                if (aCredito > 0) { clienteObj.deuda += aCredito; localStorage.setItem('pos_clientes', JSON.stringify(clientesGuardados)); renderizarClientes(); }
+                
+                let cambio = 0; if (restante < 0) cambio = Math.abs(restante); let efectivoNeto = efe > 0 ? efe - cambio : 0;
+                totalesDia.efectivo += efectivoNeto; totalesDia.debito += deb; totalesDia.credito += cred; totalesDia.transferencia += trans; localStorage.setItem('pos_totales_dia', JSON.stringify(totalesDia)); actualizarVistaCaja();
 
-            const idTicket = Date.now().toString().slice(-6); const hoy = new Date(); const fechaString = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
-            const tiempo = hoy.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            const formatoImp = document.getElementById('formato-impresion').value;
+                const idTicket = Date.now().toString().slice(-6); const hoy = new Date(); const fechaString = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+                const tiempo = hoy.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const formatoImp = document.getElementById('formato-impresion').value;
 
-            const nuevoTicket = { id: idTicket, fecha: hoy.toLocaleDateString(), hora: tiempo, fechaFiltro: fechaString, cliente: clienteNombre, telefonoCli: (clienteObj ? clienteObj.telefono : ''), total: total, sumaPagos: sumaPagos, aCredito: aCredito, cambio: cambio, efe: efe, deb: deb, cred: cred, trans: trans, nivelPrecio: nombresPrecios[nivelPrecioGlobalActual] || 'Público', items: [...carrito] };
-            historialTickets.push(nuevoTicket); localStorage.setItem('pos_historial_tickets', JSON.stringify(historialTickets));
-            
-            reimprimirTicket(idTicket, formatoImp);
+                const nuevoTicket = { id: idTicket, fecha: hoy.toLocaleDateString(), hora: tiempo, fechaFiltro: fechaString, cliente: clienteNombre, telefonoCli: (clienteObj ? clienteObj.telefono : ''), total: total, sumaPagos: sumaPagos, aCredito: aCredito, cambio: cambio, efe: efe, deb: deb, cred: cred, trans: trans, nivelPrecio: nombresPrecios[nivelPrecioGlobalActual] || 'Público', items: [...carrito] };
+                historialTickets.push(nuevoTicket); localStorage.setItem('pos_historial_tickets', JSON.stringify(historialTickets));
+                
+                try{ reimprimirTicket(idTicket, formatoImp); }catch(e){ console.error(e); alert("Venta guardada pero hubo un error generando el PDF."); }
 
-            carrito = []; document.getElementById('pago-efectivo').value = ''; document.getElementById('pago-debito').value = ''; document.getElementById('pago-credito').value = ''; document.getElementById('pago-transferencia').value = ''; document.getElementById('nombre-cliente').value = ''; document.getElementById('select-cliente-venta').value = ''; alSeleccionarClienteVenta(); renderizarCarrito(); renderizarInventario(); 
-            let mjs = "Venta procesada."; if(aCredito > 0) mjs += `\nCargado $${aCredito.toFixed(2)} a ${clienteNombre}.`; if(cambio > 0) mjs += `\nEntregar $${cambio.toFixed(2)} de cambio.`; alert(mjs);
+                carrito = []; document.getElementById('pago-efectivo').value = ''; document.getElementById('pago-debito').value = ''; document.getElementById('pago-credito').value = ''; document.getElementById('pago-transferencia').value = ''; document.getElementById('nombre-cliente').value = ''; document.getElementById('select-cliente-venta').value = ''; alSeleccionarClienteVenta(); renderizarCarrito(); renderizarInventario(); 
+                let mjs = "Venta procesada."; if(aCredito > 0) mjs += `\nCargado $${aCredito.toFixed(2)} a ${clienteNombre}.`; if(cambio > 0) mjs += `\nEntregar $${cambio.toFixed(2)} de cambio.`; alert(mjs);
+            } catch (err) { console.error(err); alert("Error: " + err.message); }
         }
 
         function reimprimirTicket(id, formatoForzado = null) {
@@ -803,10 +759,6 @@
                 doc.save(`NotaVenta_${t.id}_${t.cliente.replace(/\s+/g, '')}.pdf`);
             }
         }
-
-        // ==========================================
-        // HISTORIAL: EDITAR / ELIMINAR TICKETS
-        // ==========================================
         function eliminarTicketLogica(id) {
             const index = historialTickets.findIndex(t => t.id === id);
             if(index === -1) return null;
@@ -878,24 +830,45 @@
             filtrados.slice().reverse().forEach(t => { 
                 tbody.innerHTML += `<tr><td style="font-weight:bold;">${t.id}</td><td>${t.fecha}</td><td>${t.cliente}</td><td style="color:#81c784;">$${t.total.toFixed(2)}</td><td style="display:flex; gap:5px;"><button onclick="reimprimirTicket('${t.id}')" style="background: rgba(0, 210, 255, 0.4);">📄 PDF</button><button onclick="editarTicket('${t.id}')">✏️ Editar</button><button onclick="eliminarTicket('${t.id}')">❌</button></td></tr>`; 
             }); 
+        };
+                req.onsuccess = (e) => resolve(e.target.result); req.onerror = (e) => reject(e);
+            });
         }
-        
-        // CAJA
-        function actualizarVistaCaja() {
-            const comision = 0.0418; 
-            document.getElementById('corte-efectivo').innerText = totalesDia.efectivo.toFixed(2); document.getElementById('corte-transf').innerText = totalesDia.transferencia.toFixed(2); document.getElementById('corte-deb-bruto').innerText = totalesDia.debito.toFixed(2); const debNeto = totalesDia.debito - (totalesDia.debito * comision); document.getElementById('corte-deb-neto').innerText = debNeto.toFixed(2); document.getElementById('corte-cred-bruto').innerText = totalesDia.credito.toFixed(2); const credNeto = totalesDia.credito - (totalesDia.credito * comision); document.getElementById('corte-cred-neto').innerText = credNeto.toFixed(2); document.getElementById('corte-gastos').innerText = totalesDia.gastos.toFixed(2);
-            const totalReal = (totalesDia.efectivo + totalesDia.transferencia + debNeto + credNeto) - totalesDia.gastos; document.getElementById('corte-total-real').innerText = totalReal.toFixed(2);
-            const fondo = parseFloat(document.getElementById('fondo-caja').value) || 0; const fisico = parseFloat(document.getElementById('corte-efectivo-fisico').value) || 0; const esperado = fondo + totalesDia.efectivo - totalesDia.gastos; document.getElementById('corte-efectivo-esperado').innerText = esperado.toFixed(2); const diferencia = fisico - esperado; const diffSpan = document.getElementById('corte-diferencia'); diffSpan.innerText = `$${diferencia.toFixed(2)}`; if (diferencia < 0) diffSpan.style.color = '#ef5350'; else diffSpan.style.color = '#81c784'; 
+        async function guardarFondo(moduloId, fileInputId) {
+            const fileInput = document.getElementById(fileInputId); const file = fileInput.files[0];
+            if(!file) return alert("Selecciona una imagen o video primero.");
+            try {
+                const db = await getDB(); const tx = db.transaction('fondos', 'readwrite'); const isVideo = file.type.startsWith('video/'); const blob = new Blob([file], { type: file.type });
+                tx.objectStore('fondos').put({ blob: blob, isVideo: isVideo }, moduloId);
+                tx.oncomplete = () => { alert(`Fondo asignado a: ${moduloId}`); fileInput.value = ''; const moduloActual = document.querySelector('.modulo.activo') ? document.querySelector('.modulo.activo').id : 'ventas'; if(moduloActual === moduloId || moduloId === 'global') aplicarFondo(moduloActual); };
+            } catch (err) { console.error(err); }
         }
-
-        function realizarCorteDefinitivo() {
-            const fondo = parseFloat(document.getElementById('fondo-caja').value) || 0; const fisico = parseFloat(document.getElementById('corte-efectivo-fisico').value) || 0; const esperado = fondo + totalesDia.efectivo - totalesDia.gastos; const diferencia = fisico - esperado;
-            if(!confirm(`Se generará el Corte de Caja.\nDiferencia: $${diferencia.toFixed(2)}.\n¿Deseas continuar y reiniciar los totales?`)) return;
-            const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [80, 200] });
-            doc.setFontSize(14); doc.text("CORTE DE CAJA", 40, 10, { align: "center" }); doc.setFontSize(10); doc.text(`Fecha: ${new Date().toLocaleString()}`, 5, 20); doc.text("------------------------------------------", 5, 25);
-            let y = 30; doc.text(`Fondo Inicial: $${fondo.toFixed(2)}`, 5, y); y+=5; doc.text(`Ingresos Efectivo: $${totalesDia.efectivo.toFixed(2)}`, 5, y); y+=5; doc.text(`Gastos Efectivo: -$${totalesDia.gastos.toFixed(2)}`, 5, y); y+=5; doc.text(`Transferencias: $${totalesDia.transferencia.toFixed(2)}`, 5, y); y+=5; doc.text(`T. Débito (Bruto): $${totalesDia.debito.toFixed(2)}`, 5, y); y+=5; doc.text(`T. Crédito (Bruto): $${totalesDia.credito.toFixed(2)}`, 5, y); y+=5; doc.text("------------------------------------------", 5, y); y+=5; doc.setFontSize(12); doc.text(`EFECTIVO SISTEMA: $${esperado.toFixed(2)}`, 5, y); y+=7; doc.text(`EFECTIVO FISICO: $${fisico.toFixed(2)}`, 5, y); y+=7; if (diferencia < 0) doc.text(`FALTANTE: $${Math.abs(diferencia).toFixed(2)}`, 5, y); else doc.text(`SOBRANTE: $${diferencia.toFixed(2)}`, 5, y); y+=10; doc.text("------------------------------------------", 5, y); y+=5; const totalReal = document.getElementById('corte-total-real').innerText; doc.text(`GANANCIA NETA: $${totalReal}`, 5, y);
-            doc.save(`CorteCaja_${Date.now().toString().slice(-6)}.pdf`);
-            totalesDia = { efectivo: 0, debito: 0, credito: 0, transferencia: 0, gastos: 0 }; localStorage.setItem('pos_totales_dia', JSON.stringify(totalesDia)); document.getElementById('corte-efectivo-fisico').value = 0; actualizarVistaCaja(); alert("Corte realizado con éxito.");
+        async function eliminarFondo(moduloId) {
+            if(!confirm(`¿Restablecer el fondo para ${moduloId}?`)) return;
+            try { const db = await getDB(); const tx = db.transaction('fondos', 'readwrite'); tx.objectStore('fondos').delete(moduloId); tx.oncomplete = () => { alert("Fondo removido."); aplicarFondo(document.querySelector('.modulo.activo') ? document.querySelector('.modulo.activo').id : 'ventas'); }; } catch (err) { console.error(err); }
+        }
+        async function aplicarFondo(moduloId) {
+            try {
+                const db = await getDB(); const tx = db.transaction('fondos', 'readonly'); const req = tx.objectStore('fondos').get(moduloId);
+                req.onsuccess = () => {
+                    if (req.result) mostrarFondoGrafico(req.result.blob, req.result.isVideo);
+                    else { const reqGlob = db.transaction('fondos', 'readonly').objectStore('fondos').get('global'); reqGlob.onsuccess = () => { if(reqGlob.result) mostrarFondoGrafico(reqGlob.result.blob, reqGlob.result.isVideo); else mostrarFondoDefault(); }; }
+                };
+            } catch (err) { console.error(err); }
+        }
+        function mostrarFondoGrafico(blob, isVideo) {
+            const divBg = document.getElementById('fondo-actual'); const vidBg = document.getElementById('fondo-video');
+            if (currentObjUrl) { URL.revokeObjectURL(currentObjUrl); currentObjUrl = null; }
+            if (!blob) return mostrarFondoDefault(); currentObjUrl = URL.createObjectURL(blob);
+            if (isVideo) { divBg.style.display = 'none'; vidBg.style.display = 'block'; vidBg.src = currentObjUrl; vidBg.load(); let playPromise = vidBg.play(); if (playPromise !== undefined) { playPromise.catch(e => console.log("Bloqueo autoplay", e)); } } 
+            else { vidBg.style.display = 'none'; vidBg.pause(); divBg.style.display = 'block'; divBg.style.backgroundImage = `url('${currentObjUrl}')`; }
+        }
+        function mostrarFondoDefault() {
+            const divBg = document.getElementById('fondo-actual'); const vidBg = document.getElementById('fondo-video'); vidBg.style.display = 'none'; vidBg.pause(); divBg.style.display = 'block'; divBg.style.backgroundImage = "url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=1920&auto=format&fit=crop')";
+        }
+        function renderizarGestorFondos() {
+            const contenedor = document.getElementById('lista-gestor-fondos'); contenedor.innerHTML = '';
+            modulosFondo.forEach(mod => { contenedor.innerHTML += `<div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; border: 1px solid var(--dorado);"><h4 style="margin-top:0; color:var(--acento);">${mod.nombre}</h4><input type="file" id="file-${mod.id}" accept="image/*, video/*" style="width: 100%; font-size: 0.8em; margin-bottom: 10px;"><div style="display: flex; gap: 5px;"><button class="btn-accion" style="flex:1; padding: 5px;" onclick="guardarFondo('${mod.id}', 'file-${mod.id}')">💾 Asignar</button><button style="padding: 5px;" onclick="eliminarFondo('${mod.id}')">🗑️</button></div></div>`; });
         }
     </script>
 </body>
