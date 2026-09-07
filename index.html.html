@@ -245,10 +245,11 @@
             <section id="inventario" class="modulo">
                 <h2 style="color: var(--dorado);">Gestión de Artículos e Inventario</h2>
                 <div class="seccion-flotante">
+                    <h3 id="titulo-form-inv" style="color: var(--acento); margin-top: 0;">Agregar Nuevo Artículo</h3>
                     <div class="grid-auto">
                         <input type="text" id="inv-nombre" placeholder="Nombre del Artículo">
                         <input type="text" id="inv-codigo" placeholder="Código de Barras">
-                        <input type="number" id="inv-stock" placeholder="Existencias (Se sumará si ya existe)">
+                        <input type="number" id="inv-stock" placeholder="Existencias / Cantidad">
                         <select id="inv-tipo" onchange="window.toggleConfigKit()">
                             <option value="venta">Para Venta Normal</option>
                             <option value="consumo">Insumo (Solo consumo)</option>
@@ -275,7 +276,11 @@
                         <label style="cursor: pointer; color: #81c784;"><input type="checkbox" id="inv-iva" style="transform: scale(1.3); margin-right: 5px;"> Aplica IVA (16%)</label>
                         <label style="cursor: pointer; color: #ffb74d;"><input type="checkbox" id="inv-ieps" style="transform: scale(1.3); margin-right: 5px;"> Aplica IEPS (8%)</label>
                     </div>
-                    <button class="btn-accion" style="margin-top: 15px; width: 100%;" onclick="window.guardarArticulo()">💾 Guardar en Inventario</button>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn-accion" id="btn-guardar-inv" style="flex: 1;" onclick="window.guardarArticulo()">💾 Guardar en Inventario</button>
+                        <button id="btn-cancelar-inv" onclick="window.cancelarEdicionInv()" style="display:none; background: rgba(239, 83, 80, 0.4); border-color:#ef5350; color:white;">Cancelar Edición</button>
+                    </div>
                 </div>
                 
                 <!-- BUSCADOR DE INVENTARIO -->
@@ -371,7 +376,7 @@
                 </div>
             </section>
 
-            <!-- ENVÍOS (MODIFICADO - BLANCO Y NEGRO, SIN PESO NI GUÍA) -->
+            <!-- ENVÍOS -->
             <section id="envios" class="modulo">
                 <h2 style="color: var(--dorado);">Etiquetas de Envío (Interno)</h2>
                 <div class="seccion-flotante">
@@ -575,6 +580,7 @@
         window.carritoCotizacion = []; window.idCotizacionEditando = null;
         window.compraDraft = []; window.kitDraftComponentes = []; window.indexClienteEditando = null;
         window.indexUsuarioEditando = null;
+        window.indexInventarioEditando = null;
         window.ticketActualModal = null;
         window.usuarioLogueado = null; 
 
@@ -587,7 +593,7 @@
             
             let userF = window.usuariosGuardados.find(x => x.usuario === u && x.password === p);
 
-            // PUERTA DE EMERGENCIA (Si por cache se borró tu usuario, esto lo revive)
+            // PUERTA DE EMERGENCIA
             if(!userF && u === 'admin' && p === 'admin123') {
                 userF = { id: 1, usuario: 'admin', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'configuracion', 'usuarios'] };
                 const existeAdmin = window.usuariosGuardados.find(x => x.usuario === 'admin');
@@ -1109,10 +1115,64 @@
                         <td style="font-weight: bold; color: var(--acento);">${item.stock}</td>
                         <td>${pub}</td>
                         <td>${dueno}</td>
-                        <td><button onclick="window.eliminarArticuloInv(${index})">❌</button></td>
+                        <td style="display:flex; gap:5px;"><button onclick="window.editarArticuloInv(${index})">✏️ Editar</button><button onclick="window.eliminarArticuloInv(${index})">❌</button></td>
                     </tr>`;
                 }
             });
+        };
+
+        window.editarArticuloInv = function(index) {
+            const item = window.inventario[index];
+            document.getElementById('inv-codigo').value = item.codigo;
+            document.getElementById('inv-nombre').value = item.nombre;
+            document.getElementById('inv-tipo').value = item.tipo;
+            document.getElementById('inv-stock').value = item.stock;
+            
+            document.getElementById('inv-precio-pub').value = item.precios.pub || '';
+            document.getElementById('inv-precio-may1').value = item.precios.may1 || '';
+            document.getElementById('inv-precio-may2').value = item.precios.may2 || '';
+            document.getElementById('inv-precio-may3').value = item.precios.may3 || '';
+            document.getElementById('inv-precio-dueno').value = item.precios.dueno || '';
+            
+            document.getElementById('inv-iva').checked = item.aplicaIva || false;
+            document.getElementById('inv-ieps').checked = item.aplicaIeps || false;
+            
+            if(item.tipo === 'kit') {
+                window.kitDraftComponentes = item.componentes ? [...item.componentes] : [];
+                document.getElementById('config-kit').style.display = 'block';
+                window.actualizarListaDraftKit();
+            } else {
+                window.kitDraftComponentes = [];
+                document.getElementById('config-kit').style.display = 'none';
+            }
+            
+            window.indexInventarioEditando = index;
+            document.getElementById('titulo-form-inv').innerText = `Editando Artículo: ${item.nombre}`;
+            document.getElementById('btn-guardar-inv').innerText = "💾 Actualizar Artículo";
+            document.getElementById('btn-cancelar-inv').style.display = 'inline-block';
+            document.getElementById('inventario').scrollTo(0,0);
+        };
+
+        window.cancelarEdicionInv = function() {
+            window.indexInventarioEditando = null;
+            document.getElementById('inv-codigo').value = '';
+            document.getElementById('inv-nombre').value = '';
+            document.getElementById('inv-stock').value = '';
+            document.getElementById('inv-tipo').value = 'venta';
+            document.getElementById('inv-precio-pub').value = '';
+            document.getElementById('inv-precio-may1').value = '';
+            document.getElementById('inv-precio-may2').value = '';
+            document.getElementById('inv-precio-may3').value = '';
+            document.getElementById('inv-precio-dueno').value = '';
+            document.getElementById('inv-iva').checked = false;
+            document.getElementById('inv-ieps').checked = false;
+            
+            window.kitDraftComponentes = [];
+            document.getElementById('config-kit').style.display = 'none';
+            
+            document.getElementById('titulo-form-inv').innerText = "Agregar Nuevo Artículo";
+            document.getElementById('btn-guardar-inv').innerText = "💾 Guardar en Inventario";
+            document.getElementById('btn-cancelar-inv').style.display = 'none';
         };
 
         window.eliminarArticuloInv = function(index) {
@@ -1148,29 +1208,31 @@
             if(!art.nombre || !art.codigo) return alert("Nombre y Código obligatorios");
             if(art.tipo === 'kit') { if(window.kitDraftComponentes.length === 0) return alert("Un kit debe tener componentes."); art.componentes = [...window.kitDraftComponentes]; art.stock = 0; }
             
-            let existente = window.inventario.find(i => i.codigo === art.codigo);
-            if (existente) {
-                existente.stock += art.stock; 
-                existente.nombre = art.nombre; 
-                existente.tipo = art.tipo;
-                existente.aplicaIva = art.aplicaIva;
-                existente.aplicaIeps = art.aplicaIeps;
-                existente.precios = art.precios; 
-                if(art.tipo === 'kit') existente.componentes = art.componentes;
-                alert(`Artículo existente actualizado.\nSe sumaron ${art.stock} a las existencias actuales.`);
+            if (window.indexInventarioEditando !== null) {
+                window.inventario[window.indexInventarioEditando] = art;
+                alert("Artículo actualizado correctamente.");
+                window.cancelarEdicionInv();
             } else {
-                window.inventario.push(art); 
-                alert("Artículo nuevo guardado exitosamente."); 
+                let existente = window.inventario.find(i => i.codigo === art.codigo);
+                if (existente) {
+                    existente.stock += art.stock; 
+                    existente.nombre = art.nombre; 
+                    existente.tipo = art.tipo;
+                    existente.aplicaIva = art.aplicaIva;
+                    existente.aplicaIeps = art.aplicaIeps;
+                    existente.precios = art.precios; 
+                    if(art.tipo === 'kit') existente.componentes = art.componentes;
+                    alert(`Artículo existente actualizado.\nSe sumaron ${art.stock} a las existencias actuales.`);
+                    window.cancelarEdicionInv();
+                } else {
+                    window.inventario.push(art); 
+                    alert("Artículo nuevo guardado exitosamente."); 
+                    window.cancelarEdicionInv();
+                }
             }
             
             localStorage.setItem('pos_inventario', JSON.stringify(window.inventario)); 
             window.renderizarInventario();
-            
-            document.getElementById('inv-codigo').value = ''; 
-            document.getElementById('inv-nombre').value = ''; 
-            document.getElementById('inv-stock').value = '';
-            document.getElementById('inv-iva').checked = false;
-            document.getElementById('inv-ieps').checked = false;
         };
 
         // ==========================================
