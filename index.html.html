@@ -25,7 +25,7 @@
             color: var(--color-texto);
             overflow: hidden;
             
-            /* Fondo adaptativo de color contrastante (Gris/Azul muy oscuro) que resalta los colores cyan, dorado y plata del logo */
+            /* Fondo adaptativo de color contrastante */
             background: radial-gradient(circle at top center, #1e293b 0%, #0f172a 40%, #020617 100%);
             background-size: cover;
             background-attachment: fixed;
@@ -42,11 +42,11 @@
             border: 2px solid var(--acento); border-radius: 40px;
             display: flex; flex-direction: column; gap: 12px; padding: 15px 10px; z-index: 9999;
             box-shadow: 4px 0 15px rgba(0,0,0,0.8); align-items: center;
-            max-height: 90vh; overflow-y: auto; /* Permite scroll si la pantalla es bajita */
-            -ms-overflow-style: none; scrollbar-width: none; /* Oculta la barra en Firefox */
+            max-height: 90vh; overflow-y: auto; 
+            -ms-overflow-style: none; scrollbar-width: none; 
         }
         #menu-flotante::-webkit-scrollbar {
-            display: none; /* Oculta la barra visualmente en Chrome/Safari */
+            display: none; 
         }
         #menu-flotante a {
             text-decoration: none; font-size: 24px; color: white; transition: transform 0.2s, text-shadow 0.2s; padding: 5px;
@@ -63,7 +63,6 @@
             #menu-flotante { gap: 5px; padding: 10px 5px; }
             #menu-flotante a { font-size: 20px; width: 35px; height: 35px; }
         }
-        /* ================================== */
 
         .modulo {
             display: none; position: absolute;
@@ -139,7 +138,7 @@
         </div>
     </div>
 
-    <!-- CONTENEDOR PRINCIPAL DEL SISTEMA (Oculto hasta hacer login) -->
+    <!-- CONTENEDOR PRINCIPAL DEL SISTEMA -->
     <div id="app-container" style="display: none; width: 100%; height: 100%;">
         <nav id="menu-flotante">
             <a href="#" id="menu-ventas" onclick="window.cambiarModulo('ventas'); return false;" title="Terminal de Ventas">💰</a>
@@ -148,6 +147,7 @@
             <a href="#" id="menu-compras" onclick="window.cambiarModulo('compras'); return false;" title="Compras y Gastos">🛒</a>
             <a href="#" id="menu-cotizaciones" onclick="window.cambiarModulo('cotizaciones'); return false;" title="Cotizaciones">📝</a>
             <a href="#" id="menu-clientes" onclick="window.cambiarModulo('clientes'); return false;" title="Clientes y Deudas">👥</a>
+            <a href="#" id="menu-envios" onclick="window.cambiarModulo('envios'); return false;" title="Etiquetas de Envío">🚚</a>
             <a href="#" id="menu-historial" onclick="window.cambiarModulo('historial'); return false;" title="Historial de Tickets">🕒</a>
             <a href="#" id="menu-configuracion" onclick="window.cambiarModulo('configuracion'); return false;" title="Configuración PDF">⚙️</a>
             <a href="#" id="menu-usuarios" onclick="window.cambiarModulo('usuarios'); return false;" title="Usuarios y Permisos" style="border-top: 1px solid rgba(255,255,255,0.2); margin-top: 5px; padding-top: 10px;">👤</a>
@@ -248,7 +248,7 @@
                     <div class="grid-auto">
                         <input type="text" id="inv-nombre" placeholder="Nombre del Artículo">
                         <input type="text" id="inv-codigo" placeholder="Código de Barras">
-                        <input type="number" id="inv-stock" placeholder="Existencias">
+                        <input type="number" id="inv-stock" placeholder="Existencias (Se sumará si ya existe)">
                         <select id="inv-tipo" onchange="window.toggleConfigKit()">
                             <option value="venta">Para Venta Normal</option>
                             <option value="consumo">Insumo (Solo consumo)</option>
@@ -275,8 +275,14 @@
                         <label style="cursor: pointer; color: #81c784;"><input type="checkbox" id="inv-iva" style="transform: scale(1.3); margin-right: 5px;"> Aplica IVA (16%)</label>
                         <label style="cursor: pointer; color: #ffb74d;"><input type="checkbox" id="inv-ieps" style="transform: scale(1.3); margin-right: 5px;"> Aplica IEPS (8%)</label>
                     </div>
-                    <button class="btn-accion" style="margin-top: 15px; width: 100%;" onclick="window.guardarArticulo()">Guardar en Inventario</button>
+                    <button class="btn-accion" style="margin-top: 15px; width: 100%;" onclick="window.guardarArticulo()">💾 Guardar en Inventario</button>
                 </div>
+                
+                <!-- BUSCADOR DE INVENTARIO -->
+                <div style="margin-top: 25px; margin-bottom: 15px;">
+                    <input type="text" id="buscador-inventario" placeholder="🔍 Buscar artículo por código o nombre..." style="width: 100%; font-size: 1.1em; padding: 12px;" oninput="window.renderizarInventario()">
+                </div>
+                
                 <table>
                     <thead><tr><th>Cód.</th><th>Nombre</th><th>Tipo</th><th>Stock</th><th>P. Público</th><th>P. Dueño</th><th>Acciones</th></tr></thead>
                     <tbody id="lista-inventario"></tbody>
@@ -291,7 +297,7 @@
                     <h3 style="color: #81c784;">Ingreso Manual de Mercancía</h3>
                     <div style="overflow-x: auto;">
                         <table>
-                            <thead><tr><th>Código</th><th>Nombre del Artículo</th><th>Destino</th><th>Cant.</th><th>Costo Unitario ($)</th><th>Subtotal ($)</th><th>Acción</th></tr></thead>
+                            <thead><tr><th>Código</th><th>Nombre del Artículo</th><th>Destino</th><th>Cant.</th><th>Costo Unit. (Total Pagado c/u)</th><th>Total Línea ($)</th><th>Acción</th></tr></thead>
                             <tbody id="lista-articulos-compra"></tbody>
                         </table>
                     </div>
@@ -300,11 +306,21 @@
                     </div>
                     
                     <div style="margin-top: 25px; text-align: right; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid var(--dorado);">
-                        <p style="font-size: 1.1em; color: var(--acento);">Subtotal: $<span id="compra-subtotal">0.00</span></p>
+                        <p style="font-size: 1.1em; color: var(--acento);">Subtotal (Base sin impuestos): $<span id="compra-subtotal">0.00</span></p>
+                        <p style="font-size: 0.9em; color: #aaa; margin-top: 5px; margin-bottom: 10px;">IVA Desglosado: $<span id="compra-iva-monto">0.00</span> | IEPS Desglosado: $<span id="compra-ieps-monto">0.00</span></p>
+                        
                         <div style="display: flex; justify-content: flex-end; gap: 15px; margin: 10px 0;">
-                            <label style="cursor: pointer;"><input type="checkbox" id="compra-iva" onchange="window.renderizarTablaCompra()" style="transform: scale(1.3); margin-right: 5px;"> Agregar IVA (16%)</label>
-                            <label style="cursor: pointer;"><input type="checkbox" id="compra-ieps" onchange="window.renderizarTablaCompra()" style="transform: scale(1.3); margin-right: 5px;"> Agregar IEPS (8%)</label>
+                            <label style="cursor: pointer;"><input type="checkbox" id="compra-iva" onchange="window.renderizarTablaCompra()" style="transform: scale(1.3); margin-right: 5px;"> Extraer IVA (16%)</label>
+                            <label style="cursor: pointer;"><input type="checkbox" id="compra-ieps" onchange="window.renderizarTablaCompra()" style="transform: scale(1.3); margin-right: 5px;"> Extraer IEPS (8%)</label>
                         </div>
+                        
+                        <div style="margin: 15px 0; border-top: 1px solid rgba(255,255,255,0.2); border-bottom: 1px solid rgba(255,255,255,0.2); padding: 15px 0; text-align: right;">
+                            <label style="cursor: pointer; font-size: 1.1em; color: #ffb74d;">
+                                <input type="checkbox" id="compra-caja-chica" style="transform: scale(1.4); margin-right: 8px;" checked>
+                                💸 Se pagó con Efectivo de la Caja (Se restará del Corte)
+                            </label>
+                        </div>
+
                         <h3 style="color: #ffb74d; margin-top: 5px;">Total Gasto: $<span id="compra-total">0.00</span></h3>
                         <button class="btn-accion" style="width: 100%; max-width: 450px; font-size: 1.1em; padding: 12px;" onclick="window.confirmarCompra()">✅ Confirmar Compra, Ingresar Inventario y PDF</button>
                     </div>
@@ -313,7 +329,7 @@
                 <div class="seccion-flotante">
                     <h3 style="color: var(--dorado);">Historial de Compras</h3>
                     <table>
-                        <thead><tr><th>Fecha</th><th>Subtotal</th><th>IVA (16%)</th><th>IEPS (8%)</th><th>Total Gasto</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>Fecha</th><th>Subtotal Base</th><th>IVA (16%)</th><th>IEPS (8%)</th><th>Total Gasto</th><th>Origen</th><th>Acciones</th></tr></thead>
                         <tbody id="lista-historial-compras"></tbody>
                     </table>
                 </div>
@@ -352,6 +368,30 @@
                         <thead><tr><th>Fecha</th><th>Cliente</th><th>Total Final</th><th>Acciones</th></tr></thead>
                         <tbody id="lista-cotizaciones-guardadas"></tbody>
                     </table>
+                </div>
+            </section>
+
+            <!-- ENVÍOS (MODIFICADO - BLANCO Y NEGRO, SIN PESO NI GUÍA) -->
+            <section id="envios" class="modulo">
+                <h2 style="color: var(--dorado);">Etiquetas de Envío (Interno)</h2>
+                <div class="seccion-flotante">
+                    <h3 style="color: var(--acento);">Generar Nueva Etiqueta</h3>
+                    <p style="font-size: 0.9em; margin-bottom: 15px;">Los datos del Remitente (DE:) se tomarán automáticamente de la configuración de tu sistema.</p>
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">
+                        <label for="select-cliente-envio" style="font-weight: bold; color: var(--dorado);">Cargar Cliente Registrado:</label>
+                        <select id="select-cliente-envio" onchange="window.alSeleccionarClienteEnvio()" style="flex: 1; max-width: 350px;">
+                            <option value="">Selecciona un cliente o llena los datos abajo</option>
+                        </select>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px solid var(--acento); max-width: 600px;">
+                        <h4 style="color: #81c784; margin-top: 0;">Datos del Destinatario</h4>
+                        <input type="text" id="envio-nombre" placeholder="Nombre del Destinatario (o Empresa)" style="width:100%;">
+                        <textarea id="envio-direccion" placeholder="Calle, Número, Colonia, Ciudad, C.P., Estado" style="width:100%; height: 80px;"></textarea>
+                        <input type="text" id="envio-telefono" placeholder="Teléfono de Contacto" style="width:100%;">
+                        <button class="btn-accion" style="width: 100%; margin-top: 25px; padding: 15px; font-size: 1.1em;" onclick="window.generarPDFEnvio()">📄 Generar Etiqueta PDF</button>
+                    </div>
                 </div>
             </section>
 
@@ -460,6 +500,7 @@
                             <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="compras"> 🛒 Compras</label>
                             <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="cotizaciones"> 📝 Cotizaciones</label>
                             <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="clientes"> 👥 Clientes</label>
+                            <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="envios"> 🚚 Envíos</label>
                             <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="historial"> 🕒 Historial</label>
                             <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="configuracion"> ⚙️ Configuración</label>
                         </div>
@@ -504,7 +545,6 @@
     <div id="modal-escaner" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; justify-content:center; align-items:center; flex-direction:column;">
         <div style="background:#1e1e1e; padding:20px; border-radius:10px; width:90%; max-width:500px; border: 1px solid var(--acento); text-align:center;">
             <h3 style="color:var(--dorado); margin-top:0;">Escanear Código de Barras</h3>
-            <!-- Contenedor donde se mostrará la cámara -->
             <div id="reader" style="width: 100%; min-height: 300px; background: #000; border-radius: 8px; overflow: hidden;"></div>
             <button class="btn-accion" style="margin-top:20px; width:100%; background: rgba(239, 83, 80, 0.2); border-color: #ef5350;" onclick="window.cerrarEscaner()">❌ Cancelar / Cerrar</button>
         </div>
@@ -517,11 +557,10 @@
         window.nombresPrecios = { 'pub': 'Público', 'may1': 'Mayoreo 1', 'may2': 'Mayoreo 2', 'may3': 'Mayoreo 3', 'dueno': 'Dueño' };
         window.configuracionApp = JSON.parse(localStorage.getItem('pos_configuracion')) || { nombreNegocio: 'MINOS', rfc: '', telefono: '', correo: '', direccion: '', notasCotizacion: `Precios expresados en pesos mexicanos.\nCotización sujeta a disponibilidad de mercancía.\nForma de pago:\nObservaciones:`, notasTicket: "Gracias por tu compra.\nConserva este ticket como comprobante.\nProductos, detalles y más..." };
         
-        // Base de Datos de Usuarios (Si está vacía, crea el admin por defecto)
-        const defaultUsuarios = [{ id: 1, usuario: 'admin', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'historial', 'configuracion', 'usuarios'] }];
+        const defaultUsuarios = [{ id: 1, usuario: 'admin', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'configuracion', 'usuarios'] }];
         window.usuariosGuardados = JSON.parse(localStorage.getItem('pos_usuarios'));
-        if(!window.usuariosGuardados || window.usuariosGuardados.length === 0) {
-            window.usuariosGuardados = defaultUsuarios;
+        if(!window.usuariosGuardados || !Array.isArray(window.usuariosGuardados) || window.usuariosGuardados.length === 0) {
+            window.usuariosGuardados = [...defaultUsuarios];
             localStorage.setItem('pos_usuarios', JSON.stringify(window.usuariosGuardados));
         }
 
@@ -537,7 +576,7 @@
         window.compraDraft = []; window.kitDraftComponentes = []; window.indexClienteEditando = null;
         window.indexUsuarioEditando = null;
         window.ticketActualModal = null;
-        window.usuarioLogueado = null; // Guardará la sesión actual
+        window.usuarioLogueado = null; 
 
         // ==========================================
         // SISTEMA DE LOGIN (INICIO DE SESIÓN)
@@ -546,17 +585,24 @@
             const u = document.getElementById('login-user').value.trim();
             const p = document.getElementById('login-pass').value.trim();
             
-            // Buscar el usuario en la base de datos
-            const userF = window.usuariosGuardados.find(x => x.usuario === u && x.password === p);
+            let userF = window.usuariosGuardados.find(x => x.usuario === u && x.password === p);
+
+            // PUERTA DE EMERGENCIA (Si por cache se borró tu usuario, esto lo revive)
+            if(!userF && u === 'admin' && p === 'admin123') {
+                userF = { id: 1, usuario: 'admin', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'configuracion', 'usuarios'] };
+                const existeAdmin = window.usuariosGuardados.find(x => x.usuario === 'admin');
+                if(!existeAdmin) {
+                    window.usuariosGuardados.push(userF);
+                    localStorage.setItem('pos_usuarios', JSON.stringify(window.usuariosGuardados));
+                }
+            }
             
             if(userF) { 
                 window.usuarioLogueado = userF;
                 
-                // Ocultar pantalla de login y mostrar sistema
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app-container').style.display = 'block';
                 
-                // Cargar datos locales y preparar la interfaz gráfica
                 window.cargarConfiguracionDOM(); 
                 window.renderizarInventario(); 
                 window.renderizarCotizacionesGuardadas(); 
@@ -564,44 +610,37 @@
                 window.renderizarHistorial(); 
                 window.renderizarHistorialCompras();
                 window.actualizarVistaCaja();
-                window.renderizarUsuarios(); // Módulo Usuarios
+                window.renderizarUsuarios(); 
 
-                // APLICAR PERMISOS AL MENÚ
-                const modulosTodos = ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'historial', 'configuracion', 'usuarios'];
+                const modulosTodos = ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'configuracion', 'usuarios'];
                 let primerModuloPermitido = null;
 
                 modulosTodos.forEach(mod => {
                     const btn = document.getElementById('menu-' + mod);
                     if(btn) {
-                        // Si es Admin, o si el empleado tiene el módulo en su lista de permisos
                         if(userF.rol === 'admin' || (userF.permisos && userF.permisos.includes(mod))) {
                             btn.style.display = 'flex';
-                            if(!primerModuloPermitido) primerModuloPermitido = mod; // Guardar el primero al que tiene acceso
+                            if(!primerModuloPermitido) primerModuloPermitido = mod; 
                         } else {
                             btn.style.display = 'none';
                         }
                     }
                 });
 
-                // Cambiar la pantalla inicial al primer módulo que sí pueda ver
                 if(primerModuloPermitido) {
                     window.cambiarModulo(primerModuloPermitido);
                 }
 
-                // Finalmente, conectar a Firebase para descargar la nube
                 if(window.loadFromFirebase) {
                     window.loadFromFirebase();
                 }
                 
             } else {
-                // Credenciales incorrectas
                 document.getElementById('login-error').style.display = 'block';
             }
         };
 
-        // EVENTOS DE TECLADO GLOBALES (CTRL + M)
         document.addEventListener('keydown', function(e) {
-            // CTRL + M para editar venta en modal (Solo si está logueado y tiene permiso de Ventas)
             if (e.ctrlKey && e.key.toLowerCase() === 'm' && window.usuarioLogueado) {
                 if(window.usuarioLogueado.rol === 'admin' || window.usuarioLogueado.permisos.includes('ventas')) {
                     e.preventDefault();
@@ -692,10 +731,9 @@
             
             if(!usr || !pass) return alert("El usuario y la contraseña son obligatorios.");
 
-            // Recolectar permisos (si es empleado)
             let permisosArr = [];
             if(rol === 'admin') {
-                permisosArr = ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'historial', 'configuracion', 'usuarios'];
+                permisosArr = ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'configuracion', 'usuarios'];
             } else {
                 const checks = document.querySelectorAll('.chk-permiso');
                 checks.forEach(c => {
@@ -708,7 +746,6 @@
                 window.usuariosGuardados[window.indexUsuarioEditando] = { ...window.usuariosGuardados[window.indexUsuarioEditando], usuario: usr, password: pass, rol: rol, permisos: permisosArr };
                 alert("Usuario actualizado con éxito.");
             } else {
-                // Verificar si ya existe el nombre
                 if(window.usuariosGuardados.find(x => x.usuario.toLowerCase() === usr.toLowerCase())) {
                     return alert("Ya existe un usuario con ese nombre.");
                 }
@@ -727,7 +764,6 @@
             window.usuariosGuardados.forEach((u, idx) => {
                 let badgeRol = u.rol === 'admin' ? '<span style="color:var(--dorado)">Administrador</span>' : '<span style="color:#81c784">Empleado</span>';
                 
-                // Botón de eliminar (Prevenir que se borre el último admin)
                 let btnEliminar = '';
                 const adminsCount = window.usuariosGuardados.filter(x => x.rol === 'admin').length;
                 if(u.rol === 'admin' && adminsCount <= 1) {
@@ -754,7 +790,6 @@
             document.getElementById('usr-pass').value = u.password;
             document.getElementById('usr-rol').value = u.rol;
             
-            // Marcar checkboxes correspondientes
             const checks = document.querySelectorAll('.chk-permiso');
             checks.forEach(c => {
                 if(u.rol === 'admin' || (u.permisos && u.permisos.includes(c.value))) {
@@ -850,7 +885,6 @@
                 return;
             }
 
-            // Resetear arreglos y objetos globales en la memoria local (MANTENEMOS LOS USUARIOS)
             window.inventario = [];
             window.clientesGuardados = [];
             window.totalesDia = { efectivo: 0, debito: 0, credito: 0, transferencia: 0, gastos: 0 };
@@ -861,7 +895,6 @@
             window.compraDraft = [];
             window.carritoCotizacion = [];
             
-            // Sobreescribir el LocalStorage con datos en blanco
             localStorage.setItem('pos_inventario', '[]');
             localStorage.setItem('pos_clientes', '[]');
             localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia));
@@ -869,19 +902,16 @@
             localStorage.setItem('pos_historial_compras', '[]');
             localStorage.setItem('pos_cotizaciones', '[]');
             
-            // Forzar el guardado y sincronización hacia la nube de Firebase de forma manual e inmediata
             if(window.syncToFirebase) {
                 await window.syncToFirebase();
             }
 
             alert("✅ La base de datos ha sido borrada por completo.\nEl sistema está limpio y listo para usarse desde cero. La página se recargará ahora.");
-            
-            // Recargar la pestaña para asegurar que todo el renderizado gráfico quede en blanco y pida login
             location.reload();
         };
 
         // ==========================================
-        // MÓDULO CLIENTES
+        // MÓDULO CLIENTES Y SELECTS (INCLUYE ENVÍOS)
         // ==========================================
         window.guardarCliente = function() { 
             const nombre = document.getElementById('cliente-nombre').value; 
@@ -945,34 +975,143 @@
         };
 
         window.actualizarSelectsClientes = function() { 
-            const selVenta = document.getElementById('select-cliente-venta'); let valVentaActual = selVenta.value; selVenta.innerHTML = '<option value="">Público en General</option>'; 
-            const selCot = document.getElementById('select-cliente-cotizacion'); let valCotActual = selCot.value; selCot.innerHTML = '<option value="">Público Libre</option>'; 
-            window.clientesGuardados.forEach(c => { selVenta.innerHTML += `<option value="${c.id}">${c.nombre}</option>`; selCot.innerHTML += `<option value="${c.id}">${c.nombre}</option>`; }); 
-            if(valVentaActual) selVenta.value = valVentaActual; if(valCotActual) selCot.value = valCotActual; 
+            const selVenta = document.getElementById('select-cliente-venta'); let valVentaActual = selVenta ? selVenta.value : ''; if(selVenta) selVenta.innerHTML = '<option value="">Público en General</option>'; 
+            const selCot = document.getElementById('select-cliente-cotizacion'); let valCotActual = selCot ? selCot.value : ''; if(selCot) selCot.innerHTML = '<option value="">Público Libre</option>'; 
+            const selEnvio = document.getElementById('select-cliente-envio'); let valEnvioActual = selEnvio ? selEnvio.value : ''; if(selEnvio) selEnvio.innerHTML = '<option value="">Selecciona un cliente o llena los datos abajo</option>';
+            
+            window.clientesGuardados.forEach(c => { 
+                if(selVenta) selVenta.innerHTML += `<option value="${c.id}">${c.nombre}</option>`; 
+                if(selCot) selCot.innerHTML += `<option value="${c.id}">${c.nombre}</option>`; 
+                if(selEnvio) selEnvio.innerHTML += `<option value="${c.id}">${c.nombre}</option>`; 
+            }); 
+            
+            if(valVentaActual && selVenta) selVenta.value = valVentaActual; 
+            if(valCotActual && selCot) selCot.value = valCotActual; 
+            if(valEnvioActual && selEnvio) selEnvio.value = valEnvioActual;
         };
 
         window.abonarDeuda = function(index) { const monto = parseFloat(prompt(`Abonar a ${window.clientesGuardados[index].nombre}:`)); if(monto && monto > 0) { if(monto > window.clientesGuardados[index].deuda) return alert("No puede ser mayor a la deuda."); window.clientesGuardados[index].deuda -= monto; localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados)); window.totalesDia.efectivo += monto; localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); window.actualizarVistaCaja(); window.renderizarClientes(); alert("Abono registrado."); } };
         window.eliminarCliente = function(index) { if(confirm("¿Eliminar a este cliente?")) { window.clientesGuardados.splice(index, 1); localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados)); window.renderizarClientes(); } };
 
         // ==========================================
-        // INVENTARIO
+        // MÓDULO ENVÍOS Y ETIQUETAS PDF
+        // ==========================================
+        window.alSeleccionarClienteEnvio = function() {
+            const id = document.getElementById('select-cliente-envio').value;
+            if(id) {
+                const c = window.clientesGuardados.find(x => x.id == id);
+                if(c) {
+                    document.getElementById('envio-nombre').value = c.nombre || '';
+                    document.getElementById('envio-direccion').value = c.direccion || '';
+                    document.getElementById('envio-telefono').value = c.telefono || '';
+                }
+            } else {
+                document.getElementById('envio-nombre').value = '';
+                document.getElementById('envio-direccion').value = '';
+                document.getElementById('envio-telefono').value = '';
+            }
+        };
+
+        window.generarPDFEnvio = function() {
+            const destNombre = document.getElementById('envio-nombre').value.trim();
+            const destDir = document.getElementById('envio-direccion').value.trim();
+            const destTel = document.getElementById('envio-telefono').value.trim();
+
+            if(!destNombre || !destDir) return alert("⚠️ El Nombre y la Dirección del Destinatario son obligatorios para generar la etiqueta.");
+
+            const conf = window.configuracionApp || {};
+            const deNombre = conf.nombreNegocio || 'Mi Empresa';
+            const deDir = conf.direccion || 'Dirección no configurada';
+            const deTel = conf.telefono || 'Teléfono no configurado';
+
+            const { jsPDF } = window.jspdf; 
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [100, 150] }); 
+            
+            doc.setTextColor(0, 0, 0); 
+            doc.setDrawColor(0, 0, 0); 
+            
+            const logoData = localStorage.getItem('pos_logo_base64');
+            if(logoData) {
+                try { 
+                    doc.addImage(logoData, 'PNG', 35, 10, 30, 30); 
+                } catch(e){}
+            } else {
+                doc.setLineDashPattern([1, 1], 0);
+                doc.rect(40, 15, 20, 20);
+                doc.setFontSize(8);
+                doc.text("TU\nLOGO", 50, 25, {align: 'center'});
+                doc.setLineDashPattern([], 0); 
+            }
+            
+            doc.setFontSize(16);
+            doc.setFont("helvetica", "bold");
+            const nameLines = doc.splitTextToSize(deNombre.toUpperCase(), 90);
+            doc.text(nameLines, 50, 48, {align: 'center'});
+            
+            doc.setLineWidth(0.4);
+            doc.rect(5, 60, 90, 75); 
+            doc.line(50, 60, 50, 135); 
+            doc.line(5, 68, 95, 68); 
+            
+            doc.setFontSize(11);
+            doc.setFont("helvetica", "bold");
+            
+            doc.text("DE (REMITENTE):", 7, 65.5);
+            doc.text("PARA (DESTINATARIO):", 52, 65.5);
+            
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            const remLines = doc.splitTextToSize(`${deNombre}\n\n${deDir}\n\nTel: ${deTel}`, 42);
+            doc.text(remLines, 7, 75);
+            
+            doc.setFontSize(11);
+            doc.setFont("helvetica", "bold");
+            const destNameLines = doc.splitTextToSize(destNombre, 42);
+            doc.text(destNameLines, 52, 75);
+            
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            let yOffsetDir = 76 + (destNameLines.length * 5);
+            const destDirLines = doc.splitTextToSize(`${destDir}\n\nTel: ${destTel}`, 42);
+            doc.text(destDirLines, 52, yOffsetDir);
+            
+            doc.setFontSize(8);
+            doc.text("Etiqueta de Envío Interno", 50, 145, {align: 'center'});
+            
+            doc.save(`Etiqueta_Envio_${destNombre.replace(/\s+/g, '_')}.pdf`);
+            
+            document.getElementById('envio-nombre').value = '';
+            document.getElementById('envio-direccion').value = '';
+            document.getElementById('envio-telefono').value = '';
+            document.getElementById('select-cliente-envio').value = '';
+        };
+
+        // ==========================================
+        // INVENTARIO Y BUSCADOR
         // ==========================================
         window.renderizarInventario = function() {
             const tbody = document.getElementById('lista-inventario');
+            if(!tbody) return;
             tbody.innerHTML = '';
+            
+            const buscadorInput = document.getElementById('buscador-inventario');
+            const query = buscadorInput ? buscadorInput.value.toLowerCase() : '';
+            
             window.inventario.forEach((item, index) => {
-                let tipo = item.tipo === 'venta' ? 'Venta' : (item.tipo === 'consumo' ? 'Insumo' : 'Kit');
-                let pub = item.precios && item.precios.pub ? `$${item.precios.pub.toFixed(2)}` : '$0.00';
-                let dueno = item.precios && item.precios.dueno ? `$${item.precios.dueno.toFixed(2)}` : '$0.00';
-                tbody.innerHTML += `<tr>
-                    <td>${item.codigo}</td>
-                    <td>${item.nombre}</td>
-                    <td>${tipo}</td>
-                    <td>${item.stock}</td>
-                    <td>${pub}</td>
-                    <td>${dueno}</td>
-                    <td><button onclick="window.eliminarArticuloInv(${index})">❌</button></td>
-                </tr>`;
+                if(item.codigo.toLowerCase().includes(query) || item.nombre.toLowerCase().includes(query)) {
+                    let tipo = item.tipo === 'venta' ? 'Venta' : (item.tipo === 'consumo' ? 'Insumo' : 'Kit');
+                    let pub = item.precios && item.precios.pub ? `$${item.precios.pub.toFixed(2)}` : '$0.00';
+                    let dueno = item.precios && item.precios.dueno ? `$${item.precios.dueno.toFixed(2)}` : '$0.00';
+                    tbody.innerHTML += `<tr>
+                        <td>${item.codigo}</td>
+                        <td>${item.nombre}</td>
+                        <td>${tipo}</td>
+                        <td style="font-weight: bold; color: var(--acento);">${item.stock}</td>
+                        <td>${pub}</td>
+                        <td>${dueno}</td>
+                        <td><button onclick="window.eliminarArticuloInv(${index})">❌</button></td>
+                    </tr>`;
+                }
             });
         };
 
@@ -988,10 +1127,11 @@
         window.llenarSelectInsumos = function() { const sel = document.getElementById('sel-insumo-kit'); sel.innerHTML = '<option value="">Selecciona un insumo...</option>'; window.inventario.filter(i => i.tipo !== 'kit').forEach(i => { sel.innerHTML += `<option value="${i.codigo}">${i.nombre} (Stock: ${i.stock})</option>`; }); };
         window.agregarInsumoAlKitDraft = function() { const cod = document.getElementById('sel-insumo-kit').value; const cant = parseInt(document.getElementById('cant-insumo-kit').value); if(!cod || !cant || cant <= 0) return alert("Selecciona un insumo y cantidad."); const insumo = window.inventario.find(i => i.codigo === cod); window.kitDraftComponentes.push({ codigoInsumo: cod, nombre: insumo.nombre, cant: cant }); window.actualizarListaDraftKit(); };
         window.actualizarListaDraftKit = function() { const ul = document.getElementById('lista-draft-kit'); ul.innerHTML = ''; window.kitDraftComponentes.forEach((c, idx) => { ul.innerHTML += `<li>${c.cant}x ${c.nombre} <button onclick="window.kitDraftComponentes.splice(${idx},1); window.actualizarListaDraftKit()" style="padding: 2px 5px; font-size:10px;">❌</button></li>`; }); };
+        
         window.guardarArticulo = function() {
             const art = { 
-                codigo: document.getElementById('inv-codigo').value, 
-                nombre: document.getElementById('inv-nombre').value, 
+                codigo: document.getElementById('inv-codigo').value.trim(), 
+                nombre: document.getElementById('inv-nombre').value.trim(), 
                 tipo: document.getElementById('inv-tipo').value, 
                 stock: parseInt(document.getElementById('inv-stock').value) || 0, 
                 aplicaIva: document.getElementById('inv-iva').checked,
@@ -1004,15 +1144,28 @@
                     dueno: parseFloat(document.getElementById('inv-precio-dueno').value) || 0 
                 } 
             };
+            
             if(!art.nombre || !art.codigo) return alert("Nombre y Código obligatorios");
             if(art.tipo === 'kit') { if(window.kitDraftComponentes.length === 0) return alert("Un kit debe tener componentes."); art.componentes = [...window.kitDraftComponentes]; art.stock = 0; }
             
-            window.inventario.push(art); 
+            let existente = window.inventario.find(i => i.codigo === art.codigo);
+            if (existente) {
+                existente.stock += art.stock; 
+                existente.nombre = art.nombre; 
+                existente.tipo = art.tipo;
+                existente.aplicaIva = art.aplicaIva;
+                existente.aplicaIeps = art.aplicaIeps;
+                existente.precios = art.precios; 
+                if(art.tipo === 'kit') existente.componentes = art.componentes;
+                alert(`Artículo existente actualizado.\nSe sumaron ${art.stock} a las existencias actuales.`);
+            } else {
+                window.inventario.push(art); 
+                alert("Artículo nuevo guardado exitosamente."); 
+            }
+            
             localStorage.setItem('pos_inventario', JSON.stringify(window.inventario)); 
-            alert("Artículo guardado."); 
             window.renderizarInventario();
             
-            // Limpiar formulario
             document.getElementById('inv-codigo').value = ''; 
             document.getElementById('inv-nombre').value = ''; 
             document.getElementById('inv-stock').value = '';
@@ -1025,18 +1178,41 @@
         // ==========================================
         window.renderizarTablaCompra = function() { 
             const tbody = document.getElementById('lista-articulos-compra'); tbody.innerHTML = ''; 
-            let subtotal = 0;
+            let totalGastoGlobal = 0;
+            
             window.compraDraft.forEach((item, index) => { 
-                const sub = item.cant * item.costo;
-                subtotal += sub;
-                tbody.innerHTML += `<tr><td><input type="text" placeholder="Código" value="${item.codigo}" onchange="window.compraDraft[${index}].codigo = this.value" style="width: 80px;"></td><td><input type="text" placeholder="Nombre" value="${item.nombre}" onchange="window.compraDraft[${index}].nombre = this.value" style="width: 150px;"></td><td><select onchange="window.compraDraft[${index}].tipo = this.value"><option value="venta" ${item.tipo==='venta'?'selected':''}>Venta</option><option value="consumo" ${item.tipo==='consumo'?'selected':''}>Consumo/Insumo</option></select></td><td><input type="number" value="${item.cant}" style="width: 60px;" onchange="window.compraDraft[${index}].cant = parseInt(this.value); window.renderizarTablaCompra();"></td><td><input type="number" value="${item.costo}" style="width: 80px;" onchange="window.compraDraft[${index}].costo = parseFloat(this.value); window.renderizarTablaCompra();"></td><td style="font-weight:bold;">$${sub.toFixed(2)}</td><td><button onclick="window.removerFilaCompra(${index})">❌</button></td></tr>`; 
+                const totalLinea = item.cant * item.costo;
+                totalGastoGlobal += totalLinea;
+                
+                tbody.innerHTML += `<tr>
+                    <td><input type="text" placeholder="Código" value="${item.codigo}" onchange="window.compraDraft[${index}].codigo = this.value" style="width: 80px;"></td>
+                    <td><input type="text" placeholder="Nombre" value="${item.nombre}" onchange="window.compraDraft[${index}].nombre = this.value" style="width: 150px;"></td>
+                    <td><select onchange="window.compraDraft[${index}].tipo = this.value">
+                        <option value="venta" ${item.tipo==='venta'?'selected':''}>Venta</option>
+                        <option value="consumo" ${item.tipo==='consumo'?'selected':''}>Consumo/Insumo</option>
+                    </select></td>
+                    <td><input type="number" value="${item.cant}" style="width: 60px;" onchange="window.compraDraft[${index}].cant = parseInt(this.value); window.renderizarTablaCompra();"></td>
+                    <td><input type="number" value="${item.costo}" style="width: 80px;" onchange="window.compraDraft[${index}].costo = parseFloat(this.value); window.renderizarTablaCompra();" title="Ingresa el costo total final por unidad"></td>
+                    <td style="font-weight:bold; color:var(--acento);">$${totalLinea.toFixed(2)}</td>
+                    <td><button onclick="window.removerFilaCompra(${index})">❌</button></td>
+                </tr>`; 
             }); 
             
+            const aplicaIva = document.getElementById('compra-iva').checked;
+            const aplicaIeps = document.getElementById('compra-ieps').checked;
+
+            let tasa = 0;
+            if(aplicaIva) tasa += 0.16;
+            if(aplicaIeps) tasa += 0.08;
+
+            const subtotal = totalGastoGlobal / (1 + tasa);
+            const iva = aplicaIva ? subtotal * 0.16 : 0;
+            const ieps = aplicaIeps ? subtotal * 0.08 : 0;
+
             document.getElementById('compra-subtotal').innerText = subtotal.toFixed(2);
-            const iva = document.getElementById('compra-iva').checked ? subtotal * 0.16 : 0;
-            const ieps = document.getElementById('compra-ieps').checked ? subtotal * 0.08 : 0;
-            const total = subtotal + iva + ieps;
-            document.getElementById('compra-total').innerText = total.toFixed(2);
+            document.getElementById('compra-iva-monto').innerText = iva.toFixed(2);
+            document.getElementById('compra-ieps-monto').innerText = ieps.toFixed(2);
+            document.getElementById('compra-total').innerText = totalGastoGlobal.toFixed(2);
         };
         
         window.agregarFilaCompraManual = function() { window.compraDraft.push({ id: Date.now(), nombre: "", codigo: "", tipo: "consumo", cant: 1, costo: 0 }); window.renderizarTablaCompra(); };
@@ -1044,33 +1220,52 @@
         
         window.confirmarCompra = function() { 
             if(window.compraDraft.length === 0) return alert("No hay artículos."); 
-            let agregados = 0; let subtotalGasto = 0; 
+            let agregados = 0; let totalGastoGlobal = 0; 
+            
             window.compraDraft.forEach(item => { 
                 if(!item.nombre || !item.codigo) return; 
                 let existente = window.inventario.find(i => i.codigo === item.codigo); 
-                subtotalGasto += (item.cant * item.costo); 
-                if (existente) existente.stock += item.cant; 
-                else window.inventario.push({ codigo: item.codigo, nombre: item.nombre, tipo: item.tipo, stock: item.cant, precios: { pub: item.costo * 1.5, may1: item.costo * 1.4, may2: item.costo * 1.3, may3: item.costo * 1.2, dueno: item.costo } }); 
+                totalGastoGlobal += (item.cant * item.costo); 
+                if (existente) {
+                    existente.stock += item.cant; 
+                } else {
+                    window.inventario.push({ codigo: item.codigo, nombre: item.nombre, tipo: item.tipo, stock: item.cant, precios: { pub: item.costo * 1.5, may1: item.costo * 1.4, may2: item.costo * 1.3, may3: item.costo * 1.2, dueno: item.costo } }); 
+                }
                 agregados++; 
             }); 
             if(agregados === 0) return alert("Llenar Código y Nombre."); 
             
-            const iva = document.getElementById('compra-iva').checked ? subtotalGasto * 0.16 : 0;
-            const ieps = document.getElementById('compra-ieps').checked ? subtotalGasto * 0.08 : 0;
-            const totalGasto = subtotalGasto + iva + ieps;
+            const aplicaIva = document.getElementById('compra-iva').checked;
+            const aplicaIeps = document.getElementById('compra-ieps').checked;
 
-            window.totalesDia.gastos += totalGasto; 
-            localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); 
+            let tasa = 0;
+            if(aplicaIva) tasa += 0.16;
+            if(aplicaIeps) tasa += 0.08;
+
+            const subtotalGasto = totalGastoGlobal / (1 + tasa);
+            const iva = aplicaIva ? subtotalGasto * 0.16 : 0;
+            const ieps = aplicaIeps ? subtotalGasto * 0.08 : 0;
+            
+            const pagadoConCaja = document.getElementById('compra-caja-chica').checked;
+            
+            if(pagadoConCaja) {
+                window.totalesDia.gastos += totalGastoGlobal; 
+                localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); 
+            }
+
             localStorage.setItem('pos_inventario', JSON.stringify(window.inventario)); 
             
-            const nuevaCompra = { id: Date.now(), fecha: new Date().toLocaleString(), subtotal: subtotalGasto, iva: iva, ieps: ieps, total: totalGasto, items: [...window.compraDraft] };
+            const nuevaCompra = { id: Date.now(), fecha: new Date().toLocaleString(), subtotal: subtotalGasto, iva: iva, ieps: ieps, total: totalGastoGlobal, pagadoConCaja: pagadoConCaja, items: [...window.compraDraft] };
             window.historialCompras.push(nuevaCompra);
             localStorage.setItem('pos_historial_compras', JSON.stringify(window.historialCompras));
 
-            alert(`Compra registrada con éxito.\nTotal guardado y Gasto restado de caja: $${totalGasto.toFixed(2)}`); 
+            const msjGasto = pagadoConCaja ? `\nGasto restado de la caja: $${totalGastoGlobal.toFixed(2)}` : `\nNo se restó de la caja (Pago externo).`;
+            alert(`Compra registrada con éxito.\nLas existencias se han sumado automáticamente a tu inventario.` + msjGasto); 
+            
             window.compraDraft = []; 
             document.getElementById('compra-iva').checked = false;
             document.getElementById('compra-ieps').checked = false;
+            document.getElementById('compra-caja-chica').checked = true;
             
             window.renderizarTablaCompra();
             window.renderizarHistorialCompras();
@@ -1081,7 +1276,8 @@
         window.renderizarHistorialCompras = function() {
             const tbody = document.getElementById('lista-historial-compras'); tbody.innerHTML = '';
             window.historialCompras.slice().reverse().forEach(c => {
-                tbody.innerHTML += `<tr><td>${c.fecha}</td><td>$${c.subtotal.toFixed(2)}</td><td>$${c.iva.toFixed(2)}</td><td>$${c.ieps.toFixed(2)}</td><td style="color:#ef5350; font-weight:bold;">$${c.total.toFixed(2)}</td><td><button onclick="window.generarPDFCompra(${c.id})" style="background: rgba(0, 210, 255, 0.4);">📄 PDF Compra</button></td></tr>`;
+                const origen = (c.pagadoConCaja !== false) ? '<span style="color:#ef5350;">Caja Fís.</span>' : '<span style="color:#81c784;">Externo</span>';
+                tbody.innerHTML += `<tr><td>${c.fecha}</td><td>$${c.subtotal.toFixed(2)}</td><td>$${c.iva.toFixed(2)}</td><td>$${c.ieps.toFixed(2)}</td><td style="color:#ef5350; font-weight:bold;">$${c.total.toFixed(2)}</td><td>${origen}</td><td><button onclick="window.generarPDFCompra(${c.id})" style="background: rgba(0, 210, 255, 0.4);">📄 PDF</button></td></tr>`;
             });
         };
 
@@ -1094,13 +1290,16 @@
             
             if(window.configuracionApp.nombreNegocio) doc.text(`Empresa: ${window.configuracionApp.nombreNegocio}`, 15, 45);
             doc.text(`Fecha: ${c.fecha}`, 15, 50); doc.text(`Folio Interno: ${c.id.toString().slice(-6)}`, 150, 45);
+            
+            const origenTexto = (c.pagadoConCaja !== false) ? 'Efectivo de Caja' : 'Capital Externo (Transferencia/Tarjeta)';
+            doc.text(`Origen del Pago: ${origenTexto}`, 15, 55);
 
-            const tableColumn = ["Cant.", "Código", "Descripción", "Costo Unit.", "Subtotal"]; const tableRows = [];
+            const tableColumn = ["Cant.", "Código", "Descripción", "Costo Unit.", "Total Línea"]; const tableRows = [];
             c.items.forEach(item => { tableRows.push([item.cant, item.codigo, item.nombre, `$${item.costo.toFixed(2)}`, `$${(item.cant * item.costo).toFixed(2)}`]); });
-            doc.autoTable({ startY: 60, head: [tableColumn], body: tableRows, theme: 'grid', headStyles: { fillColor: cyan, textColor: [255, 255, 255] } });
+            doc.autoTable({ startY: 62, head: [tableColumn], body: tableRows, theme: 'grid', headStyles: { fillColor: cyan, textColor: [255, 255, 255] } });
 
             let finalY = doc.lastAutoTable.finalY + 10;
-            doc.text(`Subtotal: $${c.subtotal.toFixed(2)}`, 140, finalY); finalY+=6;
+            doc.text(`Subtotal Base: $${c.subtotal.toFixed(2)}`, 140, finalY); finalY+=6;
             if(c.iva > 0) { doc.text(`IVA (16%): $${c.iva.toFixed(2)}`, 140, finalY); finalY+=6; }
             if(c.ieps > 0) { doc.text(`IEPS (8%): $${c.ieps.toFixed(2)}`, 140, finalY); finalY+=6; }
             
@@ -1609,7 +1808,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // Credenciales proporcionadas
         const firebaseConfig = {
           apiKey: "AIzaSyDQZblX-pisdzKcx6tK7DBkVrHa1b-8mTs",
           authDomain: "mi-punto-de-venta-a6d5d.firebaseapp.com",
@@ -1622,12 +1820,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        // Documento central donde se guardará todo el sistema
         const docRef = doc(db, "minos_pos_db", "datos_globales");
 
         let isSyncing = false;
 
-        // Función que empuja datos locales a Firestore
         window.syncToFirebase = async function() {
             if(isSyncing) return;
             isSyncing = true;
@@ -1641,7 +1837,7 @@
                     pos_cotizaciones: localStorage.getItem('pos_cotizaciones') || '[]',
                     pos_configuracion: localStorage.getItem('pos_configuracion') || '{}',
                     pos_logo_base64: localStorage.getItem('pos_logo_base64') || '',
-                    pos_usuarios: localStorage.getItem('pos_usuarios') || '[]' // Se sincronizan los usuarios
+                    pos_usuarios: localStorage.getItem('pos_usuarios') || '[]' 
                 };
                 await setDoc(docRef, data);
                 console.log("☁️ Guardado en la nube exitoso.");
@@ -1652,8 +1848,6 @@
             }
         };
 
-        // INTERCEPTOR DE GUARDADO (Magia): Cada vez que el sistema guarda algo localmente, 
-        // espera 1.5 segundos y hace un respaldo automático en la nube.
         const originalSetItem = localStorage.setItem;
         localStorage.setItem = function(key, value) {
             originalSetItem.apply(this, arguments);
@@ -1663,7 +1857,6 @@
             }
         };
 
-        // DESCARGA DESDE LA NUBE AL ABRIR LA APP
         window.loadFromFirebase = async function() {
             try {
                 console.log("Descargando base de datos de la nube...");
@@ -1672,7 +1865,6 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     
-                    // Sobreescribir el almacenamiento local con los datos de la nube
                     if(data.pos_inventario) originalSetItem.call(localStorage, 'pos_inventario', data.pos_inventario);
                     if(data.pos_clientes) originalSetItem.call(localStorage, 'pos_clientes', data.pos_clientes);
                     if(data.pos_totales_dia) originalSetItem.call(localStorage, 'pos_totales_dia', data.pos_totales_dia);
@@ -1682,15 +1874,13 @@
                     if(data.pos_configuracion) originalSetItem.call(localStorage, 'pos_configuracion', data.pos_configuracion);
                     if(data.pos_logo_base64) originalSetItem.call(localStorage, 'pos_logo_base64', data.pos_logo_base64);
                     
-                    // Asegurar que si alguien borró todo, el admin por defecto regrese
                     if(data.pos_usuarios && data.pos_usuarios !== '[]') {
                         originalSetItem.call(localStorage, 'pos_usuarios', data.pos_usuarios);
                     } else {
-                        const defaultUsr = [{ id: 1, usuario: 'admin', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'historial', 'configuracion', 'usuarios'] }];
+                        const defaultUsr = [{ id: 1, usuario: 'admin', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'configuracion', 'usuarios'] }];
                         originalSetItem.call(localStorage, 'pos_usuarios', JSON.stringify(defaultUsr));
                     }
                     
-                    // Recargar variables globales de la ventana principal
                     window.inventario = JSON.parse(localStorage.getItem('pos_inventario')) || window.inventario;
                     window.totalesDia = JSON.parse(localStorage.getItem('pos_totales_dia')) || window.totalesDia;
                     window.historialTickets = JSON.parse(localStorage.getItem('pos_historial_tickets')) || window.historialTickets;
@@ -1700,7 +1890,6 @@
                     window.configuracionApp = JSON.parse(localStorage.getItem('pos_configuracion')) || window.configuracionApp;
                     window.usuariosGuardados = JSON.parse(localStorage.getItem('pos_usuarios')) || window.usuariosGuardados;
 
-                    // Refrescar toda la Interfaz visible
                     if(window.renderizarInventario) window.renderizarInventario(); 
                     if(window.renderizarCotizacionesGuardadas) window.renderizarCotizacionesGuardadas(); 
                     if(window.renderizarClientes) window.renderizarClientes(); 
@@ -1717,7 +1906,6 @@
             }
         };
 
-        // NOTA: window.loadFromFirebase() ahora se ejecuta ÚNICAMENTE después de hacer Login exitoso.
     </script>
 </body>
 </html>
