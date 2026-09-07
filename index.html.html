@@ -1337,7 +1337,7 @@
 
             localStorage.setItem('pos_inventario', JSON.stringify(window.inventario)); 
             
-            const nuevaCompra = { id: Date.now(), fecha: new Date().toLocaleDateString(), subtotal: subtotalGasto, iva: iva, ieps: ieps, total: totalGastoGlobal, pagadoConCaja: pagadoConCaja, items: [...window.compraDraft] };
+            const nuevaCompra = { id: Date.now(), fecha: new Date().toLocaleString(), subtotal: subtotalGasto, iva: iva, ieps: ieps, total: totalGastoGlobal, pagadoConCaja: pagadoConCaja, items: [...window.compraDraft] };
             window.historialCompras.push(nuevaCompra);
             localStorage.setItem('pos_historial_compras', JSON.stringify(window.historialCompras));
 
@@ -1364,7 +1364,8 @@
         };
 
         window.generarPDFCompra = function(id) {
-            const c = window.historialCompras.find(x => x.id === id); if(!c) return alert("Compra no encontrada");
+            const c = window.historialCompras.find(x => x.id == id); // FIXED
+            if(!c) return alert("Compra no encontrada");
             const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
             const cyan = [0, 210, 255]; doc.setFillColor(...cyan); doc.rect(0, 0, 220, 35, 'F');
             doc.setTextColor(255, 255, 255); doc.setFontSize(24); doc.text("COMPROBANTE DE COMPRA", 15, 22);
@@ -1420,12 +1421,13 @@
             if(selectCli.value) { const cObj = window.clientesGuardados.find(c => c.id == selectCli.value); if(cObj) cliente = cObj.nombre; } if(!cliente) cliente = 'Público en General'; 
             let subtotal = 0; window.carritoCotizacion.forEach(i => subtotal += (i.cantidad * i.precioAplicado)); const aplicaIva = document.getElementById('check-iva').checked; const iva = aplicaIva ? (subtotal * 0.16) : 0; const totalFinal = subtotal + iva;
             const cotizacionObj = { id: window.idCotizacionEditando || Date.now(), fecha: new Date().toLocaleDateString(), cliente: cliente, subtotal: subtotal, iva: iva, total: totalFinal, items: [...window.carritoCotizacion] };
-            if (window.idCotizacionEditando) { const idx = window.cotizacionesGuardadas.findIndex(c => c.id === window.idCotizacionEditando); if(idx !== -1) window.cotizacionesGuardadas[idx] = cotizacionObj; } else { window.cotizacionesGuardadas.push(cotizacionObj); }
+            if (window.idCotizacionEditando) { const idx = window.cotizacionesGuardadas.findIndex(c => c.id == window.idCotizacionEditando); if(idx !== -1) window.cotizacionesGuardadas[idx] = cotizacionObj; } else { window.cotizacionesGuardadas.push(cotizacionObj); }
             localStorage.setItem('pos_cotizaciones', JSON.stringify(window.cotizacionesGuardadas)); alert("Cotización guardada."); window.limpiarCotizacion(); window.renderizarCotizacionesGuardadas();
         };
 
         window.generarPDFCotizacionIndividual = function(id) {
-            const cot = window.cotizacionesGuardadas.find(c => c.id === id); if(!cot) return alert("Cotización no encontrada");
+            const cot = window.cotizacionesGuardadas.find(c => c.id == id); // FIXED
+            if(!cot) return alert("Cotización no encontrada");
             const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
             const marginX = 15; const cyan = [0, 210, 255]; const gold = [212, 175, 55];
             
@@ -1468,8 +1470,8 @@
             const tbody = document.getElementById('lista-cotizaciones-guardadas'); tbody.innerHTML = '';
             window.cotizacionesGuardadas.forEach(cot => { tbody.innerHTML += `<tr><td>${cot.fecha}</td><td>${cot.cliente}</td><td>$${cot.total.toFixed(2)}</td><td style="display: flex; gap: 5px; flex-wrap: wrap;"><button onclick="window.generarPDFCotizacionIndividual(${cot.id})" style="background: rgba(0, 210, 255, 0.4);">📄 PDF</button><button onclick="window.editarCotizacion(${cot.id})">✏️ Editar</button><button onclick="window.eliminarCotizacion(${cot.id})">❌</button></td></tr>`; });
         };
-        window.editarCotizacion = function(id) { const cot = window.cotizacionesGuardadas.find(c => c.id === id); if(cot) { window.carritoCotizacion = [...cot.items]; window.idCotizacionEditando = id; document.getElementById('nombre-cliente-cotizacion').value = cot.cliente; document.getElementById('select-cliente-cotizacion').value = ''; document.getElementById('titulo-cotizacion-actual').innerText = 'Editando Cotización: ' + id.toString().slice(-6); window.renderizarCarritoCotizacion(); document.getElementById('cotizaciones').scrollTo(0,0); } };
-        window.eliminarCotizacion = function(id) { if(confirm("¿Eliminar cotización?")) { window.cotizacionesGuardadas = window.cotizacionesGuardadas.filter(c => c.id !== id); localStorage.setItem('pos_cotizaciones', JSON.stringify(window.cotizacionesGuardadas)); window.renderizarCotizacionesGuardadas(); } };
+        window.editarCotizacion = function(id) { const cot = window.cotizacionesGuardadas.find(c => c.id == id); if(cot) { window.carritoCotizacion = [...cot.items]; window.idCotizacionEditando = id; document.getElementById('nombre-cliente-cotizacion').value = cot.cliente; document.getElementById('select-cliente-cotizacion').value = ''; document.getElementById('titulo-cotizacion-actual').innerText = 'Editando Cotización: ' + id.toString().slice(-6); window.renderizarCarritoCotizacion(); document.getElementById('cotizaciones').scrollTo(0,0); } };
+        window.eliminarCotizacion = function(id) { if(confirm("¿Eliminar cotización?")) { window.cotizacionesGuardadas = window.cotizacionesGuardadas.filter(c => c.id != id); localStorage.setItem('pos_cotizaciones', JSON.stringify(window.cotizacionesGuardadas)); window.renderizarCotizacionesGuardadas(); } };
 
 
         // ==========================================
@@ -1644,7 +1646,8 @@
 
 
         window.reimprimirTicket = function(id, formatoForzado = null) {
-            const t = window.historialTickets.find(x => x.id === id); if(!t) return alert("Ticket no encontrado");
+            const t = window.historialTickets.find(x => x.id == id); // FIXED
+            if(!t) return alert("Ticket no encontrado");
             const elemFormato = document.getElementById('formato-impresion');
             const formato = formatoForzado || (elemFormato ? elemFormato.value : '80mm');
             const { jsPDF } = window.jspdf; const logoData = localStorage.getItem('pos_logo_base64'); const cyan = [0, 210, 255];
@@ -1758,7 +1761,7 @@
         // ==========================================
         
         window.verTicket = function(id) {
-            const t = window.historialTickets.find(x => x.id === id);
+            const t = window.historialTickets.find(x => x.id == id); // FIXED
             if(!t) return;
             window.ticketActualModal = id;
             let txt = `FOLIO DE VENTA: ${t.id}\n`;
@@ -1799,39 +1802,51 @@
         };
 
         window.eliminarTicketLogica = function(id) {
-            const index = window.historialTickets.findIndex(t => t.id === id);
+            const index = window.historialTickets.findIndex(t => t.id == id); // FIXED
             if(index === -1) return null;
             const t = window.historialTickets[index];
             
-            if (t.estatus === 'cancelado') return null; // Previene doble cancelación
+            if (t.estatus === 'cancelado') {
+                alert("Este ticket ya fue cancelado previamente.");
+                return null; 
+            }
             
             t.items.forEach(item => {
                 if (item.tipo === 'kit') { 
                     if(item.componentes){
                         item.componentes.forEach(comp => { 
                             const dbInsumo = window.inventario.find(i => i.codigo === comp.codigoInsumo); 
-                            if(dbInsumo) dbInsumo.stock += (comp.cant * item.cantidad); 
+                            if(dbInsumo) dbInsumo.stock += (parseFloat(comp.cant) * parseFloat(item.cantidad)); 
                         }); 
                     }
                 } else { 
                     // Para ventas normales o cualquier otro artículo se devuelve directo
                     const dbArt = window.inventario.find(i => i.codigo === item.codigo); 
-                    if(dbArt) dbArt.stock += item.cantidad; 
+                    if(dbArt) dbArt.stock += parseFloat(item.cantidad); 
                 }
             });
             localStorage.setItem('pos_inventario', JSON.stringify(window.inventario)); 
             
             // Restar el dinero del corte de caja con mayor precisión
-            let efectivoNeto = parseFloat(t.efe) > 0 ? parseFloat(t.efe) - parseFloat(t.cambio) : 0;
-            window.totalesDia.efectivo -= efectivoNeto;
-            window.totalesDia.debito -= (parseFloat(t.deb) || 0);
-            window.totalesDia.credito -= (parseFloat(t.cred) || 0);
-            window.totalesDia.transferencia -= (parseFloat(t.trans) || 0);
+            let efeRaw = parseFloat(t.efe) || 0;
+            let cambioRaw = parseFloat(t.cambio) || 0;
+            let debRaw = parseFloat(t.deb) || 0;
+            let credRaw = parseFloat(t.cred) || 0;
+            let transRaw = parseFloat(t.trans) || 0;
             
-            if (t.aCredito > 0) {
+            let efectivoNeto = efeRaw > 0 ? (efeRaw - cambioRaw) : 0;
+            if(efectivoNeto < 0) efectivoNeto = 0;
+
+            window.totalesDia.efectivo -= efectivoNeto;
+            window.totalesDia.debito -= debRaw;
+            window.totalesDia.credito -= credRaw;
+            window.totalesDia.transferencia -= transRaw;
+            
+            let aCreditoRaw = parseFloat(t.aCredito) || 0;
+            if (aCreditoRaw > 0 && t.cliente) {
                 const clienteObj = window.clientesGuardados.find(c => c.nombre === t.cliente);
                 if (clienteObj) {
-                    clienteObj.deuda -= t.aCredito;
+                    clienteObj.deuda -= aCreditoRaw;
                     if(clienteObj.deuda < 0) clienteObj.deuda = 0;
                     localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados));
                 }
@@ -1840,15 +1855,22 @@
             
             // Se marca como cancelado para mantener el historial
             t.estatus = 'cancelado';
+            window.historialTickets[index] = t;
             localStorage.setItem('pos_historial_tickets', JSON.stringify(window.historialTickets));
             return t;
         };
 
         window.eliminarTicket = function(id) {
             if(!confirm("¿Estás seguro de cancelar esta venta?\n\n- Los artículos regresarán al inventario automáticamente.\n- El dinero cobrado se restará de la caja.\n- El ticket quedará marcado como 'Cancelado'.")) return;
-            window.eliminarTicketLogica(id);
-            window.renderizarHistorial(); window.renderizarInventario(); window.renderizarClientes(); window.actualizarVistaCaja();
-            alert("Venta cancelada exitosamente.");
+            const res = window.eliminarTicketLogica(id);
+            if(res){
+                window.renderizarHistorial(); 
+                window.renderizarInventario(); 
+                window.renderizarClientes(); 
+                window.actualizarVistaCaja();
+                if(window.syncToFirebase) window.syncToFirebase(); // Forzar sincronización inmediata a Firebase
+                alert("Venta cancelada exitosamente.");
+            }
         };
 
         window.editarTicket = function(id) {
@@ -1883,8 +1905,8 @@
             }
             
             filtrados.slice().reverse().forEach(t => { 
-                let estatus = t.estatus === 'cancelado' ? '<span style="color:#ef5350;">Cancelado</span>' : '<span style="color:#81c784;">Completado</span>';
-                let opacidad = t.estatus === 'cancelado' ? 'opacity: 0.6;' : '';
+                let estatusTexto = t.estatus === 'cancelado' ? '<span style="color:#ef5350; font-weight:bold;">Cancelado</span>' : '<span style="color:#81c784; font-weight:bold;">Completado</span>';
+                let opacidad = t.estatus === 'cancelado' ? 'opacity: 0.5;' : '';
                 
                 let btnCancelar = t.estatus === 'cancelado' ? '' : `<button onclick="window.eliminarTicket('${t.id}')">❌ Cancelar</button>`;
                 let btnEditar = t.estatus === 'cancelado' ? '' : `<button onclick="window.editarTicket('${t.id}')">✏️ Editar</button>`;
@@ -1894,7 +1916,7 @@
                     <td>${t.fecha} ${t.hora || ''}</td>
                     <td>${t.cliente}</td>
                     <td style="color:#81c784; font-weight:bold;">$${t.total.toFixed(2)}</td>
-                    <td style="font-weight:bold;">${estatus}</td>
+                    <td>${estatusTexto}</td>
                     <td style="display:flex; gap:5px; flex-wrap:wrap;">
                         <button onclick="window.verTicket('${t.id}')">👁️ Ver</button>
                         <button onclick="window.reimprimirTicket('${t.id}')" style="background: rgba(0, 210, 255, 0.4);">📄 PDF</button>
