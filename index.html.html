@@ -132,8 +132,9 @@
             <a href="#" id="menu-clientes" onclick="window.cambiarModulo('clientes'); return false;" title="Clientes y Deudas">👥</a>
             <a href="#" id="menu-envios" onclick="window.cambiarModulo('envios'); return false;" title="Etiquetas de Envío">🚚</a>
             <a href="#" id="menu-historial" onclick="window.cambiarModulo('historial'); return false;" title="Historial de Tickets">🕒</a>
+            <a href="#" id="menu-reportes" onclick="window.cambiarModulo('reportes'); return false;" title="Reportes y Ganancias" style="border-top: 1px solid rgba(255,255,255,0.2); margin-top: 5px; padding-top: 10px;">📈</a>
             <a href="#" id="menu-configuracion" onclick="window.cambiarModulo('configuracion'); return false;" title="Configuración PDF">⚙️</a>
-            <a href="#" id="menu-usuarios" onclick="window.cambiarModulo('usuarios'); return false;" title="Usuarios y Permisos" style="border-top: 1px solid rgba(255,255,255,0.2); margin-top: 5px; padding-top: 10px;">👤</a>
+            <a href="#" id="menu-usuarios" onclick="window.cambiarModulo('usuarios'); return false;" title="Usuarios y Permisos">👤</a>
             <a href="#" onclick="location.reload(); return false;" title="Cerrar Sesión" style="background: rgba(239, 83, 80, 0.4); border: 1px solid #ef5350; margin-top: 10px;">🚪</a>
         </nav>
 
@@ -220,14 +221,34 @@
                         <button class="btn-accion" style="width: 100%; margin-top: 10px;" onclick="window.realizarCorteDefinitivo()">✂️ Guardar Corte y Generar PDF</button>
                     </div>
                 </div>
+            </section>
 
-                <!-- NUEVO APARTADO: DESGLOSE POR DÍA -->
-                <div class="seccion-flotante" style="margin-top: 20px;">
-                    <h3 style="color: var(--acento);">Desglose de Ventas por Día</h3>
+            <!-- REPORTES Y GANANCIAS -->
+            <section id="reportes" class="modulo">
+                <h2 style="color: var(--dorado);">📊 Reporte de Ganancias e Impuestos</h2>
+                <div class="seccion-flotante">
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                        <label style="font-weight: bold; color: var(--acento);">Filtrar por Día:</label>
+                        <input type="date" id="filtro-fecha-reportes" onchange="window.renderizarReporteGanancias()" style="width: 200px;">
+                        <button onclick="document.getElementById('filtro-fecha-reportes').value=''; window.renderizarReporteGanancias();">Mostrar Histórico Completo</button>
+                    </div>
+                    <p style="font-size: 0.9em; margin-bottom: 15px; color: #aaa;">Se muestra el desglose exacto y la ganancia neta obtenida de forma detallada ticket por ticket.</p>
+                    
                     <div style="overflow-x: auto;">
                         <table>
-                            <thead><tr><th>Fecha</th><th>Venta Total</th><th>Costo de Insumos</th><th>IVA (16%)</th><th>IEPS (8%)</th><th>Ganancia Neta</th></tr></thead>
-                            <tbody id="lista-desglose-dias"></tbody>
+                            <thead>
+                                <tr>
+                                    <th>Hora</th>
+                                    <th>Folio Ticket</th>
+                                    <th>Total Venta</th>
+                                    <th>Costo Insumos</th>
+                                    <th>IVA (16%)</th>
+                                    <th>IEPS (8%)</th>
+                                    <th>Ganancia Neta</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lista-reporte-ganancias"></tbody>
+                            <tfoot id="totales-reporte-ganancias" style="font-weight: bold; font-size: 1.1em; background: rgba(0, 210, 255, 0.1);"></tfoot>
                         </table>
                     </div>
                 </div>
@@ -322,7 +343,7 @@
                 </div>
                 
                 <div class="seccion-flotante">
-                    <h3 style="color: var(--dorado);">Historial de Compras</h3>
+                    <h3 style="color: var(--dorado);">Historial de Compras <small style="font-size: 0.6em; color: #aaa;">(Presiona Ctrl+Q para buscar folio)</small></h3>
                     <table>
                         <thead><tr><th>Fecha</th><th>Subtotal Base</th><th>IVA (16%)</th><th>IEPS (8%)</th><th>Total Gasto</th><th>Origen</th><th>Acciones</th></tr></thead>
                         <tbody id="lista-historial-compras"></tbody>
@@ -358,7 +379,7 @@
                     </div>
                 </div>
                 <div class="seccion-flotante">
-                    <h3>Historial de Cotizaciones Guardadas</h3>
+                    <h3 style="color: var(--dorado);">Historial de Cotizaciones Guardadas <small style="font-size: 0.6em; color: #aaa;">(Presiona Ctrl+Q para buscar folio)</small></h3>
                     <table>
                         <thead><tr><th>Fecha</th><th>Cliente</th><th>Total Final</th><th>Acciones</th></tr></thead>
                         <tbody id="lista-cotizaciones-guardadas"></tbody>
@@ -421,7 +442,7 @@
 
             <!-- HISTORIAL DE TICKETS -->
             <section id="historial" class="modulo">
-                <h2 style="color: var(--dorado);">Historial de Tickets</h2>
+                <h2 style="color: var(--dorado);">Historial de Tickets <small style="font-size: 0.5em; color: #aaa;">(Presiona Ctrl+Q para buscar folio)</small></h2>
                 <div class="seccion-flotante">
                     <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
                         <label style="font-weight: bold; color: var(--acento);">Filtrar por Fecha:</label>
@@ -495,6 +516,7 @@
                             <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="clientes"> 👥 Clientes</label>
                             <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="envios"> 🚚 Envíos</label>
                             <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="historial"> 🕒 Historial</label>
+                            <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="reportes"> 📈 Reportes</label>
                             <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="configuracion"> ⚙️ Configuración</label>
                         </div>
                     </div>
@@ -550,7 +572,7 @@
         window.nombresPrecios = { 'pub': 'Público', 'may1': 'Mayoreo 1', 'may2': 'Mayoreo 2', 'may3': 'Mayoreo 3', 'dueno': 'Dueño' };
         window.configuracionApp = JSON.parse(localStorage.getItem('pos_configuracion')) || { nombreNegocio: 'MINOS', rfc: '', telefono: '', correo: '', direccion: '', notasCotizacion: `Precios expresados en pesos mexicanos.\nCotización sujeta a disponibilidad de mercancía.\nForma de pago:\nObservaciones:`, notasTicket: "Gracias por tu compra.\nConserva este ticket como comprobante.\nProductos, detalles y más..." };
         
-        const defaultUsuarios = [{ id: 1, usuario: 'admin', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'configuracion', 'usuarios'] }];
+        const defaultUsuarios = [{ id: 1, usuario: 'admin', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios'] }];
         window.usuariosGuardados = JSON.parse(localStorage.getItem('pos_usuarios'));
         if(!window.usuariosGuardados || !Array.isArray(window.usuariosGuardados) || window.usuariosGuardados.length === 0) {
             window.usuariosGuardados = [...defaultUsuarios];
@@ -573,7 +595,7 @@
         window.usuarioLogueado = null; 
 
         // ==========================================
-        // SISTEMA DE LOGIN (INICIO DE SESIÓN)
+        // SISTEMA DE LOGIN Y ATAJOS DE TECLADO
         // ==========================================
         window.verificarLogin = function() {
             const u = document.getElementById('login-user').value.trim();
@@ -583,7 +605,7 @@
 
             // PUERTA DE EMERGENCIA
             if(!userF && u === 'admin' && p === 'admin123') {
-                userF = { id: 1, usuario: 'admin', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'configuracion', 'usuarios'] };
+                userF = { id: 1, usuario: 'admin', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios'] };
                 const existeAdmin = window.usuariosGuardados.find(x => x.usuario === 'admin');
                 if(!existeAdmin) {
                     window.usuariosGuardados.push(userF);
@@ -605,8 +627,9 @@
                 window.renderizarHistorialCompras();
                 window.actualizarVistaCaja();
                 window.renderizarUsuarios(); 
+                if(window.renderizarReporteGanancias) window.renderizarReporteGanancias();
 
-                const modulosTodos = ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'configuracion', 'usuarios'];
+                const modulosTodos = ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios'];
                 let primerModuloPermitido = null;
 
                 modulosTodos.forEach(mod => {
@@ -635,6 +658,7 @@
         };
 
         document.addEventListener('keydown', function(e) {
+            // Atajo Ctrl+M: Editar Ticket desde el Modal
             if (e.ctrlKey && e.key.toLowerCase() === 'm' && window.usuarioLogueado) {
                 if(window.usuarioLogueado.rol === 'admin' || window.usuarioLogueado.permisos.includes('ventas')) {
                     e.preventDefault();
@@ -646,7 +670,56 @@
                     }
                 }
             }
+
+            // Atajo Ctrl+Q: Buscador de Folios en Historiales
+            if (e.ctrlKey && e.key.toLowerCase() === 'q' && window.usuarioLogueado) {
+                e.preventDefault();
+                window.abrirBuscadorFolio();
+            }
         });
+
+        // ==========================================
+        // BUSCADOR RÁPIDO DE FOLIOS (Ctrl+Q)
+        // ==========================================
+        window.abrirBuscadorFolio = function() {
+            const moduloActivo = document.querySelector('.modulo.activo').id;
+            const modulosPermitidos = ['historial', 'compras', 'cotizaciones'];
+            
+            if (!modulosPermitidos.includes(moduloActivo)) {
+                return alert("⚠️ El buscador rápido de folios (Ctrl+Q) solo funciona estando dentro de los módulos: \n- Historial de Tickets\n- Historial de Compras\n- Cotizaciones");
+            }
+
+            const folioBuscado = prompt(`🔍 BÚSQUEDA RÁPIDA (Ctrl+Q)\n\nEstás en la sección: ${moduloActivo.toUpperCase()}\n\nIngresa el número de folio completo (o los últimos 6 dígitos) que deseas buscar y abrir:`);
+            
+            if (!folioBuscado || folioBuscado.trim() === '') return;
+            
+            const fStr = folioBuscado.trim();
+            let encontrado = false;
+
+            if (moduloActivo === 'historial') {
+                const ticket = window.historialTickets.find(t => t.id.toString() === fStr || t.id.toString().endsWith(fStr));
+                if (ticket) {
+                    encontrado = true;
+                    window.verTicket(ticket.id);
+                }
+            } else if (moduloActivo === 'compras') {
+                const compra = window.historialCompras.find(c => c.id.toString() === fStr || c.id.toString().endsWith(fStr));
+                if (compra) {
+                    encontrado = true;
+                    window.generarPDFCompra(compra.id);
+                }
+            } else if (moduloActivo === 'cotizaciones') {
+                const cot = window.cotizacionesGuardadas.find(c => c.id.toString() === fStr || c.id.toString().endsWith(fStr));
+                if (cot) {
+                    encontrado = true;
+                    window.generarPDFCotizacionIndividual(cot.id);
+                }
+            }
+
+            if (!encontrado) {
+                alert(`❌ No se encontró ningún registro con el folio terminado en "${fStr}" en el historial de ${moduloActivo.toUpperCase()}.`);
+            }
+        };
 
         // ==========================================
         // FUNCIONES GENERALES Y MENÚ
@@ -659,6 +732,7 @@
             if (id === 'cotizaciones') window.renderizarCotizacionesGuardadas();
             if (id === 'clientes') window.renderizarClientes();
             if (id === 'historial') window.renderizarHistorial();
+            if (id === 'reportes') window.renderizarReporteGanancias();
             if (id === 'caja') window.actualizarVistaCaja();
             if (id === 'configuracion') window.cargarConfiguracionDOM();
             if (id === 'usuarios') window.renderizarUsuarios();
@@ -675,32 +749,19 @@
 
         window.iniciarEscaner = function() {
             document.getElementById('modal-escaner').style.display = 'flex';
-            
-            if (!window.html5QrcodeScanner) {
-                window.html5QrcodeScanner = new Html5QrcodeScanner(
-                    "reader", { fps: 10, qrbox: { width: 250, height: 150 } }, false
-                );
-            }
-            
+            if (!window.html5QrcodeScanner) { window.html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 250, height: 150 } }, false); }
             window.html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-            
             function onScanSuccess(decodedText, decodedResult) {
                 window.cerrarEscaner(); 
-                const buscador = document.getElementById('buscador-articulo');
-                buscador.value = decodedText;
-                const event = new KeyboardEvent('keypress', { 'key': 'Enter' });
-                window.buscarArticuloVenta(event);
+                const buscador = document.getElementById('buscador-articulo'); buscador.value = decodedText;
+                const event = new KeyboardEvent('keypress', { 'key': 'Enter' }); window.buscarArticuloVenta(event);
             }
             function onScanFailure(error) { }
         };
 
         window.cerrarEscaner = function() {
             document.getElementById('modal-escaner').style.display = 'none';
-            if (window.html5QrcodeScanner) {
-                window.html5QrcodeScanner.clear().catch(error => {
-                    console.error("Error al detener el escáner.", error);
-                });
-            }
+            if (window.html5QrcodeScanner) { window.html5QrcodeScanner.clear().catch(error => { console.error("Error al detener el escáner.", error); }); }
         };
 
         // ==========================================
@@ -709,30 +770,19 @@
         window.togglePermisosUI = function() {
             const rol = document.getElementById('usr-rol').value;
             const container = document.getElementById('usr-permisos-container');
-            if(rol === 'admin') {
-                container.style.opacity = '0.3';
-                container.style.pointerEvents = 'none';
-            } else {
-                container.style.opacity = '1';
-                container.style.pointerEvents = 'auto';
-            }
+            if(rol === 'admin') { container.style.opacity = '0.3'; container.style.pointerEvents = 'none'; } 
+            else { container.style.opacity = '1'; container.style.pointerEvents = 'auto'; }
         };
 
         window.guardarUsuario = function() {
-            const usr = document.getElementById('usr-nombre').value.trim();
-            const pass = document.getElementById('usr-pass').value.trim();
-            const rol = document.getElementById('usr-rol').value;
-            
+            const usr = document.getElementById('usr-nombre').value.trim(); const pass = document.getElementById('usr-pass').value.trim(); const rol = document.getElementById('usr-rol').value;
             if(!usr || !pass) return alert("El usuario y la contraseña son obligatorios.");
 
             let permisosArr = [];
-            if(rol === 'admin') {
-                permisosArr = ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'configuracion', 'usuarios'];
-            } else {
+            if(rol === 'admin') { permisosArr = ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios']; } 
+            else {
                 const checks = document.querySelectorAll('.chk-permiso');
-                checks.forEach(c => {
-                    if(c.checked) permisosArr.push(c.value);
-                });
+                checks.forEach(c => { if(c.checked) permisosArr.push(c.value); });
                 if(permisosArr.length === 0) return alert("Un empleado debe tener al menos un permiso asignado.");
             }
 
@@ -740,111 +790,58 @@
                 window.usuariosGuardados[window.indexUsuarioEditando] = { ...window.usuariosGuardados[window.indexUsuarioEditando], usuario: usr, password: pass, rol: rol, permisos: permisosArr };
                 alert("Usuario actualizado con éxito.");
             } else {
-                if(window.usuariosGuardados.find(x => x.usuario.toLowerCase() === usr.toLowerCase())) {
-                    return alert("Ya existe un usuario con ese nombre.");
-                }
+                if(window.usuariosGuardados.find(x => x.usuario.toLowerCase() === usr.toLowerCase())) { return alert("Ya existe un usuario con ese nombre."); }
                 window.usuariosGuardados.push({ id: Date.now(), usuario: usr, password: pass, rol: rol, permisos: permisosArr });
                 alert("Usuario creado con éxito.");
             }
 
-            localStorage.setItem('pos_usuarios', JSON.stringify(window.usuariosGuardados));
-            window.cancelarEdicionUsuario();
-            window.renderizarUsuarios();
+            localStorage.setItem('pos_usuarios', JSON.stringify(window.usuariosGuardados)); window.cancelarEdicionUsuario(); window.renderizarUsuarios();
         };
 
         window.renderizarUsuarios = function() {
-            const tbody = document.getElementById('lista-usuarios');
-            tbody.innerHTML = '';
+            const tbody = document.getElementById('lista-usuarios'); tbody.innerHTML = '';
             window.usuariosGuardados.forEach((u, idx) => {
                 let badgeRol = u.rol === 'admin' ? '<span style="color:var(--dorado)">Administrador</span>' : '<span style="color:#81c784">Empleado</span>';
-                
-                let btnEliminar = '';
-                const adminsCount = window.usuariosGuardados.filter(x => x.rol === 'admin').length;
-                if(u.rol === 'admin' && adminsCount <= 1) {
-                    btnEliminar = '<span style="color:gray; font-size:10px;">Protegido</span>';
-                } else {
-                    btnEliminar = `<button onclick="window.eliminarUsuario(${idx})">❌</button>`;
-                }
-
-                tbody.innerHTML += `<tr>
-                    <td>${u.usuario}</td>
-                    <td>${'*'.repeat(u.password.length)}</td>
-                    <td>${badgeRol}</td>
-                    <td style="display:flex; gap:5px;">
-                        <button onclick="window.editarUsuario(${idx})">✏️ Editar</button>
-                        ${btnEliminar}
-                    </td>
-                </tr>`;
+                let btnEliminar = ''; const adminsCount = window.usuariosGuardados.filter(x => x.rol === 'admin').length;
+                if(u.rol === 'admin' && adminsCount <= 1) { btnEliminar = '<span style="color:gray; font-size:10px;">Protegido</span>'; } else { btnEliminar = `<button onclick="window.eliminarUsuario(${idx})">❌</button>`; }
+                tbody.innerHTML += `<tr><td>${u.usuario}</td><td>${'*'.repeat(u.password.length)}</td><td>${badgeRol}</td><td style="display:flex; gap:5px;"><button onclick="window.editarUsuario(${idx})">✏️ Editar</button>${btnEliminar}</td></tr>`;
             });
         };
 
         window.editarUsuario = function(index) {
             const u = window.usuariosGuardados[index];
-            document.getElementById('usr-nombre').value = u.usuario;
-            document.getElementById('usr-pass').value = u.password;
-            document.getElementById('usr-rol').value = u.rol;
-            
+            document.getElementById('usr-nombre').value = u.usuario; document.getElementById('usr-pass').value = u.password; document.getElementById('usr-rol').value = u.rol;
             const checks = document.querySelectorAll('.chk-permiso');
-            checks.forEach(c => {
-                if(u.rol === 'admin' || (u.permisos && u.permisos.includes(c.value))) {
-                    c.checked = true;
-                } else {
-                    c.checked = false;
-                }
-            });
+            checks.forEach(c => { if(u.rol === 'admin' || (u.permisos && u.permisos.includes(c.value))) { c.checked = true; } else { c.checked = false; } });
 
-            window.togglePermisosUI();
-            window.indexUsuarioEditando = index;
-            document.getElementById('titulo-form-usuario').innerText = `Editando Usuario: ${u.usuario}`;
-            document.getElementById('btn-guardar-usuario').innerText = "💾 Actualizar Usuario";
-            document.getElementById('btn-cancelar-edicion-usuario').style.display = 'inline-block';
-            document.getElementById('usuarios').scrollTo(0,0);
+            window.togglePermisosUI(); window.indexUsuarioEditando = index;
+            document.getElementById('titulo-form-usuario').innerText = `Editando Usuario: ${u.usuario}`; document.getElementById('btn-guardar-usuario').innerText = "💾 Actualizar Usuario";
+            document.getElementById('btn-cancelar-edicion-usuario').style.display = 'inline-block'; document.getElementById('usuarios').scrollTo(0,0);
         };
 
         window.cancelarEdicionUsuario = function() {
-            window.indexUsuarioEditando = null;
-            document.getElementById('usr-nombre').value = '';
-            document.getElementById('usr-pass').value = '';
-            document.getElementById('usr-rol').value = 'empleado';
-            
-            const checks = document.querySelectorAll('.chk-permiso');
-            checks.forEach(c => c.checked = false);
-            
-            window.togglePermisosUI();
-            document.getElementById('titulo-form-usuario').innerText = "Registrar Nuevo Usuario";
-            document.getElementById('btn-guardar-usuario').innerText = "💾 Guardar Usuario";
-            document.getElementById('btn-cancelar-edicion-usuario').style.display = 'none';
+            window.indexUsuarioEditando = null; document.getElementById('usr-nombre').value = ''; document.getElementById('usr-pass').value = ''; document.getElementById('usr-rol').value = 'empleado';
+            const checks = document.querySelectorAll('.chk-permiso'); checks.forEach(c => c.checked = false);
+            window.togglePermisosUI(); document.getElementById('titulo-form-usuario').innerText = "Registrar Nuevo Usuario"; document.getElementById('btn-guardar-usuario').innerText = "💾 Guardar Usuario"; document.getElementById('btn-cancelar-edicion-usuario').style.display = 'none';
         };
 
-        window.eliminarUsuario = function(index) {
-            if(confirm("¿Estás seguro de eliminar este usuario del sistema?")) {
-                window.usuariosGuardados.splice(index, 1);
-                localStorage.setItem('pos_usuarios', JSON.stringify(window.usuariosGuardados));
-                window.renderizarUsuarios();
-            }
-        };
+        window.eliminarUsuario = function(index) { if(confirm("¿Estás seguro de eliminar este usuario del sistema?")) { window.usuariosGuardados.splice(index, 1); localStorage.setItem('pos_usuarios', JSON.stringify(window.usuariosGuardados)); window.renderizarUsuarios(); } };
 
         // ==========================================
         // CONFIGURACIÓN (PDF Y LOGO)
         // ==========================================
         window.cargarConfiguracionDOM = function() {
-            document.getElementById('conf-nombre').value = window.configuracionApp.nombreNegocio || ""; 
-            document.getElementById('conf-rfc').value = window.configuracionApp.rfc || ""; 
-            document.getElementById('conf-tel').value = window.configuracionApp.telefono || ""; 
-            document.getElementById('conf-correo').value = window.configuracionApp.correo || ""; 
-            document.getElementById('conf-direccion').value = window.configuracionApp.direccion || ""; 
-            document.getElementById('conf-notas').value = window.configuracionApp.notasCotizacion || "";
+            document.getElementById('conf-nombre').value = window.configuracionApp.nombreNegocio || ""; document.getElementById('conf-rfc').value = window.configuracionApp.rfc || ""; 
+            document.getElementById('conf-tel').value = window.configuracionApp.telefono || ""; document.getElementById('conf-correo').value = window.configuracionApp.correo || ""; 
+            document.getElementById('conf-direccion').value = window.configuracionApp.direccion || ""; document.getElementById('conf-notas').value = window.configuracionApp.notasCotizacion || "";
             document.getElementById('conf-notas-ticket').value = window.configuracionApp.notasTicket || "";
             const logoData = localStorage.getItem('pos_logo_base64'); if(logoData) document.getElementById('conf-logo-preview').src = logoData;
         };
 
         window.guardarConfiguracion = function() {
-            window.configuracionApp.nombreNegocio = document.getElementById('conf-nombre').value || 'MINOS'; 
-            window.configuracionApp.rfc = document.getElementById('conf-rfc').value; 
-            window.configuracionApp.telefono = document.getElementById('conf-tel').value; 
-            window.configuracionApp.correo = document.getElementById('conf-correo').value; 
-            window.configuracionApp.direccion = document.getElementById('conf-direccion').value; 
-            window.configuracionApp.notasCotizacion = document.getElementById('conf-notas').value;
+            window.configuracionApp.nombreNegocio = document.getElementById('conf-nombre').value || 'MINOS'; window.configuracionApp.rfc = document.getElementById('conf-rfc').value; 
+            window.configuracionApp.telefono = document.getElementById('conf-tel').value; window.configuracionApp.correo = document.getElementById('conf-correo').value; 
+            window.configuracionApp.direccion = document.getElementById('conf-direccion').value; window.configuracionApp.notasCotizacion = document.getElementById('conf-notas').value;
             window.configuracionApp.notasTicket = document.getElementById('conf-notas-ticket').value;
             localStorage.setItem('pos_configuracion', JSON.stringify(window.configuracionApp)); alert("Configuración Guardada.");
         };
@@ -871,10 +868,7 @@
             const confirmacion1 = confirm("⚠️ ¡ADVERTENCIA EXTREMA! ⚠️\n\nEstás a punto de borrar TODO el inventario, clientes, ventas, deudas, compras y cotizaciones. Esta acción NO se puede deshacer y afectará a todos los dispositivos conectados.\n\n¿Estás completamente seguro de continuar?");
             if(!confirmacion1) return;
             const confirmacion2 = prompt("Para confirmar que deseas formatear toda la base de datos, escribe la palabra en mayúsculas: BORRAR");
-            if(confirmacion2 !== "BORRAR") {
-                alert("Operación cancelada. No se ha borrado nada.");
-                return;
-            }
+            if(confirmacion2 !== "BORRAR") { alert("Operación cancelada. No se ha borrado nada."); return; }
 
             window.inventario = []; window.clientesGuardados = []; window.totalesDia = { efectivo: 0, debito: 0, credito: 0, transferencia: 0, gastos: 0 };
             window.historialTickets = []; window.historialCompras = []; window.cotizacionesGuardadas = []; window.carrito = []; window.compraDraft = []; window.carritoCotizacion = [];
@@ -883,79 +877,53 @@
             localStorage.setItem('pos_historial_tickets', '[]'); localStorage.setItem('pos_historial_compras', '[]'); localStorage.setItem('pos_cotizaciones', '[]');
             
             if(window.syncToFirebase) await window.syncToFirebase();
-
-            alert("✅ La base de datos ha sido borrada por completo.\nEl sistema está limpio y listo para usarse desde cero. La página se recargará ahora.");
-            location.reload();
+            alert("✅ La base de datos ha sido borrada por completo.\nEl sistema está limpio y listo para usarse desde cero. La página se recargará ahora."); location.reload();
         };
 
         // ==========================================
         // MÓDULO CLIENTES Y SELECTS (INCLUYE ENVÍOS)
         // ==========================================
         window.guardarCliente = function() { 
-            const nombre = document.getElementById('cliente-nombre').value; 
-            const nivel = document.getElementById('cliente-nivel').value; 
-            const deuda = parseFloat(document.getElementById('cliente-deuda').value) || 0; 
-            const rfc = document.getElementById('cliente-rfc').value;
-            const direccion = document.getElementById('cliente-direccion').value;
-            const correo = document.getElementById('cliente-correo').value;
-            const telefono = document.getElementById('cliente-telefono').value;
+            const nombre = document.getElementById('cliente-nombre').value; const nivel = document.getElementById('cliente-nivel').value; const deuda = parseFloat(document.getElementById('cliente-deuda').value) || 0; 
+            const rfc = document.getElementById('cliente-rfc').value; const direccion = document.getElementById('cliente-direccion').value; const correo = document.getElementById('cliente-correo').value; const telefono = document.getElementById('cliente-telefono').value;
 
             if(!nombre) return alert("Nombre obligatorio"); 
-            
             if (window.indexClienteEditando !== null) { 
-                window.clientesGuardados[window.indexClienteEditando] = { ...window.clientesGuardados[window.indexClienteEditando], nombre, nivelPrecio: nivel, deuda, rfc, direccion, correo, telefono };
-                alert("Cliente actualizado."); 
+                window.clientesGuardados[window.indexClienteEditando] = { ...window.clientesGuardados[window.indexClienteEditando], nombre, nivelPrecio: nivel, deuda, rfc, direccion, correo, telefono }; alert("Cliente actualizado."); 
             } else { 
-                window.clientesGuardados.push({ id: Date.now(), nombre, deuda, nivelPrecio: nivel, rfc, direccion, correo, telefono }); 
-                alert("Cliente agregado."); 
+                window.clientesGuardados.push({ id: Date.now(), nombre, deuda, nivelPrecio: nivel, rfc, direccion, correo, telefono }); alert("Cliente agregado."); 
             } 
             localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados)); window.cancelarEdicionCliente(); window.renderizarClientes(); 
         };
 
         window.editarInfoCliente = function(index) { 
             const c = window.clientesGuardados[index]; 
-            document.getElementById('cliente-nombre').value = c.nombre; 
-            document.getElementById('cliente-nivel').value = c.nivelPrecio || 'pub'; 
-            document.getElementById('cliente-deuda').value = c.deuda; 
-            document.getElementById('cliente-rfc').value = c.rfc || '';
-            document.getElementById('cliente-direccion').value = c.direccion || '';
-            document.getElementById('cliente-correo').value = c.correo || '';
-            document.getElementById('cliente-telefono').value = c.telefono || '';
-            
-            window.indexClienteEditando = index; 
-            document.getElementById('titulo-form-cliente').innerText = `Editando Cliente: ${c.nombre}`; 
-            document.getElementById('btn-guardar-cliente').innerText = "💾 Actualizar Cliente"; 
-            document.getElementById('btn-cancelar-edicion-cliente').style.display = 'inline-block'; 
-            document.getElementById('clientes').scrollTo(0,0); 
+            document.getElementById('cliente-nombre').value = c.nombre; document.getElementById('cliente-nivel').value = c.nivelPrecio || 'pub'; document.getElementById('cliente-deuda').value = c.deuda; 
+            document.getElementById('cliente-rfc').value = c.rfc || ''; document.getElementById('cliente-direccion').value = c.direccion || ''; document.getElementById('cliente-correo').value = c.correo || ''; document.getElementById('cliente-telefono').value = c.telefono || '';
+            window.indexClienteEditando = index; document.getElementById('titulo-form-cliente').innerText = `Editando Cliente: ${c.nombre}`; document.getElementById('btn-guardar-cliente').innerText = "💾 Actualizar Cliente"; 
+            document.getElementById('btn-cancelar-edicion-cliente').style.display = 'inline-block'; document.getElementById('clientes').scrollTo(0,0); 
         };
 
         window.cancelarEdicionCliente = function() { 
-            window.indexClienteEditando = null; 
-            document.getElementById('cliente-nombre').value = ''; document.getElementById('cliente-nivel').value = 'pub'; 
-            document.getElementById('cliente-deuda').value = '0'; document.getElementById('cliente-rfc').value = '';
-            document.getElementById('cliente-direccion').value = ''; document.getElementById('cliente-correo').value = ''; document.getElementById('cliente-telefono').value = '';
-            document.getElementById('titulo-form-cliente').innerText = "Registrar Nuevo Cliente"; 
-            document.getElementById('btn-guardar-cliente').innerText = "+ Agregar Cliente"; 
-            document.getElementById('btn-cancelar-edicion-cliente').style.display = 'none'; 
+            window.indexClienteEditando = null; document.getElementById('cliente-nombre').value = ''; document.getElementById('cliente-nivel').value = 'pub'; 
+            document.getElementById('cliente-deuda').value = '0'; document.getElementById('cliente-rfc').value = ''; document.getElementById('cliente-direccion').value = ''; document.getElementById('cliente-correo').value = ''; document.getElementById('cliente-telefono').value = '';
+            document.getElementById('titulo-form-cliente').innerText = "Registrar Nuevo Cliente"; document.getElementById('btn-guardar-cliente').innerText = "+ Agregar Cliente"; document.getElementById('btn-cancelar-edicion-cliente').style.display = 'none'; 
         };
 
         window.renderizarClientes = function() { 
-            window.clientesGuardados.sort((a, b) => a.nombre.localeCompare(b.nombre)); // Ordenamiento alfabético
+            window.clientesGuardados.sort((a, b) => a.nombre.localeCompare(b.nombre));
             const tbody = document.getElementById('lista-clientes'); tbody.innerHTML = ''; 
             window.clientesGuardados.forEach((c, index) => { 
                 let colorDeuda = c.deuda > 0 ? '#ef5350' : '#81c784'; let textoDeuda = c.deuda > 0 ? `$${c.deuda.toFixed(2)}` : 'Sin Deuda'; let textoNivel = window.nombresPrecios[c.nivelPrecio || 'pub']; 
-                tbody.innerHTML += `<tr><td>${c.nombre}</td><td>${textoNivel}</td><td style="color: ${colorDeuda}; font-weight: bold;">${textoDeuda}</td><td style="display: flex; gap: 5px;"><button onclick="window.abonarDeuda(${index})" style="background: rgba(76, 175, 80, 0.4);">💵 Abonar</button><button onclick="window.editarInfoCliente(${index})">✏️ Editar</button><button onclick="window.eliminarCliente(${index})">❌</button></td></tr>`; 
+                tbody.innerHTML += `<tr><td>${c.nombre}</td><td>${textoNivel}</td><td style="color: ${colorDeuda}; font-weight: bold;">${textoDeuda}</td><td style="display: flex; gap: 5px;"><button onclick="window.abonarDeuda(${index})" style="background: rgba(76, 175, 80, 0.4);">💵 Abonar</button><button onclick="window.editarInfoCliente(${index})">✏️️ Editar</button><button onclick="window.eliminarCliente(${index})">❌</button></td></tr>`; 
             }); 
             window.actualizarSelectsClientes(); 
         };
 
         window.actualizarSelectsClientes = function() { 
-            window.clientesGuardados.sort((a, b) => a.nombre.localeCompare(b.nombre)); // Ordenamiento alfabético automático
-
-            const datalistVenta = document.getElementById('clientes-datalist');
-            let valVentaActual = document.getElementById('input-cliente-venta') ? document.getElementById('input-cliente-venta').value : '';
+            window.clientesGuardados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+            const datalistVenta = document.getElementById('clientes-datalist'); let valVentaActual = document.getElementById('input-cliente-venta') ? document.getElementById('input-cliente-venta').value : '';
             if(datalistVenta) datalistVenta.innerHTML = ''; 
-            
             const selCot = document.getElementById('select-cliente-cotizacion'); let valCotActual = selCot ? selCot.value : ''; if(selCot) selCot.innerHTML = '<option value="">Público Libre</option>'; 
             const selEnvio = document.getElementById('select-cliente-envio'); let valEnvioActual = selEnvio ? selEnvio.value : ''; if(selEnvio) selEnvio.innerHTML = '<option value="">Selecciona un cliente o llena los datos abajo</option>';
             
@@ -965,8 +933,7 @@
                 if(selEnvio) selEnvio.innerHTML += `<option value="${c.id}">${c.nombre}</option>`; 
             }); 
             
-            if(valCotActual && selCot) selCot.value = valCotActual; 
-            if(valEnvioActual && selEnvio) selEnvio.value = valEnvioActual;
+            if(valCotActual && selCot) selCot.value = valCotActual; if(valEnvioActual && selEnvio) selEnvio.value = valEnvioActual;
         };
 
         window.abonarDeuda = function(index) { const monto = parseFloat(prompt(`Abonar a ${window.clientesGuardados[index].nombre}:`)); if(monto && monto > 0) { if(monto > window.clientesGuardados[index].deuda) return alert("No puede ser mayor a la deuda."); window.clientesGuardados[index].deuda -= monto; localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados)); window.totalesDia.efectivo += monto; localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); window.actualizarVistaCaja(); window.renderizarClientes(); alert("Abono registrado."); } };
@@ -977,34 +944,16 @@
         // ==========================================
         window.alSeleccionarClienteEnvio = function() {
             const id = document.getElementById('select-cliente-envio').value;
-            if(id) {
-                const c = window.clientesGuardados.find(x => x.id == id);
-                if(c) {
-                    document.getElementById('envio-nombre').value = c.nombre || '';
-                    document.getElementById('envio-direccion').value = c.direccion || '';
-                    document.getElementById('envio-telefono').value = c.telefono || '';
-                }
-            } else {
-                document.getElementById('envio-nombre').value = '';
-                document.getElementById('envio-direccion').value = '';
-                document.getElementById('envio-telefono').value = '';
-            }
+            if(id) { const c = window.clientesGuardados.find(x => x.id == id); if(c) { document.getElementById('envio-nombre').value = c.nombre || ''; document.getElementById('envio-direccion').value = c.direccion || ''; document.getElementById('envio-telefono').value = c.telefono || ''; } } 
+            else { document.getElementById('envio-nombre').value = ''; document.getElementById('envio-direccion').value = ''; document.getElementById('envio-telefono').value = ''; }
         };
 
         window.generarPDFEnvio = function() {
-            const destNombre = document.getElementById('envio-nombre').value.trim();
-            const destDir = document.getElementById('envio-direccion').value.trim();
-            const destTel = document.getElementById('envio-telefono').value.trim();
-
+            const destNombre = document.getElementById('envio-nombre').value.trim(); const destDir = document.getElementById('envio-direccion').value.trim(); const destTel = document.getElementById('envio-telefono').value.trim();
             if(!destNombre || !destDir) return alert("⚠️ El Nombre y la Dirección del Destinatario son obligatorios para generar la etiqueta.");
 
-            const conf = window.configuracionApp || {};
-            const deNombre = conf.nombreNegocio || 'Mi Empresa';
-            const deDir = conf.direccion || 'Dirección no configurada';
-            const deTel = conf.telefono || 'Teléfono no configurado';
-
-            const { jsPDF } = window.jspdf; 
-            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [100, 150] }); 
+            const conf = window.configuracionApp || {}; const deNombre = conf.nombreNegocio || 'Mi Empresa'; const deDir = conf.direccion || 'Dirección no configurada'; const deTel = conf.telefono || 'Teléfono no configurado';
+            const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [100, 150] }); 
             
             doc.setTextColor(0, 0, 0); doc.setDrawColor(0, 0, 0); 
             const logoData = localStorage.getItem('pos_logo_base64');
@@ -1030,8 +979,7 @@
             window.inventario.forEach((item, index) => {
                 if(item.codigo.toLowerCase().includes(query) || item.nombre.toLowerCase().includes(query)) {
                     let tipo = item.tipo === 'venta' ? 'Venta' : (item.tipo === 'consumo' ? 'Insumo' : 'Kit');
-                    let pub = item.precios && item.precios.pub ? `$${item.precios.pub.toFixed(2)}` : '$0.00';
-                    let dueno = item.precios && item.precios.dueno ? `$${item.precios.dueno.toFixed(2)}` : '$0.00';
+                    let pub = item.precios && item.precios.pub ? `$${item.precios.pub.toFixed(2)}` : '$0.00'; let dueno = item.precios && item.precios.dueno ? `$${item.precios.dueno.toFixed(2)}` : '$0.00';
                     let stockD = item.tipo === 'kit' ? 'Usa Insumos' : item.stock;
                     tbody.innerHTML += `<tr><td>${item.codigo}</td><td>${item.nombre}</td><td>${tipo}</td><td style="font-weight: bold; color: var(--acento);">${stockD}</td><td>${pub}</td><td>${dueno}</td><td style="display:flex; gap:5px;"><button onclick="window.editarArticuloInv(${index})">✏️ Editar</button><button onclick="window.eliminarArticuloInv(${index})">❌</button></td></tr>`;
                 }
@@ -1333,6 +1281,8 @@
             window.carrito = []; document.getElementById('pago-efectivo').value = ''; document.getElementById('pago-debito').value = ''; document.getElementById('pago-credito').value = ''; document.getElementById('pago-transferencia').value = ''; document.getElementById('nombre-cliente').value = '';
             
             window.renderizarCarrito(); window.actualizarVistaCaja(); window.renderizarClientes(); window.renderizarHistorial();
+            if(window.renderizarReporteGanancias) window.renderizarReporteGanancias();
+
             alert(`Venta procesada con éxito.\nCambio a devolver: $${cambio.toFixed(2)}`);
         };
 
@@ -1456,7 +1406,7 @@
         window.eliminarTicket = function(id) {
             if(!confirm("¿Estás seguro de cancelar esta venta?\n\n- Los artículos regresarán al inventario automáticamente.\n- El dinero cobrado se restará de la caja.\n- El ticket quedará marcado como 'Cancelado'.")) return;
             const res = window.eliminarTicketLogica(id);
-            if(res){ window.renderizarHistorial(); window.renderizarInventario(); window.renderizarClientes(); window.actualizarVistaCaja(); if(window.syncToFirebase) window.syncToFirebase(); alert("Venta cancelada exitosamente."); }
+            if(res){ window.renderizarHistorial(); window.renderizarInventario(); window.renderizarClientes(); window.actualizarVistaCaja(); if(window.renderizarReporteGanancias) window.renderizarReporteGanancias(); if(window.syncToFirebase) window.syncToFirebase(); alert("Venta cancelada exitosamente."); }
         };
 
         window.editarTicket = function(id) {
@@ -1472,6 +1422,7 @@
             if(levelOpt) { selectNivel.value = levelOpt.value; window.nivelPrecioGlobalActual = levelOpt.value; }
             
             window.renderizarHistorial(); window.renderizarInventario(); window.renderizarClientes(); window.actualizarVistaCaja();
+            if(window.renderizarReporteGanancias) window.renderizarReporteGanancias();
             window.cambiarModulo('ventas'); window.renderizarCarrito();
         };
 
@@ -1492,24 +1443,32 @@
         };
         
         // ==========================================
-        // CAJA Y REPORTE DIARIO
+        // MÓDULO REPORTES Y GANANCIAS
         // ==========================================
-        
-        window.renderizarDesgloseDiario = function() {
-            const tbody = document.getElementById('lista-desglose-dias');
+        window.renderizarReporteGanancias = function() {
+            const tbody = document.getElementById('lista-reporte-ganancias');
+            const tfoot = document.getElementById('totales-reporte-ganancias');
             if(!tbody) return;
-            tbody.innerHTML = '';
-            
-            const resumen = {};
-            window.historialTickets.forEach(t => {
-                if(t.estatus === 'cancelado') return;
-                if(!resumen[t.fecha]) { resumen[t.fecha] = { total: 0, costo: 0, iva: 0, ieps: 0 }; }
-                resumen[t.fecha].total += (t.total || 0);
-                
-                let tCosto = t.costo || 0; let tIva = t.iva || 0; let tIeps = t.ieps || 0;
-                
-                // Retrocompatibilidad con tickets previos al cálculo individual
-                if(tCosto === 0 && t.items) {
+            tbody.innerHTML = ''; tfoot.innerHTML = '';
+
+            const fechaFiltro = document.getElementById('filtro-fecha-reportes').value;
+            let filtrados = window.historialTickets.filter(t => t.estatus !== 'cancelado');
+
+            if(fechaFiltro) {
+                let [y, m, d] = fechaFiltro.split('-');
+                let localDateStr = new Date(parseInt(y), parseInt(m)-1, parseInt(d)).toLocaleDateString();
+                filtrados = filtrados.filter(t => t.fecha === localDateStr || t.fecha.includes(fechaFiltro));
+            }
+
+            let totalGlobal = 0, costoGlobal = 0, ivaGlobal = 0, iepsGlobal = 0, gananciaGlobal = 0;
+            let lastDate = "";
+
+            filtrados.slice().reverse().forEach(t => {
+                let tCosto = t.costo || 0;
+                let tIva = t.iva || 0;
+                let tIeps = t.ieps || 0;
+
+                if (tCosto === 0 && t.items && !t.hasOwnProperty('costo')) {
                     t.items.forEach(i => {
                         const iR = i.aplicaIva ? 0.16 : 0; const ieR = i.aplicaIeps ? 0.08 : 0;
                         const tL = i.cantidad * i.precioAplicado; const sL = tL / (1 + iR + ieR);
@@ -1518,29 +1477,39 @@
                         tCosto += i.cantidad * cU;
                     });
                 }
-                
-                resumen[t.fecha].costo += tCosto; resumen[t.fecha].iva += tIva; resumen[t.fecha].ieps += tIeps;
-            });
-            
-            // Ordenar por fecha descendente
-            const fechas = Object.keys(resumen).sort((a,b) => {
-                const pA = a.split('/'); const pB = b.split('/');
-                const dA = new Date(pA[2], pA[1]-1, pA[0]); const dB = new Date(pB[2], pB[1]-1, pB[0]);
-                return dB - dA;
-            });
-            
-            fechas.forEach(f => {
-                const r = resumen[f];
-                const ganancia = r.total - r.costo - r.iva - r.ieps;
+
+                let ganancia = t.total - tCosto - tIva - tIeps;
+
+                totalGlobal += t.total;
+                costoGlobal += tCosto;
+                ivaGlobal += tIva;
+                iepsGlobal += tIeps;
+                gananciaGlobal += ganancia;
+
+                if (t.fecha !== lastDate) {
+                    tbody.innerHTML += `<tr style="background: rgba(212, 175, 55, 0.2);"><td colspan="7" style="font-weight: bold; color: var(--dorado); text-align: center; padding: 12px;">📅 Ventas del Día: ${t.fecha}</td></tr>`;
+                    lastDate = t.fecha;
+                }
+
                 tbody.innerHTML += `<tr>
-                    <td>${f}</td>
-                    <td style="color:var(--acento); font-weight:bold;">$${r.total.toFixed(2)}</td>
-                    <td>$${r.costo.toFixed(2)}</td>
-                    <td>$${r.iva.toFixed(2)}</td>
-                    <td>$${r.ieps.toFixed(2)}</td>
+                    <td>${t.hora || '--:--'}</td>
+                    <td style="font-weight:bold;">#${t.id}</td>
+                    <td style="color:var(--acento); font-weight:bold;">$${t.total.toFixed(2)}</td>
+                    <td>$${tCosto.toFixed(2)}</td>
+                    <td>$${tIva.toFixed(2)}</td>
+                    <td>$${tIeps.toFixed(2)}</td>
                     <td style="color:#81c784; font-weight:bold;">$${ganancia.toFixed(2)}</td>
                 </tr>`;
             });
+
+            tfoot.innerHTML = `<tr>
+                <td colspan="2" style="text-align: right; color: var(--dorado);">TOTALES:</td>
+                <td style="color:var(--acento);">$${totalGlobal.toFixed(2)}</td>
+                <td>$${costoGlobal.toFixed(2)}</td>
+                <td>$${ivaGlobal.toFixed(2)}</td>
+                <td>$${iepsGlobal.toFixed(2)}</td>
+                <td style="color:#81c784;">$${gananciaGlobal.toFixed(2)}</td>
+            </tr>`;
         };
 
         window.actualizarVistaCaja = function() {
@@ -1553,8 +1522,6 @@
             const totalReal = (window.totalesDia.efectivo + window.totalesDia.transferencia + debNeto + credNeto) - window.totalesDia.gastos; document.getElementById('corte-total-real').innerText = totalReal.toFixed(2);
             
             const fondo = parseFloat(document.getElementById('fondo-caja').value) || 0; const fisico = parseFloat(document.getElementById('corte-efectivo-fisico').value) || 0; const esperado = fondo + window.totalesDia.efectivo - window.totalesDia.gastos; document.getElementById('corte-efectivo-esperado').innerText = esperado.toFixed(2); const diferencia = fisico - esperado; const diffSpan = document.getElementById('corte-diferencia'); diffSpan.innerText = `$${diferencia.toFixed(2)}`; if (diferencia < 0) diffSpan.style.color = '#ef5350'; else diffSpan.style.color = '#81c784'; 
-            
-            if(window.renderizarDesgloseDiario) window.renderizarDesgloseDiario();
         };
 
         window.realizarCorteDefinitivo = function() {
@@ -1652,7 +1619,7 @@
                     if(data.pos_usuarios && data.pos_usuarios !== '[]') {
                         originalSetItem.call(localStorage, 'pos_usuarios', data.pos_usuarios);
                     } else {
-                        const defaultUsr = [{ id: 1, usuario: 'admin', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'configuracion', 'usuarios'] }];
+                        const defaultUsr = [{ id: 1, usuario: 'admin', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios'] }];
                         originalSetItem.call(localStorage, 'pos_usuarios', JSON.stringify(defaultUsr));
                     }
                     
@@ -1673,6 +1640,7 @@
                     if(window.cargarConfiguracionDOM) window.cargarConfiguracionDOM();
                     if(window.actualizarVistaCaja) window.actualizarVistaCaja();
                     if(window.renderizarUsuarios) window.renderizarUsuarios();
+                    if(window.renderizarReporteGanancias) window.renderizarReporteGanancias();
                     
                     console.log("☁️ Nube cargada y sistema actualizado.");
                 }
