@@ -345,7 +345,7 @@
                 <div class="seccion-flotante">
                     <h3 style="color: var(--dorado);">Historial de Compras <small style="font-size: 0.6em; color: #aaa;">(Presiona Ctrl+Q para buscar folio)</small></h3>
                     <table>
-                        <thead><tr><th>Fecha</th><th>Subtotal Base</th><th>IVA (16%)</th><th>IEPS (8%)</th><th>Total Gasto</th><th>Origen</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>Folio</th><th>Fecha</th><th>Subtotal Base</th><th>IVA (16%)</th><th>IEPS (8%)</th><th>Total Gasto</th><th>Origen</th><th>Acciones</th></tr></thead>
                         <tbody id="lista-historial-compras"></tbody>
                     </table>
                 </div>
@@ -381,7 +381,7 @@
                 <div class="seccion-flotante">
                     <h3 style="color: var(--dorado);">Historial de Cotizaciones Guardadas <small style="font-size: 0.6em; color: #aaa;">(Presiona Ctrl+Q para buscar folio)</small></h3>
                     <table>
-                        <thead><tr><th>Fecha</th><th>Cliente</th><th>Total Final</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>Folio</th><th>Fecha</th><th>Cliente</th><th>Total Final</th><th>Acciones</th></tr></thead>
                         <tbody id="lista-cotizaciones-guardadas"></tbody>
                     </table>
                 </div>
@@ -567,7 +567,7 @@
 
     <script>
         // ==========================================
-        // VARIABLES GLOBALES DE DATOS
+        // VARIABLES GLOBALES DE DATOS Y CONTADORES
         // ==========================================
         window.nombresPrecios = { 'pub': 'Público', 'may1': 'Mayoreo 1', 'may2': 'Mayoreo 2', 'may3': 'Mayoreo 3', 'dueno': 'Dueño' };
         window.configuracionApp = JSON.parse(localStorage.getItem('pos_configuracion')) || { nombreNegocio: 'MINOS', rfc: '', telefono: '', correo: '', direccion: '', notasCotizacion: `Precios expresados en pesos mexicanos.\nCotización sujeta a disponibilidad de mercancía.\nForma de pago:\nObservaciones:`, notasTicket: "Gracias por tu compra.\nConserva este ticket como comprobante.\nProductos, detalles y más..." };
@@ -586,6 +586,9 @@
         window.clientesGuardados = JSON.parse(localStorage.getItem('pos_clientes')) || [];
         window.cotizacionesGuardadas = JSON.parse(localStorage.getItem('pos_cotizaciones')) || [];
         
+        // CONTADORES PARA FOLIOS (Inicializados desde cero lógicamente en 1)
+        window.contadoresFolios = JSON.parse(localStorage.getItem('pos_contadores_folios')) || { tickets: 1, cotizaciones: 1, compras: 1, cortes: 1 };
+        
         window.carrito = []; window.nivelPrecioGlobalActual = 'pub';
         window.carritoCotizacion = []; window.idCotizacionEditando = null;
         window.compraDraft = []; window.kitDraftComponentes = []; window.indexClienteEditando = null;
@@ -593,6 +596,35 @@
         window.indexInventarioEditando = null;
         window.ticketActualModal = null;
         window.usuarioLogueado = null; 
+
+        // ==========================================
+        // FUNCIONES DE FOLIOS E INICIALES
+        // ==========================================
+        window.obtenerInicialesCajero = function() {
+            const nombre = window.usuarioLogueado ? window.usuarioLogueado.usuario : 'Admin';
+            // Separamos por espacios o guiones bajos
+            const partes = nombre.replace(/[^a-zA-Z0-9]/g, ' ').trim().split(/\s+/).filter(p => p.length > 0);
+            
+            if (partes.length === 0) return 'XX';
+            if (partes.length === 1) {
+                return partes[0].substring(0, 2).toUpperCase();
+            }
+            return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+        };
+
+        window.generarNuevoFolio = function(tipo) {
+            let contadores = JSON.parse(localStorage.getItem('pos_contadores_folios')) || { tickets: 1, cotizaciones: 1, compras: 1, cortes: 1 };
+            if (!contadores[tipo]) contadores[tipo] = 1;
+            let num = contadores[tipo];
+            
+            // Aumentar para la próxima vez y guardar
+            contadores[tipo] = num + 1;
+            localStorage.setItem('pos_contadores_folios', JSON.stringify(contadores));
+            
+            const iniciales = window.obtenerInicialesCajero();
+            const numStr = num.toString().padStart(4, '0');
+            return `${iniciales}-${numStr}`; // Ejemplo: JR-0001
+        };
 
         // ==========================================
         // SISTEMA DE LOGIN Y ATAJOS DE TECLADO
@@ -689,27 +721,27 @@
                 return alert("⚠️ El buscador rápido de folios (Ctrl+Q) solo funciona estando dentro de los módulos: \n- Historial de Tickets\n- Historial de Compras\n- Cotizaciones");
             }
 
-            const folioBuscado = prompt(`🔍 BÚSQUEDA RÁPIDA (Ctrl+Q)\n\nEstás en la sección: ${moduloActivo.toUpperCase()}\n\nIngresa el número de folio completo (o los últimos 6 dígitos) que deseas buscar y abrir:`);
+            const folioBuscado = prompt(`🔍 BÚSQUEDA RÁPIDA (Ctrl+Q)\n\nEstás en la sección: ${moduloActivo.toUpperCase()}\n\nIngresa el número de folio completo (o los dígitos) que deseas buscar y abrir:`);
             
             if (!folioBuscado || folioBuscado.trim() === '') return;
             
-            const fStr = folioBuscado.trim();
+            const fStr = folioBuscado.trim().toLowerCase();
             let encontrado = false;
 
             if (moduloActivo === 'historial') {
-                const ticket = window.historialTickets.find(t => t.id.toString() === fStr || t.id.toString().endsWith(fStr));
+                const ticket = window.historialTickets.find(t => t.id.toString().toLowerCase() === fStr || t.id.toString().toLowerCase().includes(fStr));
                 if (ticket) {
                     encontrado = true;
                     window.verTicket(ticket.id);
                 }
             } else if (moduloActivo === 'compras') {
-                const compra = window.historialCompras.find(c => c.id.toString() === fStr || c.id.toString().endsWith(fStr));
+                const compra = window.historialCompras.find(c => c.id.toString().toLowerCase() === fStr || c.id.toString().toLowerCase().includes(fStr));
                 if (compra) {
                     encontrado = true;
                     window.generarPDFCompra(compra.id);
                 }
             } else if (moduloActivo === 'cotizaciones') {
-                const cot = window.cotizacionesGuardadas.find(c => c.id.toString() === fStr || c.id.toString().endsWith(fStr));
+                const cot = window.cotizacionesGuardadas.find(c => c.id.toString().toLowerCase() === fStr || c.id.toString().toLowerCase().includes(fStr));
                 if (cot) {
                     encontrado = true;
                     window.generarPDFCotizacionIndividual(cot.id);
@@ -717,7 +749,7 @@
             }
 
             if (!encontrado) {
-                alert(`❌ No se encontró ningún registro con el folio terminado en "${fStr}" en el historial de ${moduloActivo.toUpperCase()}.`);
+                alert(`❌ No se encontró ningún registro con el folio "${fStr}" en el historial de ${moduloActivo.toUpperCase()}.`);
             }
         };
 
@@ -872,9 +904,11 @@
 
             window.inventario = []; window.clientesGuardados = []; window.totalesDia = { efectivo: 0, debito: 0, credito: 0, transferencia: 0, gastos: 0 };
             window.historialTickets = []; window.historialCompras = []; window.cotizacionesGuardadas = []; window.carrito = []; window.compraDraft = []; window.carritoCotizacion = [];
+            window.contadoresFolios = { tickets: 1, cotizaciones: 1, compras: 1, cortes: 1 };
             
             localStorage.setItem('pos_inventario', '[]'); localStorage.setItem('pos_clientes', '[]'); localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia));
             localStorage.setItem('pos_historial_tickets', '[]'); localStorage.setItem('pos_historial_compras', '[]'); localStorage.setItem('pos_cotizaciones', '[]');
+            localStorage.setItem('pos_contadores_folios', JSON.stringify(window.contadoresFolios));
             
             if(window.syncToFirebase) await window.syncToFirebase();
             alert("✅ La base de datos ha sido borrada por completo.\nEl sistema está limpio y listo para usarse desde cero. La página se recargará ahora."); location.reload();
@@ -915,7 +949,7 @@
             const tbody = document.getElementById('lista-clientes'); tbody.innerHTML = ''; 
             window.clientesGuardados.forEach((c, index) => { 
                 let colorDeuda = c.deuda > 0 ? '#ef5350' : '#81c784'; let textoDeuda = c.deuda > 0 ? `$${c.deuda.toFixed(2)}` : 'Sin Deuda'; let textoNivel = window.nombresPrecios[c.nivelPrecio || 'pub']; 
-                tbody.innerHTML += `<tr><td>${c.nombre}</td><td>${textoNivel}</td><td style="color: ${colorDeuda}; font-weight: bold;">${textoDeuda}</td><td style="display: flex; gap: 5px;"><button onclick="window.abonarDeuda(${index})" style="background: rgba(76, 175, 80, 0.4);">💵 Abonar</button><button onclick="window.editarInfoCliente(${index})">✏️️ Editar</button><button onclick="window.eliminarCliente(${index})">❌</button></td></tr>`; 
+                tbody.innerHTML += `<tr><td>${c.nombre}</td><td>${textoNivel}</td><td style="color: ${colorDeuda}; font-weight: bold;">${textoDeuda}</td><td style="display: flex; gap: 5px;"><button onclick="window.abonarDeuda(${index})" style="background: rgba(76, 175, 80, 0.4);">💵 Abonar</button><button onclick="window.editarInfoCliente(${index})">✏️ Editar</button><button onclick="window.eliminarCliente(${index})">❌</button></td></tr>`; 
             }); 
             window.actualizarSelectsClientes(); 
         };
@@ -1058,7 +1092,8 @@
             if(pagadoConCaja) { window.totalesDia.gastos += totalGastoGlobal; localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); }
             localStorage.setItem('pos_inventario', JSON.stringify(window.inventario)); 
             
-            const nuevaCompra = { id: Date.now(), fecha: new Date().toLocaleString(), subtotal: subtotalGasto, iva: iva, ieps: ieps, total: totalGastoGlobal, pagadoConCaja: pagadoConCaja, items: [...window.compraDraft] };
+            const idCompra = window.generarNuevoFolio('compras');
+            const nuevaCompra = { id: idCompra, fecha: new Date().toLocaleString(), subtotal: subtotalGasto, iva: iva, ieps: ieps, total: totalGastoGlobal, pagadoConCaja: pagadoConCaja, items: [...window.compraDraft] };
             window.historialCompras.push(nuevaCompra); localStorage.setItem('pos_historial_compras', JSON.stringify(window.historialCompras));
 
             const msjGasto = pagadoConCaja ? `\nGasto restado de la caja: $${totalGastoGlobal.toFixed(2)}` : `\nNo se restó de la caja (Pago externo).`;
@@ -1072,7 +1107,7 @@
             const tbody = document.getElementById('lista-historial-compras'); tbody.innerHTML = '';
             window.historialCompras.slice().reverse().forEach(c => {
                 const origen = (c.pagadoConCaja !== false) ? '<span style="color:#ef5350;">Caja Fís.</span>' : '<span style="color:#81c784;">Externo</span>';
-                tbody.innerHTML += `<tr><td>${c.fecha}</td><td>$${c.subtotal.toFixed(2)}</td><td>$${c.iva.toFixed(2)}</td><td>$${c.ieps.toFixed(2)}</td><td style="color:#ef5350; font-weight:bold;">$${c.total.toFixed(2)}</td><td>${origen}</td><td><button onclick="window.generarPDFCompra(${c.id})" style="background: rgba(0, 210, 255, 0.4);">📄 PDF</button></td></tr>`;
+                tbody.innerHTML += `<tr><td>${c.id}</td><td>${c.fecha}</td><td>$${c.subtotal.toFixed(2)}</td><td>$${c.iva.toFixed(2)}</td><td>$${c.ieps.toFixed(2)}</td><td style="color:#ef5350; font-weight:bold;">$${c.total.toFixed(2)}</td><td>${origen}</td><td><button onclick="window.generarPDFCompra('${c.id}')" style="background: rgba(0, 210, 255, 0.4);">📄 PDF</button></td></tr>`;
             });
         };
 
@@ -1082,7 +1117,7 @@
             const cyan = [0, 210, 255]; doc.setFillColor(...cyan); doc.rect(0, 0, 220, 35, 'F'); doc.setTextColor(255, 255, 255); doc.setFontSize(24); doc.text("COMPROBANTE DE COMPRA", 15, 22); doc.setTextColor(50, 50, 50); doc.setFontSize(10);
             
             if(window.configuracionApp.nombreNegocio) doc.text(`Empresa: ${window.configuracionApp.nombreNegocio}`, 15, 45);
-            doc.text(`Fecha: ${c.fecha}`, 15, 50); doc.text(`Folio Interno: ${c.id.toString().slice(-6)}`, 150, 45);
+            doc.text(`Fecha: ${c.fecha}`, 15, 50); doc.text(`Folio Interno: ${c.id}`, 150, 45);
             const origenTexto = (c.pagadoConCaja !== false) ? 'Efectivo de Caja' : 'Capital Externo (Transferencia/Tarjeta)'; doc.text(`Origen del Pago: ${origenTexto}`, 15, 55);
 
             const tableColumn = ["Cant.", "Código", "Descripción", "Costo Unit.", "Total Línea"]; const tableRows = [];
@@ -1095,7 +1130,7 @@
             if(c.ieps > 0) { doc.text(`IEPS (8%): $${c.ieps.toFixed(2)}`, 140, finalY); finalY+=6; }
             
             finalY+=4; doc.setFontSize(12); doc.setTextColor(212, 175, 55); doc.text(`TOTAL GASTO: $${c.total.toFixed(2)}`, 140, finalY);
-            doc.save(`Compra_${c.id.toString().slice(-6)}.pdf`);
+            doc.save(`Compra_${c.id}.pdf`);
         };
 
         // ==========================================
@@ -1126,7 +1161,10 @@
             const selectCli = document.getElementById('select-cliente-cotizacion'); let cliente = document.getElementById('nombre-cliente-cotizacion').value;
             if(selectCli.value) { const cObj = window.clientesGuardados.find(c => c.id == selectCli.value); if(cObj) cliente = cObj.nombre; } if(!cliente) cliente = 'Público en General'; 
             let subtotal = 0; window.carritoCotizacion.forEach(i => subtotal += (i.cantidad * i.precioAplicado)); const aplicaIva = document.getElementById('check-iva').checked; const iva = aplicaIva ? (subtotal * 0.16) : 0; const totalFinal = subtotal + iva;
-            const cotizacionObj = { id: window.idCotizacionEditando || Date.now(), fecha: new Date().toLocaleDateString(), cliente: cliente, subtotal: subtotal, iva: iva, total: totalFinal, items: [...window.carritoCotizacion] };
+            
+            const idCoti = window.idCotizacionEditando || window.generarNuevoFolio('cotizaciones');
+            const cotizacionObj = { id: idCoti, fecha: new Date().toLocaleDateString(), cliente: cliente, subtotal: subtotal, iva: iva, total: totalFinal, items: [...window.carritoCotizacion] };
+            
             if (window.idCotizacionEditando) { const idx = window.cotizacionesGuardadas.findIndex(c => c.id == window.idCotizacionEditando); if(idx !== -1) window.cotizacionesGuardadas[idx] = cotizacionObj; } else { window.cotizacionesGuardadas.push(cotizacionObj); }
             localStorage.setItem('pos_cotizaciones', JSON.stringify(window.cotizacionesGuardadas)); alert("Cotización guardada."); window.limpiarCotizacion(); window.renderizarCotizacionesGuardadas();
         };
@@ -1146,7 +1184,7 @@
             if(window.configuracionApp.telefono) { doc.text(`Tel: ${window.configuracionApp.telefono}`, marginX, y); y+=5; }
             if(window.configuracionApp.correo) { doc.text(`Correo: ${window.configuracionApp.correo}`, marginX, y); y+=5; }
             
-            doc.text(`No. de cotización: ${cot.id.toString().slice(-6)}`, 140, 45); doc.text(`Fecha: ${cot.fecha}`, 140, 50);
+            doc.text(`No. de cotización: ${cot.id}`, 140, 45); doc.text(`Fecha: ${cot.fecha}`, 140, 50);
 
             doc.setFillColor(240, 240, 240); doc.rect(marginX, 65, 185, 8, 'F'); doc.setTextColor(...cyan); doc.setFontSize(11); doc.text("DATOS DEL CLIENTE", marginX + 2, 70.5);
             doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.text(`Cliente / Empresa: ${cot.cliente}`, marginX, 80); doc.text(`Domicilio / Dirección de entrega: A convenir`, marginX, 85);
@@ -1166,15 +1204,15 @@
             doc.setFontSize(9); doc.setTextColor(100, 100, 100); doc.text("Elaboró/Vendedor", 42, finalY + 5); doc.text("Aceptación del cliente", 140, finalY + 5);
             finalY += 15; doc.setFontSize(8); const footerText = doc.splitTextToSize("Esta cotización es una propuesta comercial y no constituye una factura. Los precios y condiciones podrán modificarse de acuerdo con la disponibilidad y los términos acordados.", 185); doc.text(footerText, marginX, finalY);
 
-            doc.save(`Cotizacion_${cot.id.toString().slice(-6)}_${cot.cliente}.pdf`);
+            doc.save(`Cotizacion_${cot.id}_${cot.cliente}.pdf`);
         };
 
         window.limpiarCotizacion = function() { window.carritoCotizacion = []; window.idCotizacionEditando = null; document.getElementById('nombre-cliente-cotizacion').value = ''; document.getElementById('select-cliente-cotizacion').value = ''; document.getElementById('titulo-cotizacion-actual').innerText = 'Crear Nueva Cotización'; window.renderizarCarritoCotizacion(); };
         window.renderizarCotizacionesGuardadas = function() {
             const tbody = document.getElementById('lista-cotizaciones-guardadas'); tbody.innerHTML = '';
-            window.cotizacionesGuardadas.forEach(cot => { tbody.innerHTML += `<tr><td>${cot.fecha}</td><td>${cot.cliente}</td><td>$${cot.total.toFixed(2)}</td><td style="display: flex; gap: 5px; flex-wrap: wrap;"><button onclick="window.generarPDFCotizacionIndividual(${cot.id})" style="background: rgba(0, 210, 255, 0.4);">📄 PDF</button><button onclick="window.editarCotizacion(${cot.id})">✏️ Editar</button><button onclick="window.eliminarCotizacion(${cot.id})">❌</button></td></tr>`; });
+            window.cotizacionesGuardadas.forEach(cot => { tbody.innerHTML += `<tr><td>${cot.id}</td><td>${cot.fecha}</td><td>${cot.cliente}</td><td>$${cot.total.toFixed(2)}</td><td style="display: flex; gap: 5px; flex-wrap: wrap;"><button onclick="window.generarPDFCotizacionIndividual('${cot.id}')" style="background: rgba(0, 210, 255, 0.4);">📄 PDF</button><button onclick="window.editarCotizacion('${cot.id}')">✏️ Editar</button><button onclick="window.eliminarCotizacion('${cot.id}')">❌</button></td></tr>`; });
         };
-        window.editarCotizacion = function(id) { const cot = window.cotizacionesGuardadas.find(c => c.id == id); if(cot) { window.carritoCotizacion = [...cot.items]; window.idCotizacionEditando = id; document.getElementById('nombre-cliente-cotizacion').value = cot.cliente; document.getElementById('select-cliente-cotizacion').value = ''; document.getElementById('titulo-cotizacion-actual').innerText = 'Editando Cotización: ' + id.toString().slice(-6); window.renderizarCarritoCotizacion(); document.getElementById('cotizaciones').scrollTo(0,0); } };
+        window.editarCotizacion = function(id) { const cot = window.cotizacionesGuardadas.find(c => c.id == id); if(cot) { window.carritoCotizacion = [...cot.items]; window.idCotizacionEditando = id; document.getElementById('nombre-cliente-cotizacion').value = cot.cliente; document.getElementById('select-cliente-cotizacion').value = ''; document.getElementById('titulo-cotizacion-actual').innerText = 'Editando Cotización: ' + id; window.renderizarCarritoCotizacion(); document.getElementById('cotizaciones').scrollTo(0,0); } };
         window.eliminarCotizacion = function(id) { if(confirm("¿Eliminar cotización?")) { window.cotizacionesGuardadas = window.cotizacionesGuardadas.filter(c => c.id != id); localStorage.setItem('pos_cotizaciones', JSON.stringify(window.cotizacionesGuardadas)); window.renderizarCotizacionesGuardadas(); } };
 
 
@@ -1265,7 +1303,7 @@
 
             if (restante > 0 && clienteObj) { clienteObj.deuda += restante; localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados)); }
 
-            const idTicket = Date.now();
+            const idTicket = window.generarNuevoFolio('tickets');
             const cajeroActual = window.usuarioLogueado ? window.usuarioLogueado.usuario : 'Admin';
 
             const nuevoTicket = {
@@ -1438,7 +1476,7 @@
                 let btnCancelar = t.estatus === 'cancelado' ? '' : `<button onclick="window.eliminarTicket('${t.id}')">❌ Cancelar</button>`;
                 let btnEditar = t.estatus === 'cancelado' ? '' : `<button onclick="window.editarTicket('${t.id}')">✏️ Editar</button>`;
                 
-                tbody.innerHTML += `<tr style="${opacidad}"><td style="font-weight:bold;">${t.id}</td><td>${t.fecha} ${t.hora || ''}</td><td>${t.cliente}</td><td style="color:#81c784; font-weight:bold;">$${t.total.toFixed(2)}</td><td>${estatusTexto}</td><td style="display:flex; gap:5px; flex-wrap:wrap;"><button onclick="window.verTicket('${t.id}')">👁️ Ver</button><button onclick="window.reimprimirTicket('${t.id}')" style="background: rgba(0, 210, 255, 0.4);">📄 PDF</button>${btnEditar}${btnCancelar}</td></tr>`; 
+                tbody.innerHTML += `<tr style="${opacidad}"><td style="font-weight:bold;">${t.id}</td><td>${t.fecha} ${t.hora || ''}</td><td>${t.cliente}</td><td style="color:#81c784; font-weight:bold;">$${t.total.toFixed(2)}</td><td>${estatusTexto}</td><td style="display:flex; gap:5px; flex-wrap:wrap;"><button onclick="window.verTicket('${t.id}')">👁️️ Ver</button><button onclick="window.reimprimirTicket('${t.id}')" style="background: rgba(0, 210, 255, 0.4);">📄 PDF</button>${btnEditar}${btnCancelar}</td></tr>`; 
             }); 
         };
         
@@ -1530,15 +1568,17 @@
             const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [80, 200] });
             
             const cajeroStr = window.usuarioLogueado ? window.usuarioLogueado.usuario : 'Admin';
+            const folioCorte = window.generarNuevoFolio('cortes');
 
             doc.setFontSize(14); doc.text("CORTE DE CAJA", 40, 10, { align: "center" }); doc.setFontSize(10); 
+            doc.text(`Folio: ${folioCorte}`, 40, 15, { align: "center" });
             doc.text(`Fecha: ${new Date().toLocaleString()}`, 5, 20); 
             doc.text(`Cajero: ${cajeroStr}`, 5, 25);
             doc.text("------------------------------------------", 5, 30);
             
             let y = 35; doc.text(`Fondo Inicial: $${fondo.toFixed(2)}`, 5, y); y+=5; doc.text(`Ingresos Efectivo: $${window.totalesDia.efectivo.toFixed(2)}`, 5, y); y+=5; doc.text(`Gastos Efectivo: -$${window.totalesDia.gastos.toFixed(2)}`, 5, y); y+=5; doc.text(`Transferencias: $${window.totalesDia.transferencia.toFixed(2)}`, 5, y); y+=5; doc.text(`T. Débito (Bruto): $${window.totalesDia.debito.toFixed(2)}`, 5, y); y+=5; doc.text(`T. Crédito (Bruto): $${window.totalesDia.credito.toFixed(2)}`, 5, y); y+=5; doc.text("------------------------------------------", 5, y); y+=5; doc.setFontSize(12); doc.text(`EFECTIVO SISTEMA: $${esperado.toFixed(2)}`, 5, y); y+=7; doc.text(`EFECTIVO FISICO: $${fisico.toFixed(2)}`, 5, y); y+=7; if (diferencia < 0) doc.text(`FALTANTE: $${Math.abs(diferencia).toFixed(2)}`, 5, y); else doc.text(`SOBRANTE: $${diferencia.toFixed(2)}`, 5, y); y+=10; doc.text("------------------------------------------", 5, y); y+=5; const totalReal = document.getElementById('corte-total-real').innerText; doc.text(`GANANCIA NETA: $${totalReal}`, 5, y);
             
-            doc.save(`CorteCaja_${Date.now().toString().slice(-6)}.pdf`);
+            doc.save(`CorteCaja_${folioCorte}.pdf`);
             window.totalesDia = { efectivo: 0, debito: 0, credito: 0, transferencia: 0, gastos: 0 }; localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); document.getElementById('corte-efectivo-fisico').value = 0; window.actualizarVistaCaja(); alert("Corte realizado con éxito.");
         };
     </script>
@@ -1579,7 +1619,8 @@
                     pos_cotizaciones: localStorage.getItem('pos_cotizaciones') || '[]',
                     pos_configuracion: localStorage.getItem('pos_configuracion') || '{}',
                     pos_logo_base64: localStorage.getItem('pos_logo_base64') || '',
-                    pos_usuarios: localStorage.getItem('pos_usuarios') || '[]' 
+                    pos_usuarios: localStorage.getItem('pos_usuarios') || '[]',
+                    pos_contadores_folios: localStorage.getItem('pos_contadores_folios') || '{}'
                 };
                 await setDoc(docRef, data);
                 console.log("☁️ Guardado en la nube exitoso.");
@@ -1615,6 +1656,7 @@
                     if(data.pos_cotizaciones) originalSetItem.call(localStorage, 'pos_cotizaciones', data.pos_cotizaciones);
                     if(data.pos_configuracion) originalSetItem.call(localStorage, 'pos_configuracion', data.pos_configuracion);
                     if(data.pos_logo_base64) originalSetItem.call(localStorage, 'pos_logo_base64', data.pos_logo_base64);
+                    if(data.pos_contadores_folios) originalSetItem.call(localStorage, 'pos_contadores_folios', data.pos_contadores_folios);
                     
                     if(data.pos_usuarios && data.pos_usuarios !== '[]') {
                         originalSetItem.call(localStorage, 'pos_usuarios', data.pos_usuarios);
@@ -1631,6 +1673,7 @@
                     window.cotizacionesGuardadas = JSON.parse(localStorage.getItem('pos_cotizaciones')) || window.cotizacionesGuardadas;
                     window.configuracionApp = JSON.parse(localStorage.getItem('pos_configuracion')) || window.configuracionApp;
                     window.usuariosGuardados = JSON.parse(localStorage.getItem('pos_usuarios')) || window.usuariosGuardados;
+                    window.contadoresFolios = JSON.parse(localStorage.getItem('pos_contadores_folios')) || window.contadoresFolios;
 
                     if(window.renderizarInventario) window.renderizarInventario(); 
                     if(window.renderizarCotizacionesGuardadas) window.renderizarCotizacionesGuardadas(); 
