@@ -150,9 +150,9 @@
                     <label for="nivel-precio-global" style="font-weight: bold; color: var(--acento); margin-left: 10px;">Aplicar Precio:</label>
                     <select id="nivel-precio-global" onchange="window.cambiarNivelPrecioGlobal()" style="flex: 1; max-width: 200px;">
                         <option value="pub">Público</option>
-                        <option value="may1">Mayoreo 1</option>
-                        <option value="may2">Mayoreo 2</option>
-                        <option value="may3">Mayoreo 3</option>
+                        <option value="may1">Mayoreo 1 (Precio 2)</option>
+                        <option value="may2">Mayoreo 2 (Precio 3)</option>
+                        <option value="may3">Mayoreo 3 (Precio 4)</option>
                         <option value="dueno">Dueño / Especial</option>
                     </select>
                 </div>
@@ -180,10 +180,10 @@
                         <p style="color: var(--acento); font-size: 1.3em; font-weight: bold; text-shadow: 2px 2px 4px #000;">Cambio a devolver: $<span id="cambio-venta">0.00</span></p>
                     </div>
                     <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 15px; align-items: center;">
-                        <label>Formato de Ticket:</label>
-                        <select id="formato-impresion" style="width: 150px;">
-                            <option value="80mm">Rollo 80mm</option>
-                            <option value="carta">Hoja Carta</option>
+                        <label>Formato de Ticket al Cobrar:</label>
+                        <select id="formato-impresion" style="width: 160px;">
+                            <option value="80mm">🧾 Rollo 80mm</option>
+                            <option value="carta">📄 Hoja Tamaño Carta</option>
                         </select>
                     </div>
                     <input type="text" id="nombre-cliente" placeholder="Nombre del Cliente (Opcional si no está registrado)">
@@ -232,7 +232,7 @@
                         <input type="date" id="filtro-fecha-reportes" onchange="window.renderizarReporteGanancias()" style="width: 200px;">
                         <button onclick="document.getElementById('filtro-fecha-reportes').value=''; window.renderizarReporteGanancias();">Mostrar Histórico Completo</button>
                     </div>
-                    <p style="font-size: 0.9em; margin-bottom: 15px; color: #aaa;">Se muestra el desglose exacto y la ganancia neta obtenida de forma detallada ticket por ticket.</p>
+                    <p style="font-size: 0.9em; margin-bottom: 15px; color: #aaa;">Se muestra el desglose exacto y la ganancia neta obtenida ticket por ticket (tomando el costo unitario registrado en el apartado de Compras).</p>
                     
                     <div style="overflow-x: auto;">
                         <table>
@@ -241,7 +241,7 @@
                                     <th>Hora</th>
                                     <th>Folio Ticket</th>
                                     <th>Total Venta</th>
-                                    <th>Costo Insumos</th>
+                                    <th>Costo (Compras)</th>
                                     <th>IVA (16%)</th>
                                     <th>IEPS (8%)</th>
                                     <th>Ganancia Neta</th>
@@ -279,10 +279,10 @@
                     </div>
                     <h4 style="margin-bottom: 5px;">Precios de Venta (Con impuestos incluidos)</h4>
                     <div class="grid-auto">
-                        <input type="number" id="inv-precio-pub" placeholder="Público" step="any">
-                        <input type="number" id="inv-precio-may1" placeholder="Mayoreo 1" step="any">
-                        <input type="number" id="inv-precio-may2" placeholder="Mayoreo 2" step="any">
-                        <input type="number" id="inv-precio-may3" placeholder="Mayoreo 3" step="any">
+                        <input type="number" id="inv-precio-pub" placeholder="Público (Precio 1)" step="any">
+                        <input type="number" id="inv-precio-may1" placeholder="Mayoreo 1 (Precio 2)" step="any">
+                        <input type="number" id="inv-precio-may2" placeholder="Mayoreo 2 (Precio 3)" step="any">
+                        <input type="number" id="inv-precio-may3" placeholder="Mayoreo 3 (Precio 4)" step="any">
                         <input type="number" id="inv-precio-dueno" placeholder="Dueño" step="any">
                     </div>
                     <div style="margin-top: 10px; display: flex; gap: 15px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">
@@ -301,7 +301,7 @@
                 </div>
                 
                 <table>
-                    <thead><tr><th>Cód.</th><th>Nombre</th><th>Tipo</th><th>Stock</th><th>P. Público</th><th>P. Dueño</th><th>Acciones</th></tr></thead>
+                    <thead><tr><th>Cód.</th><th>Nombre</th><th>Tipo</th><th>Stock</th><th>Costo Compra</th><th>P. Público</th><th>P. Dueño</th><th>Acciones</th></tr></thead>
                     <tbody id="lista-inventario"></tbody>
                 </table>
             </section>
@@ -392,7 +392,7 @@
                 <h2 style="color: var(--dorado);">Etiquetas de Envío (Interno)</h2>
                 <div class="seccion-flotante">
                     <h3 style="color: var(--acento);">Generar Nueva Etiqueta</h3>
-                    <p style="font-size: 0.9em; margin-bottom: 15px;">Los datos del Remitente (DE:) se tomarán automáticamente de la configuración de tu sistema.</p>
+                    <p style="font-size: 0.9em; margin-bottom: 15px;">Los datos del Remitente (DE:) y el logo se tomarán automáticamente de la configuración de tu sistema.</p>
                     <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">
                         <label for="select-cliente-envio" style="font-weight: bold; color: var(--dorado);">Cargar Cliente Registrado:</label>
                         <select id="select-cliente-envio" onchange="window.alSeleccionarClienteEnvio()" style="flex: 1; max-width: 350px;">
@@ -417,7 +417,7 @@
                     <div class="grid-auto">
                         <input type="text" id="cliente-nombre" placeholder="Nombre del Cliente">
                         <select id="cliente-nivel">
-                            <option value="pub">Precio Público</option><option value="may1">Mayoreo 1</option><option value="may2">Mayoreo 2</option><option value="may3">Mayoreo 3</option><option value="dueno">Dueño / Especial</option>
+                            <option value="pub">Precio Público</option><option value="may1">Mayoreo 1 (Precio 2)</option><option value="may2">Mayoreo 2 (Precio 3)</option><option value="may3">Mayoreo 3 (Precio 4)</option><option value="dueno">Dueño / Especial</option>
                         </select>
                         <input type="number" id="cliente-deuda" placeholder="Deuda Inicial ($)" value="0" step="any">
                         <input type="text" id="cliente-rfc" placeholder="RFC (Opcional)">
@@ -462,7 +462,7 @@
             <section id="configuracion" class="modulo">
                 <h2 style="color: var(--dorado);">⚙️ Configuración de Documentos (PDF)</h2>
                 <div class="seccion-flotante">
-                    <p>Configura los datos de tu empresa y sube tu logo (se usará en tickets y cotizaciones).</p>
+                    <p>Configura los datos de tu empresa y sube tu logo (se usará en todos los documentos PDF del sistema).</p>
                     <div class="grid-2">
                         <div>
                             <label>Logo de la Empresa (PNG/JPG sin fondo):</label>
@@ -487,7 +487,7 @@
                 <div style="margin-top: 30px; padding: 20px; background: rgba(239, 83, 80, 0.1); border: 1px solid #ef5350; border-radius: 8px; text-align: center;">
                     <h3 style="color: #ef5350; margin-top: 0; text-shadow: none;">⚠️ Zona de Peligro</h3>
                     <p style="font-size: 0.95em; margin-bottom: 15px; color: #ffcdd2;">Al presionar este botón borrarás todo el inventario, clientes, ventas, deudas y cotizaciones, dejando el sistema totalmente en blanco. Tu configuración, usuarios y logotipo se mantendrán.</p>
-                    <button class="btn-accion" style="background: rgba(239, 83, 80, 0.3); border-color: #ef5350; color: white;" onclick="window.limpiarBaseDeDatos()">🗑️ FORMATER Y BORRAR TODA LA BASE DE DATOS</button>
+                    <button class="btn-accion" style="background: rgba(239, 83, 80, 0.3); border-color: #ef5350; color: white;" onclick="window.limpiarBaseDeDatos()">🗑️ FORMATEAR Y BORRAR TODA LA BASE DE DATOS</button>
                 </div>
             </section>
 
@@ -541,17 +541,49 @@
         </main>
     </div> <!-- Fin de app-container -->
 
-    <!-- MODAL PARA VER TICKET (SIN DESCARGAR) -->
+    <!-- MODAL PARA ABONAR DEUDA DE CLIENTE CON MÉTODO DE PAGO -->
+    <div id="modal-abono" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10001; justify-content:center; align-items:center;">
+        <div style="background:#1e293b; padding:25px; border-radius:12px; width:90%; max-width:420px; border: 2px solid var(--acento); box-shadow: 0 0 25px rgba(0,210,255,0.3);">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:10px; margin-bottom:15px;">
+                <h3 style="margin:0; color:var(--dorado);">💵 Registrar Abono de Cliente</h3>
+                <button onclick="window.cerrarModalAbono()" style="background:#ef5350; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">X</button>
+            </div>
+            <p style="margin: 5px 0;">Cliente: <strong id="abono-nombre-cliente" style="color:var(--acento);"></strong></p>
+            <p style="margin: 5px 0 15px 0;">Deuda Actual: <strong id="abono-deuda-actual" style="color:#ef5350;"></strong></p>
+            
+            <label style="display:block; margin-top:10px; font-weight:bold;">Monto a Abonar ($):</label>
+            <input type="number" id="abono-monto" placeholder="0.00" step="any" style="width:100%; font-size:1.1em;">
+            
+            <label style="display:block; margin-top:10px; font-weight:bold;">Método de Pago:</label>
+            <select id="abono-metodo" style="width:100%; font-size:1.05em;">
+                <option value="efectivo">💵 Efectivo</option>
+                <option value="debito">💳 Tarjeta de Débito</option>
+                <option value="credito">💳 Tarjeta de Crédito</option>
+                <option value="transferencia">🏦 Transferencia</option>
+            </select>
+
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="btn-accion" style="flex:1; padding:12px;" onclick="window.confirmarAbonoDeuda()">✅ Confirmar Abono</button>
+                <button style="background:rgba(239,83,80,0.3); border-color:#ef5350; color:white; padding:12px;" onclick="window.cerrarModalAbono()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA VER TICKET (Y DESCARGAR EN 80MM O CARTA) -->
     <div id="modal-ticket" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
-        <div style="background:#1e1e1e; padding:20px; border-radius:10px; width:90%; max-width:500px; max-height:90vh; overflow-y:auto; border: 1px solid var(--dorado);">
+        <div style="background:#1e1e1e; padding:20px; border-radius:10px; width:90%; max-width:520px; max-height:90vh; overflow-y:auto; border: 1px solid var(--dorado);">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #444; padding-bottom:10px; margin-bottom:10px;">
                 <h3 style="margin:0; color:var(--acento);">Detalle del Ticket</h3>
                 <button onclick="window.cerrarModalTicket()" style="background:red; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">X</button>
             </div>
             <div id="contenido-ticket" style="color:white; font-family:monospace; white-space:pre-wrap; font-size:14px; line-height: 1.4;"></div>
             <div style="margin-top:15px; border-top:1px solid #444; padding-top:10px; text-align:right;">
-                <p style="font-size:0.8em; color:#aaa; margin-bottom: 5px;">Presiona <b style="color:var(--dorado);">Ctrl + M</b> para editar esta venta</p>
-                <button class="btn-accion" id="btn-editar-modal-ticket" onclick="if(window.ticketActualModal) { window.cerrarModalTicket(); window.editarTicket(window.ticketActualModal); }">✏️ Editar Venta</button>
+                <p style="font-size:0.8em; color:#aaa; margin-bottom: 8px;">Presiona <b style="color:var(--dorado);">Ctrl + M</b> para editar esta venta</p>
+                <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+                    <button onclick="if(window.ticketActualModal) window.reimprimirTicket(window.ticketActualModal, '80mm')" style="background: rgba(0, 210, 255, 0.35); border-color: var(--acento);">🧾 PDF Rollo 80mm</button>
+                    <button onclick="if(window.ticketActualModal) window.reimprimirTicket(window.ticketActualModal, 'carta')" style="background: rgba(212, 175, 55, 0.35); border-color: var(--dorado);">📄 PDF Tamaño Carta</button>
+                    <button class="btn-accion" id="btn-editar-modal-ticket" onclick="if(window.ticketActualModal) { window.cerrarModalTicket(); window.editarTicket(window.ticketActualModal); }">✏️ Editar Venta</button>
+                </div>
             </div>
         </div>
     </div>
@@ -592,17 +624,87 @@
         window.carrito = []; window.nivelPrecioGlobalActual = 'pub';
         window.carritoCotizacion = []; window.idCotizacionEditando = null;
         window.compraDraft = []; window.kitDraftComponentes = []; window.indexClienteEditando = null;
+        window.indexClienteAbonando = null;
         window.indexUsuarioEditando = null;
         window.indexInventarioEditando = null;
         window.ticketActualModal = null;
         window.usuarioLogueado = null; 
 
         // ==========================================
+        // FUNCIONES DE COSTOS (DESDE COMPRAS) Y DESCUENTOS
+        // ==========================================
+        window.obtenerCostoPorCodigoDesdeCompras = function(codigo) {
+            if (!codigo) return 0;
+            const codNorm = codigo.toString().trim().toLowerCase();
+            // 1. Buscar el último costo registrado en el apartado de Compras
+            if (window.historialCompras && Array.isArray(window.historialCompras)) {
+                for (let i = window.historialCompras.length - 1; i >= 0; i--) {
+                    const compra = window.historialCompras[i];
+                    if (compra && Array.isArray(compra.items)) {
+                        const encontrado = compra.items.find(x => x.codigo && x.codigo.toString().trim().toLowerCase() === codNorm);
+                        if (encontrado && !isNaN(parseFloat(encontrado.costo))) {
+                            return parseFloat(encontrado.costo);
+                        }
+                    }
+                }
+            }
+            // 2. Respaldo en la propiedad costoCompra del artículo en inventario
+            const artInv = window.inventario.find(x => x.codigo && x.codigo.toString().trim().toLowerCase() === codNorm);
+            if (artInv && !isNaN(parseFloat(artInv.costoCompra))) {
+                return parseFloat(artInv.costoCompra);
+            }
+            return 0;
+        };
+
+        window.obtenerCostoArticulo = function(item) {
+            if (!item) return 0;
+            const codNorm = item.codigo ? item.codigo.toString().trim().toLowerCase() : '';
+            const dbArt = window.inventario.find(x => x.codigo && x.codigo.toString().trim().toLowerCase() === codNorm) || item;
+            
+            // Si es un Kit, su costo es la suma del costo de compra de sus insumos
+            if (dbArt.tipo === 'kit' && Array.isArray(dbArt.componentes) && dbArt.componentes.length > 0) {
+                let costoKit = 0;
+                dbArt.componentes.forEach(comp => {
+                    const costoInsumo = window.obtenerCostoPorCodigoDesdeCompras(comp.codigoInsumo);
+                    costoKit += (parseFloat(comp.cant) || 0) * costoInsumo;
+                });
+                return costoKit;
+            }
+            return window.obtenerCostoPorCodigoDesdeCompras(item.codigo);
+        };
+
+        window.obtenerPrecioPublicoItem = function(item) {
+            if (!item) return 0;
+            if (item.precios && !isNaN(parseFloat(item.precios.pub)) && parseFloat(item.precios.pub) > 0) {
+                return parseFloat(item.precios.pub);
+            }
+            const codNorm = item.codigo ? item.codigo.toString().trim().toLowerCase() : '';
+            const dbArt = window.inventario.find(x => x.codigo && x.codigo.toString().trim().toLowerCase() === codNorm);
+            if (dbArt && dbArt.precios && !isNaN(parseFloat(dbArt.precios.pub))) {
+                return parseFloat(dbArt.precios.pub);
+            }
+            return parseFloat(item.precioAplicado) || 0;
+        };
+
+        window.calcularDescuentoTicket = function(ticket) {
+            if (!ticket || !Array.isArray(ticket.items)) return 0;
+            let descTotal = 0;
+            ticket.items.forEach(item => {
+                const pPub = window.obtenerPrecioPublicoItem(item);
+                const pAplicado = parseFloat(item.precioAplicado) || 0;
+                const cant = parseFloat(item.cantidad) || 0;
+                if (pPub > pAplicado) {
+                    descTotal += (pPub - pAplicado) * cant;
+                }
+            });
+            return descTotal;
+        };
+
+        // ==========================================
         // FUNCIONES DE FOLIOS E INICIALES
         // ==========================================
         window.obtenerInicialesCajero = function() {
             const nombre = window.usuarioLogueado ? window.usuarioLogueado.usuario : 'Admin';
-            // Separamos por espacios o guiones bajos
             const partes = nombre.replace(/[^a-zA-Z0-9]/g, ' ').trim().split(/\s+/).filter(p => p.length > 0);
             
             if (partes.length === 0) return 'XX';
@@ -617,13 +719,12 @@
             if (!contadores[tipo]) contadores[tipo] = 1;
             let num = contadores[tipo];
             
-            // Aumentar para la próxima vez y guardar
             contadores[tipo] = num + 1;
             localStorage.setItem('pos_contadores_folios', JSON.stringify(contadores));
             
             const iniciales = window.obtenerInicialesCajero();
             const numStr = num.toString().padStart(4, '0');
-            return `${iniciales}-${numStr}`; // Ejemplo: JR-0001
+            return `${iniciales}-${numStr}`;
         };
 
         // ==========================================
@@ -690,7 +791,6 @@
         };
 
         document.addEventListener('keydown', function(e) {
-            // Atajo Ctrl+M: Editar Ticket desde el Modal
             if (e.ctrlKey && e.key.toLowerCase() === 'm' && window.usuarioLogueado) {
                 if(window.usuarioLogueado.rol === 'admin' || window.usuarioLogueado.permisos.includes('ventas')) {
                     e.preventDefault();
@@ -703,7 +803,6 @@
                 }
             }
 
-            // Atajo Ctrl+Q: Buscador de Folios en Historiales
             if (e.ctrlKey && e.key.toLowerCase() === 'q' && window.usuarioLogueado) {
                 e.preventDefault();
                 window.abrirBuscadorFolio();
@@ -915,7 +1014,7 @@
         };
 
         // ==========================================
-        // MÓDULO CLIENTES Y SELECTS (INCLUYE ENVÍOS)
+        // MÓDULO CLIENTES, ABONOS Y SELECTS
         // ==========================================
         window.guardarCliente = function() { 
             const nombre = document.getElementById('cliente-nombre').value; const nivel = document.getElementById('cliente-nivel').value; const deuda = parseFloat(document.getElementById('cliente-deuda').value) || 0; 
@@ -956,7 +1055,7 @@
 
         window.actualizarSelectsClientes = function() { 
             window.clientesGuardados.sort((a, b) => a.nombre.localeCompare(b.nombre));
-            const datalistVenta = document.getElementById('clientes-datalist'); let valVentaActual = document.getElementById('input-cliente-venta') ? document.getElementById('input-cliente-venta').value : '';
+            const datalistVenta = document.getElementById('clientes-datalist');
             if(datalistVenta) datalistVenta.innerHTML = ''; 
             const selCot = document.getElementById('select-cliente-cotizacion'); let valCotActual = selCot ? selCot.value : ''; if(selCot) selCot.innerHTML = '<option value="">Público Libre</option>'; 
             const selEnvio = document.getElementById('select-cliente-envio'); let valEnvioActual = selEnvio ? selEnvio.value : ''; if(selEnvio) selEnvio.innerHTML = '<option value="">Selecciona un cliente o llena los datos abajo</option>';
@@ -970,11 +1069,66 @@
             if(valCotActual && selCot) selCot.value = valCotActual; if(valEnvioActual && selEnvio) selEnvio.value = valEnvioActual;
         };
 
-        window.abonarDeuda = function(index) { const monto = parseFloat(prompt(`Abonar a ${window.clientesGuardados[index].nombre}:`)); if(monto && monto > 0) { if(monto > window.clientesGuardados[index].deuda) return alert("No puede ser mayor a la deuda."); window.clientesGuardados[index].deuda -= monto; localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados)); window.totalesDia.efectivo += monto; localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); window.actualizarVistaCaja(); window.renderizarClientes(); alert("Abono registrado."); } };
+        // MODAL DE ABONO CON SELECCIÓN DE MÉTODO DE PAGO
+        window.abonarDeuda = function(index) {
+            const cliente = window.clientesGuardados[index];
+            if (!cliente) return;
+            if ((parseFloat(cliente.deuda) || 0) <= 0) {
+                return alert("Este cliente no tiene deuda pendiente.");
+            }
+            window.indexClienteAbonando = index;
+            document.getElementById('abono-nombre-cliente').innerText = cliente.nombre;
+            document.getElementById('abono-deuda-actual').innerText = `$${cliente.deuda.toFixed(2)}`;
+            document.getElementById('abono-monto').value = '';
+            document.getElementById('abono-metodo').value = 'efectivo';
+            document.getElementById('modal-abono').style.display = 'flex';
+            setTimeout(() => document.getElementById('abono-monto').focus(), 100);
+        };
+
+        window.cerrarModalAbono = function() {
+            document.getElementById('modal-abono').style.display = 'none';
+            window.indexClienteAbonando = null;
+        };
+
+        window.confirmarAbonoDeuda = function() {
+            if (window.indexClienteAbonando === null) return;
+            const cliente = window.clientesGuardados[window.indexClienteAbonando];
+            const monto = parseFloat(document.getElementById('abono-monto').value);
+            const metodo = document.getElementById('abono-metodo').value;
+
+            if (isNaN(monto) || monto <= 0) {
+                return alert("Ingresa un monto válido mayor a $0.00.");
+            }
+            if (monto > cliente.deuda + 0.001) {
+                return alert("El abono no puede ser mayor a la deuda actual del cliente.");
+            }
+
+            cliente.deuda = Math.max(0, cliente.deuda - monto);
+            localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados));
+
+            const etiquetasMetodo = {
+                efectivo: 'Efectivo',
+                debito: 'Tarjeta de Débito',
+                credito: 'Tarjeta de Crédito',
+                transferencia: 'Transferencia'
+            };
+
+            if (metodo === 'efectivo') window.totalesDia.efectivo += monto;
+            else if (metodo === 'debito') window.totalesDia.debito += monto;
+            else if (metodo === 'credito') window.totalesDia.credito += monto;
+            else if (metodo === 'transferencia') window.totalesDia.transferencia += monto;
+
+            localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia));
+            window.actualizarVistaCaja();
+            window.renderizarClientes();
+            window.cerrarModalAbono();
+            alert(`✅ Abono de $${monto.toFixed(2)} registrado exitosamente mediante ${etiquetasMetodo[metodo]}.`);
+        };
+
         window.eliminarCliente = function(index) { if(confirm("¿Eliminar a este cliente?")) { window.clientesGuardados.splice(index, 1); localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados)); window.renderizarClientes(); } };
 
         // ==========================================
-        // MÓDULO ENVÍOS Y ETIQUETAS PDF
+        // MÓDULO ENVÍOS Y ETIQUETAS PDF (CON LOGO)
         // ==========================================
         window.alSeleccionarClienteEnvio = function() {
             const id = document.getElementById('select-cliente-envio').value;
@@ -1013,9 +1167,11 @@
             window.inventario.forEach((item, index) => {
                 if(item.codigo.toLowerCase().includes(query) || item.nombre.toLowerCase().includes(query)) {
                     let tipo = item.tipo === 'venta' ? 'Venta' : (item.tipo === 'consumo' ? 'Insumo' : 'Kit');
-                    let pub = item.precios && item.precios.pub ? `$${item.precios.pub.toFixed(2)}` : '$0.00'; let dueno = item.precios && item.precios.dueno ? `$${item.precios.dueno.toFixed(2)}` : '$0.00';
+                    let costoCompra = window.obtenerCostoArticulo(item);
+                    let pub = item.precios && item.precios.pub ? `$${item.precios.pub.toFixed(2)}` : '$0.00';
+                    let dueno = item.precios && item.precios.dueno ? `$${item.precios.dueno.toFixed(2)}` : '$0.00';
                     let stockD = item.tipo === 'kit' ? 'Usa Insumos' : item.stock;
-                    tbody.innerHTML += `<tr><td>${item.codigo}</td><td>${item.nombre}</td><td>${tipo}</td><td style="font-weight: bold; color: var(--acento);">${stockD}</td><td>${pub}</td><td>${dueno}</td><td style="display:flex; gap:5px;"><button onclick="window.editarArticuloInv(${index})">✏️ Editar</button><button onclick="window.eliminarArticuloInv(${index})">❌</button></td></tr>`;
+                    tbody.innerHTML += `<tr><td>${item.codigo}</td><td>${item.nombre}</td><td>${tipo}</td><td style="font-weight: bold; color: var(--acento);">${stockD}</td><td style="color:#ffb74d;">$${costoCompra.toFixed(2)}</td><td>${pub}</td><td>${dueno}</td><td style="display:flex; gap:5px;"><button onclick="window.editarArticuloInv(${index})">✏️ Editar</button><button onclick="window.eliminarArticuloInv(${index})">❌</button></td></tr>`;
                 }
             });
         };
@@ -1048,7 +1204,13 @@
             if(!art.nombre || !art.codigo) return alert("Nombre y Código obligatorios");
             if(art.tipo === 'kit') { if(window.kitDraftComponentes.length === 0) return alert("Un kit debe tener componentes."); art.componentes = [...window.kitDraftComponentes]; art.stock = 0; }
             
-            if (window.indexInventarioEditando !== null) { window.inventario[window.indexInventarioEditando] = art; alert("Artículo actualizado correctamente."); window.cancelarEdicionInv(); } else {
+            if (window.indexInventarioEditando !== null) {
+                const prevCosto = window.inventario[window.indexInventarioEditando].costoCompra;
+                if (prevCosto !== undefined) art.costoCompra = prevCosto;
+                window.inventario[window.indexInventarioEditando] = art;
+                alert("Artículo actualizado correctamente.");
+                window.cancelarEdicionInv();
+            } else {
                 let existente = window.inventario.find(i => i.codigo === art.codigo);
                 if (existente) { existente.stock += art.stock; existente.nombre = art.nombre; existente.tipo = art.tipo; existente.aplicaIva = art.aplicaIva; existente.aplicaIeps = art.aplicaIeps; existente.precios = art.precios; if(art.tipo === 'kit') existente.componentes = art.componentes; alert(`Artículo existente actualizado.\nSe sumaron ${art.stock} a las existencias actuales.`); window.cancelarEdicionInv(); } else { window.inventario.push(art); alert("Artículo nuevo guardado exitosamente."); window.cancelarEdicionInv(); }
             }
@@ -1056,13 +1218,24 @@
         };
 
         // ==========================================
-        // COMPRAS MANUALES E HISTORIAL
+        // COMPRAS MANUALES E HISTORIAL (CON LOGO EN PDF)
         // ==========================================
+        window.alCambiarCodigoCompra = function(index, valor) {
+            window.compraDraft[index].codigo = valor.trim();
+            const existente = window.inventario.find(i => i.codigo.toLowerCase() === valor.trim().toLowerCase());
+            if (existente) {
+                if (!window.compraDraft[index].nombre) window.compraDraft[index].nombre = existente.nombre;
+                if (existente.tipo === 'venta' || existente.tipo === 'consumo') window.compraDraft[index].tipo = existente.tipo;
+                if (!window.compraDraft[index].costo && existente.costoCompra) window.compraDraft[index].costo = existente.costoCompra;
+                window.renderizarTablaCompra();
+            }
+        };
+
         window.renderizarTablaCompra = function() { 
             const tbody = document.getElementById('lista-articulos-compra'); tbody.innerHTML = ''; let totalGastoGlobal = 0;
             window.compraDraft.forEach((item, index) => { 
                 const totalLinea = item.cant * item.costo; totalGastoGlobal += totalLinea;
-                tbody.innerHTML += `<tr><td><input type="text" placeholder="Código" value="${item.codigo}" onchange="window.compraDraft[${index}].codigo = this.value" style="width: 80px;"></td><td><input type="text" placeholder="Nombre" value="${item.nombre}" onchange="window.compraDraft[${index}].nombre = this.value" style="width: 150px;"></td><td><select onchange="window.compraDraft[${index}].tipo = this.value"><option value="venta" ${item.tipo==='venta'?'selected':''}>Venta</option><option value="consumo" ${item.tipo==='consumo'?'selected':''}>Consumo/Insumo</option></select></td><td><input type="number" value="${item.cant}" step="any" style="width: 60px;" onchange="window.compraDraft[${index}].cant = parseFloat(this.value) || 1; window.renderizarTablaCompra();"></td><td><input type="number" value="${item.costo}" step="any" style="width: 80px;" onchange="window.compraDraft[${index}].costo = parseFloat(this.value); window.renderizarTablaCompra();" title="Ingresa el costo total final por unidad"></td><td style="font-weight:bold; color:var(--acento);">$${totalLinea.toFixed(2)}</td><td><button onclick="window.removerFilaCompra(${index})">❌</button></td></tr>`; 
+                tbody.innerHTML += `<tr><td><input type="text" placeholder="Código" value="${item.codigo}" onchange="window.alCambiarCodigoCompra(${index}, this.value)" style="width: 80px;"></td><td><input type="text" placeholder="Nombre" value="${item.nombre}" onchange="window.compraDraft[${index}].nombre = this.value" style="width: 150px;"></td><td><select onchange="window.compraDraft[${index}].tipo = this.value"><option value="venta" ${item.tipo==='venta'?'selected':''}>Venta</option><option value="consumo" ${item.tipo==='consumo'?'selected':''}>Consumo/Insumo</option></select></td><td><input type="number" value="${item.cant}" step="any" style="width: 60px;" onchange="window.compraDraft[${index}].cant = parseFloat(this.value) || 1; window.renderizarTablaCompra();"></td><td><input type="number" value="${item.costo}" step="any" style="width: 80px;" onchange="window.compraDraft[${index}].costo = parseFloat(this.value) || 0; window.renderizarTablaCompra();" title="Ingresa el costo total final por unidad"></td><td style="font-weight:bold; color:var(--acento);">$${totalLinea.toFixed(2)}</td><td><button onclick="window.removerFilaCompra(${index})">❌</button></td></tr>`; 
             }); 
             
             const aplicaIva = document.getElementById('compra-iva').checked; const aplicaIeps = document.getElementById('compra-ieps').checked;
@@ -1078,8 +1251,22 @@
         window.confirmarCompra = function() { 
             if(window.compraDraft.length === 0) return alert("No hay artículos."); let agregados = 0; let totalGastoGlobal = 0; 
             window.compraDraft.forEach(item => { 
-                if(!item.nombre || !item.codigo) return; let existente = window.inventario.find(i => i.codigo === item.codigo); totalGastoGlobal += (item.cant * item.costo); 
-                if (existente) { existente.stock += item.cant; } else { window.inventario.push({ codigo: item.codigo, nombre: item.nombre, tipo: item.tipo, stock: item.cant, precios: { pub: item.costo * 1.5, may1: item.costo * 1.4, may2: item.costo * 1.3, may3: item.costo * 1.2, dueno: item.costo } }); }
+                if(!item.nombre || !item.codigo) return;
+                let existente = window.inventario.find(i => i.codigo.toLowerCase() === item.codigo.trim().toLowerCase());
+                totalGastoGlobal += (item.cant * item.costo); 
+                if (existente) {
+                    existente.stock += item.cant;
+                    existente.costoCompra = parseFloat(item.costo) || 0;
+                } else {
+                    window.inventario.push({
+                        codigo: item.codigo.trim(),
+                        nombre: item.nombre.trim(),
+                        tipo: item.tipo,
+                        stock: item.cant,
+                        costoCompra: parseFloat(item.costo) || 0,
+                        precios: { pub: item.costo * 1.5, may1: item.costo * 1.4, may2: item.costo * 1.3, may3: item.costo * 1.2, dueno: item.costo }
+                    });
+                }
                 agregados++; 
             }); 
             if(agregados === 0) return alert("Llenar Código y Nombre."); 
@@ -1096,11 +1283,14 @@
             const nuevaCompra = { id: idCompra, fecha: new Date().toLocaleString(), subtotal: subtotalGasto, iva: iva, ieps: ieps, total: totalGastoGlobal, pagadoConCaja: pagadoConCaja, items: [...window.compraDraft] };
             window.historialCompras.push(nuevaCompra); localStorage.setItem('pos_historial_compras', JSON.stringify(window.historialCompras));
 
+            window.generarPDFCompra(idCompra);
+
             const msjGasto = pagadoConCaja ? `\nGasto restado de la caja: $${totalGastoGlobal.toFixed(2)}` : `\nNo se restó de la caja (Pago externo).`;
-            alert(`Compra registrada con éxito.\nLas existencias se han sumado automáticamente a tu inventario.` + msjGasto); 
+            alert(`Compra registrada con éxito.\nLas existencias y el costo de compra se han actualizado en tu inventario.` + msjGasto); 
             
             window.compraDraft = []; document.getElementById('compra-iva').checked = false; document.getElementById('compra-ieps').checked = false; document.getElementById('compra-caja-chica').checked = true;
             window.renderizarTablaCompra(); window.renderizarHistorialCompras(); window.actualizarVistaCaja(); window.renderizarInventario(); 
+            if(window.renderizarReporteGanancias) window.renderizarReporteGanancias();
         };
 
         window.renderizarHistorialCompras = function() {
@@ -1114,11 +1304,26 @@
         window.generarPDFCompra = function(id) {
             const c = window.historialCompras.find(x => x.id == id); if(!c) return alert("Compra no encontrada");
             const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
-            const cyan = [0, 210, 255]; doc.setFillColor(...cyan); doc.rect(0, 0, 220, 35, 'F'); doc.setTextColor(255, 255, 255); doc.setFontSize(24); doc.text("COMPROBANTE DE COMPRA", 15, 22); doc.setTextColor(50, 50, 50); doc.setFontSize(10);
-            
-            if(window.configuracionApp.nombreNegocio) doc.text(`Empresa: ${window.configuracionApp.nombreNegocio}`, 15, 45);
-            doc.text(`Fecha: ${c.fecha}`, 15, 50); doc.text(`Folio Interno: ${c.id}`, 150, 45);
-            const origenTexto = (c.pagadoConCaja !== false) ? 'Efectivo de Caja' : 'Capital Externo (Transferencia/Tarjeta)'; doc.text(`Origen del Pago: ${origenTexto}`, 15, 55);
+            const marginX = 15; const cyan = [0, 210, 255]; const gold = [212, 175, 55];
+            const conf = window.configuracionApp || {};
+            const nombreNegocio = (conf.nombreNegocio || 'MINOS').toUpperCase();
+            const logoData = localStorage.getItem('pos_logo_base64');
+
+            doc.setFillColor(...cyan); doc.rect(0, 0, 220, 35, 'F');
+            if(logoData) {
+                try { doc.addImage(logoData, 'PNG', marginX, 5, 25, 25); } catch(e) {}
+                doc.setFontSize(20); doc.setTextColor(...gold); doc.text(nombreNegocio, marginX + 30, 22);
+            } else {
+                doc.setFontSize(20); doc.setTextColor(...gold); doc.text(nombreNegocio, marginX, 22);
+            }
+            doc.setTextColor(255, 255, 255); doc.setFontSize(18); doc.text("COMPROBANTE DE COMPRA", 200, 22, { align: 'right' });
+
+            doc.setTextColor(50, 50, 50); doc.setFontSize(10);
+            doc.text(`Empresa: ${conf.nombreNegocio || 'MINOS'}`, marginX, 45);
+            doc.text(`Fecha: ${c.fecha}`, marginX, 50);
+            doc.text(`Folio Interno: ${c.id}`, 150, 45);
+            const origenTexto = (c.pagadoConCaja !== false) ? 'Efectivo de Caja' : 'Capital Externo (Transferencia/Tarjeta)';
+            doc.text(`Origen del Pago: ${origenTexto}`, marginX, 55);
 
             const tableColumn = ["Cant.", "Código", "Descripción", "Costo Unit.", "Total Línea"]; const tableRows = [];
             c.items.forEach(item => { tableRows.push([item.cant, item.codigo, item.nombre, `$${item.costo.toFixed(2)}`, `$${(item.cant * item.costo).toFixed(2)}`]); });
@@ -1134,7 +1339,7 @@
         };
 
         // ==========================================
-        // COTIZACIONES Y PDF
+        // COTIZACIONES Y PDF (CON LOGO)
         // ==========================================
         window.alSeleccionarClienteCotizacion = function() {
             const clienteId = document.getElementById('select-cliente-cotizacion').value; let nivel = 'pub';
@@ -1217,7 +1422,7 @@
 
 
         // ==========================================
-        // VENTAS Y TICKETS
+        // VENTAS Y TICKETS (80MM Y TAMAÑO CARTA CON LOGO)
         // ==========================================
         window.alSeleccionarClienteVenta = function() {
             const val = document.getElementById('input-cliente-venta').value;
@@ -1236,7 +1441,7 @@
         window.buscarArticuloVenta = function(e) { if (e.key === 'Enter') { const query = document.getElementById('buscador-articulo').value.toLowerCase(); const art = window.inventario.find(a => a.codigo.toLowerCase() === query || a.nombre.toLowerCase().includes(query)); if (art && art.tipo !== 'consumo') { const existente = window.carrito.find(c => c.codigo === art.codigo); if (existente) existente.cantidad++; else window.carrito.push({ ...art, cantidad: 1, precioAplicado: art.precios[window.nivelPrecioGlobalActual] }); document.getElementById('buscador-articulo').value = ''; window.renderizarCarrito(); } else alert("Artículo no encontrado."); } };
         window.renderizarCarrito = function() { 
             const tbody = document.getElementById('lista-carrito'); tbody.innerHTML = ''; 
-            let subtotalGlobal = 0, ivaGlobal = 0, iepsGlobal = 0, totalGlobal = 0; 
+            let subtotalGlobal = 0, ivaGlobal = 0, iepsGlobal = 0, totalGlobal = 0, descuentoGlobal = 0; 
             const etiquetaNivel = window.nombresPrecios[window.nivelPrecioGlobalActual] ? `(${window.nombresPrecios[window.nivelPrecioGlobalActual]})` : ''; 
             
             window.carrito.forEach((item, index) => { 
@@ -1245,14 +1450,20 @@
                 const subtotalLinea = totalLinea / (1 + ivaRate + iepsRate);
                 ivaGlobal += subtotalLinea * ivaRate; iepsGlobal += subtotalLinea * iepsRate; subtotalGlobal += subtotalLinea; totalGlobal += totalLinea;
                 
+                const pPub = window.obtenerPrecioPublicoItem(item);
+                const descUnit = pPub > item.precioAplicado ? (pPub - item.precioAplicado) : 0;
+                const descLinea = descUnit * item.cantidad;
+                descuentoGlobal += descLinea;
+
                 let desgloseImpuestos = '';
-                if(item.aplicaIva || item.aplicaIeps) { const uniSub = item.precioAplicado / (1 + ivaRate + iepsRate); desgloseImpuestos = `<br><small style="color:#aaa;">Sub: $${uniSub.toFixed(2)} | IVA: $${(uniSub*ivaRate).toFixed(2)} | IEPS: $${(uniSub*iepsRate).toFixed(2)}</small>`; }
+                if(item.aplicaIva || item.aplicaIeps) { const uniSub = item.precioAplicado / (1 + ivaRate + iepsRate); desgloseImpuestos += `<br><small style="color:#aaa;">Sub: $${uniSub.toFixed(2)} | IVA: $${(uniSub*ivaRate).toFixed(2)} | IEPS: $${(uniSub*iepsRate).toFixed(2)}</small>`; }
+                if(descLinea > 0) { desgloseImpuestos += `<br><small style="color:#81c784;">P. Púb: $${pPub.toFixed(2)} | Desc: -$${descLinea.toFixed(2)}</small>`; }
                 
                 tbody.innerHTML += `<tr><td>${item.codigo}</td><td>${item.nombre}${desgloseImpuestos}</td><td><input type="number" value="${item.cantidad}" step="any" style="width: 60px;" onchange="window.actualizarCantCarrito(${index}, this.value)"></td><td>$${item.precioAplicado} <small style="color:#ffb74d">${etiquetaNivel}</small></td><td style="font-weight:bold; color:var(--acento);">$${totalLinea.toFixed(2)}</td><td><button onclick="window.removerDelCarrito(${index})">❌</button></td></tr>`; 
             }); 
             
             window.totalVentaActual = totalGlobal; 
-            document.getElementById('total-venta').innerHTML = `${totalGlobal.toFixed(2)} <span style="font-size:0.5em; color:#fff; display:block; margin-top:5px; font-weight:normal;">(Subtotal: $${subtotalGlobal.toFixed(2)} | IVA: $${ivaGlobal.toFixed(2)} | IEPS: $${iepsGlobal.toFixed(2)})</span>`; 
+            document.getElementById('total-venta').innerHTML = `${totalGlobal.toFixed(2)} <span style="font-size:0.5em; color:#fff; display:block; margin-top:5px; font-weight:normal;">(Subtotal: $${subtotalGlobal.toFixed(2)} | Descuento: $${descuentoGlobal.toFixed(2)} | IVA: $${ivaGlobal.toFixed(2)} | IEPS: $${iepsGlobal.toFixed(2)})</span>`; 
             window.calcularPagos(); 
         };
 
@@ -1281,7 +1492,7 @@
 
             if (restante > 0 && !clienteObj) { return alert("⚠️ Para dejar saldo pendiente (fiar), debes seleccionar un cliente registrado."); }
 
-            let tCosto = 0, tIva = 0, tIeps = 0;
+            let tCosto = 0, tIva = 0, tIeps = 0, tDescuento = 0;
 
             window.carrito.forEach(item => {
                 const iR = item.aplicaIva ? 0.16 : 0; const ieR = item.aplicaIeps ? 0.08 : 0;
@@ -1289,8 +1500,15 @@
                 const sL = tL / (1 + iR + ieR);
                 tIva += sL * iR; tIeps += sL * ieR;
                 
-                const costoU = (item.precios && item.precios.dueno) ? item.precios.dueno : 0;
+                // El costo se obtiene directamente del apartado de Compras
+                const costoU = window.obtenerCostoArticulo(item);
                 tCosto += item.cantidad * costoU;
+
+                // Descuento tomando como base el Precio Público
+                const pPub = window.obtenerPrecioPublicoItem(item);
+                if (pPub > item.precioAplicado) {
+                    tDescuento += (pPub - item.precioAplicado) * item.cantidad;
+                }
 
                 if (item.tipo === 'venta') { const dbArt = window.inventario.find(i => i.codigo === item.codigo); if(dbArt) dbArt.stock -= item.cantidad; } 
                 else if (item.tipo === 'kit' && item.componentes) { item.componentes.forEach(comp => { const dbInsumo = window.inventario.find(i => i.codigo === comp.codigoInsumo); if(dbInsumo) dbInsumo.stock -= (comp.cant * item.cantidad); }); }
@@ -1309,7 +1527,7 @@
             const nuevoTicket = {
                 id: idTicket, fecha: new Date().toLocaleDateString(), hora: new Date().toLocaleTimeString(),
                 cliente: nombreCliente, telefonoCli: clienteObj ? clienteObj.telefono : '', nivelPrecio: window.nivelPrecioGlobalActual,
-                cajero: cajeroActual, total: total, costo: tCosto, iva: tIva, ieps: tIeps, efe: ef, deb: deb, cred: cred, trans: trans,
+                cajero: cajeroActual, total: total, costo: tCosto, descuento: tDescuento, iva: tIva, ieps: tIeps, efe: ef, deb: deb, cred: cred, trans: trans,
                 sumaPagos: sumaPagos, cambio: cambio, aCredito: restante, estatus: 'completado', items: [...window.carrito]
             };
 
@@ -1332,12 +1550,13 @@
             let subVenta = 0, ivaVenta = 0, iepsVenta = 0, totalVenta = 0;
             t.items.forEach(i => { const iR = i.aplicaIva ? 0.16 : 0; const ieR = i.aplicaIeps ? 0.08 : 0; const tL = i.cantidad * i.precioAplicado; const sL = tL / (1 + iR + ieR); subVenta += sL; ivaVenta += sL * iR; iepsVenta += sL * ieR; totalVenta += tL; });
 
+            const descuentoVenta = window.calcularDescuentoTicket(t);
             const conf = window.configuracionApp || {}; const cajeroStr = t.cajero || 'Admin';
 
             if(formato === '80mm') {
-                const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [80, 250] }); let y = 10;
+                const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [80, 260] }); let y = 10;
                 if(logoData) { try{ doc.addImage(logoData, 'PNG', 25, y, 30, 30); y += 35; }catch(e){} }
-                doc.setFontSize(16); doc.text(conf.nombreNegocio.toUpperCase(), 40, y, { align: "center" }); y+=6;
+                doc.setFontSize(16); doc.text((conf.nombreNegocio || 'MINOS').toUpperCase(), 40, y, { align: "center" }); y+=6;
                 doc.setFontSize(8); doc.text("DETALLES QUE HACEN LA DIFERENCIA", 40, y, { align: "center" }); y+=8;
                 
                 doc.setFontSize(9); doc.text(`Ticket: ${t.id}`, 5, y); doc.text(`Fecha: ${t.fecha}`, 45, y); y+=5; doc.text(`Hora: ${t.hora || ''}`, 5, y); doc.text(`Cajero: ${cajeroStr}`, 45, y); y+=8;
@@ -1346,13 +1565,26 @@
                 if (t.estatus === 'cancelado') { doc.setFontSize(12); doc.setTextColor(255,0,0); doc.text("TICKET CANCELADO", 40, y, {align:"center"}); y+=8; doc.setTextColor(0,0,0); }
 
                 doc.setFontSize(10); doc.text("DETALLE DE COMPRA", 40, y, {align:"center"}); y+=6; doc.setFontSize(9);
-                t.items.forEach(item => { doc.text(`${item.cantidad}x ${item.nombre.substring(0, 18)}`, 5, y); doc.text(`$${(item.cantidad * item.precioAplicado).toFixed(2)}`, 60, y); y+=5; });
+                t.items.forEach(item => {
+                    const pPub = window.obtenerPrecioPublicoItem(item);
+                    const descItem = pPub > item.precioAplicado ? (pPub - item.precioAplicado) * item.cantidad : 0;
+                    doc.text(`${item.cantidad}x ${item.nombre.substring(0, 18)}`, 5, y);
+                    doc.text(`$${(item.cantidad * item.precioAplicado).toFixed(2)}`, 60, y);
+                    y+=4.5;
+                    if (descItem > 0) {
+                        doc.setFontSize(7.5);
+                        doc.text(`   (P.Púb: $${pPub.toFixed(2)} c/u | Ahorro: -$${descItem.toFixed(2)})`, 5, y);
+                        doc.setFontSize(9);
+                        y+=4.5;
+                    }
+                });
                 y+=2; doc.text("------------------------------------------", 5, y); y+=6;
                 
-                doc.text(`Subtotal`, 35, y); doc.text(`$${subVenta.toFixed(2)}`, 60, y); y+=5; doc.text(`Descuento`, 35, y); doc.text(`$0.00`, 60, y); y+=5; 
-                if(ivaVenta > 0) { doc.text(`IVA (16%)`, 35, y); doc.text(`$${ivaVenta.toFixed(2)}`, 60, y); y+=5; }
-                if(iepsVenta > 0) { doc.text(`IEPS (8%)`, 35, y); doc.text(`$${iepsVenta.toFixed(2)}`, 60, y); y+=5; }
-                doc.setFontSize(11); doc.text(`TOTAL`, 35, y); doc.text(`$${t.total.toFixed(2)}`, 60, y); y+=8;
+                doc.text(`Subtotal`, 30, y); doc.text(`$${subVenta.toFixed(2)}`, 60, y); y+=5;
+                doc.text(`Descuento`, 30, y); doc.text(`$${descuentoVenta.toFixed(2)}`, 60, y); y+=5; 
+                if(ivaVenta > 0) { doc.text(`IVA (16%)`, 30, y); doc.text(`$${ivaVenta.toFixed(2)}`, 60, y); y+=5; }
+                if(iepsVenta > 0) { doc.text(`IEPS (8%)`, 30, y); doc.text(`$${iepsVenta.toFixed(2)}`, 60, y); y+=5; }
+                doc.setFontSize(11); doc.text(`TOTAL`, 30, y); doc.text(`$${t.total.toFixed(2)}`, 60, y); y+=8;
                 
                 doc.setFontSize(10); doc.text("FORMA DE PAGO", 40, y, {align:"center"}); y+=6; doc.setFontSize(9);
                 if(t.efe > 0) { doc.text(`Efectivo`, 5, y); doc.text(`$${t.efe.toFixed(2)}`, 60, y); y+=5; }
@@ -1366,36 +1598,61 @@
                 doc.setFontSize(10); const notasTicketConfigurables = conf.notasTicket || "Gracias por tu compra.\nConserva este ticket como comprobante.";
                 const arrNotas = doc.splitTextToSize(notasTicketConfigurables, 70); doc.text(arrNotas, 40, y, {align:"center"}); y += (arrNotas.length * 4) + 10;
                 
-                doc.setFontSize(11); doc.text(conf.nombreNegocio.toUpperCase(), 40, y, {align:"center"}); doc.save(`Ticket_${t.id}_${t.cliente.replace(/\s+/g, '')}.pdf`);
+                doc.setFontSize(11); doc.text((conf.nombreNegocio || 'MINOS').toUpperCase(), 40, y, {align:"center"}); doc.save(`Ticket_80mm_${t.id}_${t.cliente.replace(/\s+/g, '')}.pdf`);
             } else {
                 const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' }); const marginX = 15;
                 doc.setFillColor(...cyan); doc.rect(0, 0, 220, 35, 'F');
-                if(logoData) { try{doc.addImage(logoData, 'PNG', marginX, 5, 25, 25);}catch(e){} doc.setFontSize(22); doc.setTextColor(212, 175, 55); doc.text(conf.nombreNegocio.toUpperCase(), marginX + 30, 22); } 
-                else { doc.setFontSize(22); doc.setTextColor(212, 175, 55); doc.text(conf.nombreNegocio.toUpperCase(), marginX, 22); }
-                doc.setTextColor(255, 255, 255); doc.setFontSize(24); doc.text("NOTA DE VENTA", 135, 22); doc.setTextColor(50, 50, 50); doc.setFontSize(10); let y = 45;
-                if(conf.rfc) { doc.text(`RFC: ${conf.rfc}`, marginX, y); y+=5; } if(conf.telefono) { doc.text(`Tel: ${conf.telefono}`, marginX, y); y+=5; } if(conf.correo) { doc.text(`Correo: ${conf.correo}`, marginX, y); y+=5; }
-                doc.text(`Folio Ticket: ${t.id}`, 140, 45); doc.text(`Fecha: ${t.fecha} ${t.hora || ''}`, 140, 50); doc.text(`Cajero: ${cajeroStr}`, 140, 55);
+                if(logoData) { try{doc.addImage(logoData, 'PNG', marginX, 5, 25, 25);}catch(e){} doc.setFontSize(22); doc.setTextColor(212, 175, 55); doc.text((conf.nombreNegocio || 'MINOS').toUpperCase(), marginX + 30, 22); } 
+                else { doc.setFontSize(22); doc.setTextColor(212, 175, 55); doc.text((conf.nombreNegocio || 'MINOS').toUpperCase(), marginX, 22); }
+                doc.setTextColor(255, 255, 255); doc.setFontSize(22); doc.text("TICKET / NOTA DE VENTA", 200, 22, { align: 'right' });
+                doc.setTextColor(50, 50, 50); doc.setFontSize(10); let y = 44;
+                if(conf.rfc) { doc.text(`RFC: ${conf.rfc}`, marginX, y); y+=5; }
+                if(conf.telefono) { doc.text(`Tel: ${conf.telefono}`, marginX, y); y+=5; }
+                if(conf.correo) { doc.text(`Correo: ${conf.correo}`, marginX, y); y+=5; }
+                if(conf.direccion) { const dirLines = doc.splitTextToSize(`Dirección: ${conf.direccion}`, 115); doc.text(dirLines, marginX, y); }
+
+                doc.text(`Folio Ticket: ${t.id}`, 140, 44); doc.text(`Fecha: ${t.fecha} ${t.hora || ''}`, 140, 49); doc.text(`Cajero: ${cajeroStr}`, 140, 54);
                 
-                if (t.estatus === 'cancelado') { doc.setFontSize(14); doc.setTextColor(255,0,0); doc.text("TICKET CANCELADO", 140, 62); }
+                if (t.estatus === 'cancelado') { doc.setFontSize(14); doc.setTextColor(255,0,0); doc.text("TICKET CANCELADO", 140, 61); }
                 doc.setFillColor(240, 240, 240); doc.rect(marginX, 65, 185, 8, 'F'); doc.setTextColor(...cyan); doc.setFontSize(11); doc.text("DATOS DEL CLIENTE", marginX + 2, 70.5);
                 doc.setTextColor(50, 50, 50); doc.setFontSize(10); doc.text(`Cliente: ${t.cliente}`, marginX, 80); doc.text(`Teléfono: ${t.telefonoCli || 'N/A'}`, marginX, 85);
                 
-                const tableColumn = ["Cant.", "Descripción", "Precio U.", "Importe"]; const tableRows = []; t.items.forEach(item => { tableRows.push([item.cantidad, item.nombre, `$${item.precioAplicado.toFixed(2)}`, `$${(item.cantidad * item.precioAplicado).toFixed(2)}`]); });
-                doc.autoTable({ startY: 95, head: [tableColumn], body: tableRows, theme: 'grid', headStyles: { fillColor: cyan, textColor: [255, 255, 255] }, styles: { fontSize: 10 } });
+                const tableColumn = ["Cant.", "Descripción", "P. Público", "Descuento", "Precio U.", "Importe"];
+                const tableRows = [];
+                t.items.forEach(item => {
+                    const pPub = window.obtenerPrecioPublicoItem(item);
+                    const descItem = pPub > item.precioAplicado ? (pPub - item.precioAplicado) * item.cantidad : 0;
+                    tableRows.push([
+                        item.cantidad,
+                        item.nombre,
+                        `$${pPub.toFixed(2)}`,
+                        `$${descItem.toFixed(2)}`,
+                        `$${item.precioAplicado.toFixed(2)}`,
+                        `$${(item.cantidad * item.precioAplicado).toFixed(2)}`
+                    ]);
+                });
+                doc.autoTable({ startY: 92, head: [tableColumn], body: tableRows, theme: 'grid', headStyles: { fillColor: cyan, textColor: [255, 255, 255] }, styles: { fontSize: 10 } });
                 
                 let finalY = doc.lastAutoTable.finalY + 10; 
-                doc.setFontSize(10); doc.text(`Subtotal: $${subVenta.toFixed(2)}`, 140, finalY); finalY+=6;
+                doc.setFontSize(10);
+                doc.text(`Subtotal: $${subVenta.toFixed(2)}`, 140, finalY); finalY+=6;
+                doc.text(`Descuento: $${descuentoVenta.toFixed(2)}`, 140, finalY); finalY+=6;
                 if(ivaVenta > 0) { doc.text(`IVA (16%): $${ivaVenta.toFixed(2)}`, 140, finalY); finalY+=6; }
                 if(iepsVenta > 0) { doc.text(`IEPS (8%): $${iepsVenta.toFixed(2)}`, 140, finalY); finalY+=6; }
                 
-                doc.setFontSize(11); doc.text(`TOTAL: $${t.total.toFixed(2)}`, 140, finalY); finalY+=8; doc.setFontSize(10);
-                if (t.sumaPagos > 0) { doc.text(`Abonado: $${t.sumaPagos.toFixed(2)}`, 140, finalY); finalY+=6; }
-                if (t.aCredito > 0) { doc.text(`A Crédito: $${t.aCredito.toFixed(2)}`, 140, finalY); finalY+=6; }
-                if (t.cambio > 0) { doc.text(`Cambio: $${t.cambio.toFixed(2)}`, 140, finalY); finalY+=10;}
+                doc.setFontSize(12); doc.setTextColor(212, 175, 55); doc.text(`TOTAL: $${t.total.toFixed(2)}`, 140, finalY); finalY+=8;
+                doc.setFontSize(9.5); doc.setTextColor(50, 50, 50);
+                if (t.efe > 0) { doc.text(`Pago Efectivo: $${t.efe.toFixed(2)}`, 140, finalY); finalY+=5; }
+                if (t.deb > 0) { doc.text(`Pago T. Débito: $${t.deb.toFixed(2)}`, 140, finalY); finalY+=5; }
+                if (t.cred > 0) { doc.text(`Pago T. Crédito: $${t.cred.toFixed(2)}`, 140, finalY); finalY+=5; }
+                if (t.trans > 0) { doc.text(`Pago Transferencia: $${t.trans.toFixed(2)}`, 140, finalY); finalY+=5; }
+                if (t.sumaPagos > 0) { doc.text(`Total Recibido: $${t.sumaPagos.toFixed(2)}`, 140, finalY); finalY+=5; }
+                if (t.aCredito > 0) { doc.text(`Saldo a Crédito: $${t.aCredito.toFixed(2)}`, 140, finalY); finalY+=5; }
+                if (t.cambio > 0) { doc.text(`Cambio: $${t.cambio.toFixed(2)}`, 140, finalY); finalY+=8; }
                 
-                const notasTicketConfigurables = conf.notasTicket || "Gracias por tu compra."; const arrNotasCarta = doc.splitTextToSize(notasTicketConfigurables, 100);
+                const notasTicketConfigurables = conf.notasTicket || "Gracias por tu compra."; const arrNotasCarta = doc.splitTextToSize(notasTicketConfigurables, 115);
                 doc.text(arrNotasCarta, marginX, doc.lastAutoTable.finalY + 10);
-                doc.save(`NotaVenta_${t.id}_${t.cliente.replace(/\s+/g, '')}.pdf`);
+                doc.save(`Ticket_Carta_${t.id}_${t.cliente.replace(/\s+/g, '')}.pdf`);
             }
         };
 
@@ -1405,11 +1662,22 @@
         
         window.verTicket = function(id) {
             const t = window.historialTickets.find(x => x.id == id); if(!t) return; window.ticketActualModal = id;
+            const descuentoVenta = window.calcularDescuentoTicket(t);
             let txt = `FOLIO DE VENTA: ${t.id}\n`; txt += `ESTATUS: ${t.estatus === 'cancelado' ? 'CANCELADO' : 'COMPLETADO'}\n`; txt += `FECHA: ${t.fecha} ${t.hora||''}\n`; txt += `CAJERO: ${t.cajero||'Admin'}\n`; txt += `CLIENTE: ${t.cliente}\n`; txt += `==================================\n\n`; txt += `ARTÍCULOS:\n`;
-            t.items.forEach(i => { txt += `- ${i.cantidad}x ${i.nombre}\n  ($${i.precioAplicado.toFixed(2)} c/u)  .......... $${(i.cantidad*i.precioAplicado).toFixed(2)}\n`; });
-            txt += `\n==================================\n`; txt += `TOTAL A PAGAR:      $${t.total.toFixed(2)}\n`; txt += `PAGO RECIBIDO:      $${t.sumaPagos.toFixed(2)}\n`;
-            if(t.aCredito > 0) { txt += `QUEDÓ A CRÉDITO:    $${t.aCredito.toFixed(2)}\n`; }
-            if(t.cambio > 0) { txt += `CAMBIO ENTREGADO:   $${t.cambio.toFixed(2)}\n`; }
+            t.items.forEach(i => {
+                const pPub = window.obtenerPrecioPublicoItem(i);
+                const descLinea = pPub > i.precioAplicado ? (pPub - i.precioAplicado) * i.cantidad : 0;
+                txt += `- ${i.cantidad}x ${i.nombre}\n  ($${i.precioAplicado.toFixed(2)} c/u) .......... $${(i.cantidad*i.precioAplicado).toFixed(2)}\n`;
+                if (descLinea > 0) {
+                    txt += `  [P. Público: $${pPub.toFixed(2)} | Desc: -$${descLinea.toFixed(2)}]\n`;
+                }
+            });
+            txt += `\n==================================\n`;
+            txt += `DESCUENTO TOTAL:   $${descuentoVenta.toFixed(2)}\n`;
+            txt += `TOTAL A PAGAR:     $${t.total.toFixed(2)}\n`;
+            txt += `PAGO RECIBIDO:     $${t.sumaPagos.toFixed(2)}\n`;
+            if(t.aCredito > 0) { txt += `QUEDÓ A CRÉDITO:   $${t.aCredito.toFixed(2)}\n`; }
+            if(t.cambio > 0) { txt += `CAMBIO ENTREGADO:  $${t.cambio.toFixed(2)}\n`; }
             
             document.getElementById('contenido-ticket').innerText = txt;
             if(t.estatus === 'cancelado') { document.getElementById('btn-editar-modal-ticket').style.display = 'none'; } else { document.getElementById('btn-editar-modal-ticket').style.display = 'inline-block'; }
@@ -1456,7 +1724,7 @@
             inputCli.value = (t.cliente !== 'Público en General') ? t.cliente : '';
             
             const selectNivel = document.getElementById('nivel-precio-global');
-            const levelOpt = Array.from(selectNivel.options).find(opt => opt.text === t.nivelPrecio);
+            const levelOpt = Array.from(selectNivel.options).find(opt => opt.value === t.nivelPrecio || opt.text === t.nivelPrecio);
             if(levelOpt) { selectNivel.value = levelOpt.value; window.nivelPrecioGlobalActual = levelOpt.value; }
             
             window.renderizarHistorial(); window.renderizarInventario(); window.renderizarClientes(); window.actualizarVistaCaja();
@@ -1476,12 +1744,12 @@
                 let btnCancelar = t.estatus === 'cancelado' ? '' : `<button onclick="window.eliminarTicket('${t.id}')">❌ Cancelar</button>`;
                 let btnEditar = t.estatus === 'cancelado' ? '' : `<button onclick="window.editarTicket('${t.id}')">✏️ Editar</button>`;
                 
-                tbody.innerHTML += `<tr style="${opacidad}"><td style="font-weight:bold;">${t.id}</td><td>${t.fecha} ${t.hora || ''}</td><td>${t.cliente}</td><td style="color:#81c784; font-weight:bold;">$${t.total.toFixed(2)}</td><td>${estatusTexto}</td><td style="display:flex; gap:5px; flex-wrap:wrap;"><button onclick="window.verTicket('${t.id}')">👁️️ Ver</button><button onclick="window.reimprimirTicket('${t.id}')" style="background: rgba(0, 210, 255, 0.4);">📄 PDF</button>${btnEditar}${btnCancelar}</td></tr>`; 
+                tbody.innerHTML += `<tr style="${opacidad}"><td style="font-weight:bold;">${t.id}</td><td>${t.fecha} ${t.hora || ''}</td><td>${t.cliente}</td><td style="color:#81c784; font-weight:bold;">$${t.total.toFixed(2)}</td><td>${estatusTexto}</td><td style="display:flex; gap:5px; flex-wrap:wrap;"><button onclick="window.verTicket('${t.id}')">👁 Ver</button><button onclick="window.reimprimirTicket('${t.id}', '80mm')" style="background: rgba(0, 210, 255, 0.4);" title="Descargar en formato Rollo 80mm">🧾 80mm</button><button onclick="window.reimprimirTicket('${t.id}', 'carta')" style="background: rgba(212, 175, 55, 0.4);" title="Descargar en formato Hoja Carta">📄 Carta</button>${btnEditar}${btnCancelar}</td></tr>`; 
             }); 
         };
         
         // ==========================================
-        // MÓDULO REPORTES Y GANANCIAS
+        // MÓDULO REPORTES Y GANANCIAS (COSTO DESDE COMPRAS)
         // ==========================================
         window.renderizarReporteGanancias = function() {
             const tbody = document.getElementById('lista-reporte-ganancias');
@@ -1502,18 +1770,25 @@
             let lastDate = "";
 
             filtrados.slice().reverse().forEach(t => {
-                let tCosto = t.costo || 0;
-                let tIva = t.iva || 0;
-                let tIeps = t.ieps || 0;
+                let tCosto = 0;
+                let tIva = 0;
+                let tIeps = 0;
 
-                if (tCosto === 0 && t.items && !t.hasOwnProperty('costo')) {
+                if (t.items && Array.isArray(t.items) && t.items.length > 0) {
                     t.items.forEach(i => {
                         const iR = i.aplicaIva ? 0.16 : 0; const ieR = i.aplicaIeps ? 0.08 : 0;
-                        const tL = i.cantidad * i.precioAplicado; const sL = tL / (1 + iR + ieR);
+                        const tL = (parseFloat(i.cantidad) || 0) * (parseFloat(i.precioAplicado) || 0);
+                        const sL = tL / (1 + iR + ieR);
                         tIva += sL * iR; tIeps += sL * ieR;
-                        const cU = (i.precios && i.precios.dueno) ? i.precios.dueno : 0;
-                        tCosto += i.cantidad * cU;
+                        
+                        // El costo se obtiene desde el apartado de Compras de cada artículo
+                        const cU = window.obtenerCostoArticulo(i);
+                        tCosto += (parseFloat(i.cantidad) || 0) * cU;
                     });
+                } else {
+                    tCosto = t.costo || 0;
+                    tIva = t.iva || 0;
+                    tIeps = t.ieps || 0;
                 }
 
                 let ganancia = t.total - tCosto - tIva - tIeps;
@@ -1562,21 +1837,30 @@
             const fondo = parseFloat(document.getElementById('fondo-caja').value) || 0; const fisico = parseFloat(document.getElementById('corte-efectivo-fisico').value) || 0; const esperado = fondo + window.totalesDia.efectivo - window.totalesDia.gastos; document.getElementById('corte-efectivo-esperado').innerText = esperado.toFixed(2); const diferencia = fisico - esperado; const diffSpan = document.getElementById('corte-diferencia'); diffSpan.innerText = `$${diferencia.toFixed(2)}`; if (diferencia < 0) diffSpan.style.color = '#ef5350'; else diffSpan.style.color = '#81c784'; 
         };
 
+        // CORTE DE CAJA PDF (CON LOGO DEL NEGOCIO)
         window.realizarCorteDefinitivo = function() {
             const fondo = parseFloat(document.getElementById('fondo-caja').value) || 0; const fisico = parseFloat(document.getElementById('corte-efectivo-fisico').value) || 0; const esperado = fondo + window.totalesDia.efectivo - window.totalesDia.gastos; const diferencia = fisico - esperado;
             if(!confirm(`Se generará el Corte de Caja.\nDiferencia: $${diferencia.toFixed(2)}.\n¿Deseas continuar y reiniciar los totales?`)) return;
-            const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [80, 200] });
+            const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [80, 240] });
             
             const cajeroStr = window.usuarioLogueado ? window.usuarioLogueado.usuario : 'Admin';
             const folioCorte = window.generarNuevoFolio('cortes');
+            const conf = window.configuracionApp || {};
+            const logoData = localStorage.getItem('pos_logo_base64');
 
-            doc.setFontSize(14); doc.text("CORTE DE CAJA", 40, 10, { align: "center" }); doc.setFontSize(10); 
-            doc.text(`Folio: ${folioCorte}`, 40, 15, { align: "center" });
-            doc.text(`Fecha: ${new Date().toLocaleString()}`, 5, 20); 
-            doc.text(`Cajero: ${cajeroStr}`, 5, 25);
-            doc.text("------------------------------------------", 5, 30);
+            let y = 10;
+            if(logoData) {
+                try { doc.addImage(logoData, 'PNG', 25, y, 30, 30); y += 35; } catch(e) {}
+            }
+            doc.setFontSize(15); doc.text((conf.nombreNegocio || 'MINOS').toUpperCase(), 40, y, { align: "center" }); y += 6;
+            doc.setFontSize(13); doc.text("CORTE DE CAJA", 40, y, { align: "center" }); y += 5;
+            doc.setFontSize(10); 
+            doc.text(`Folio: ${folioCorte}`, 40, y, { align: "center" }); y += 6;
+            doc.text(`Fecha: ${new Date().toLocaleString()}`, 5, y); y += 5;
+            doc.text(`Cajero: ${cajeroStr}`, 5, y); y += 5;
+            doc.text("------------------------------------------", 5, y); y += 5;
             
-            let y = 35; doc.text(`Fondo Inicial: $${fondo.toFixed(2)}`, 5, y); y+=5; doc.text(`Ingresos Efectivo: $${window.totalesDia.efectivo.toFixed(2)}`, 5, y); y+=5; doc.text(`Gastos Efectivo: -$${window.totalesDia.gastos.toFixed(2)}`, 5, y); y+=5; doc.text(`Transferencias: $${window.totalesDia.transferencia.toFixed(2)}`, 5, y); y+=5; doc.text(`T. Débito (Bruto): $${window.totalesDia.debito.toFixed(2)}`, 5, y); y+=5; doc.text(`T. Crédito (Bruto): $${window.totalesDia.credito.toFixed(2)}`, 5, y); y+=5; doc.text("------------------------------------------", 5, y); y+=5; doc.setFontSize(12); doc.text(`EFECTIVO SISTEMA: $${esperado.toFixed(2)}`, 5, y); y+=7; doc.text(`EFECTIVO FISICO: $${fisico.toFixed(2)}`, 5, y); y+=7; if (diferencia < 0) doc.text(`FALTANTE: $${Math.abs(diferencia).toFixed(2)}`, 5, y); else doc.text(`SOBRANTE: $${diferencia.toFixed(2)}`, 5, y); y+=10; doc.text("------------------------------------------", 5, y); y+=5; const totalReal = document.getElementById('corte-total-real').innerText; doc.text(`GANANCIA NETA: $${totalReal}`, 5, y);
+            doc.text(`Fondo Inicial: $${fondo.toFixed(2)}`, 5, y); y+=5; doc.text(`Ingresos Efectivo: $${window.totalesDia.efectivo.toFixed(2)}`, 5, y); y+=5; doc.text(`Gastos Efectivo: -$${window.totalesDia.gastos.toFixed(2)}`, 5, y); y+=5; doc.text(`Transferencias: $${window.totalesDia.transferencia.toFixed(2)}`, 5, y); y+=5; doc.text(`T. Débito (Bruto): $${window.totalesDia.debito.toFixed(2)}`, 5, y); y+=5; doc.text(`T. Crédito (Bruto): $${window.totalesDia.credito.toFixed(2)}`, 5, y); y+=5; doc.text("------------------------------------------", 5, y); y+=5; doc.setFontSize(12); doc.text(`EFECTIVO SISTEMA: $${esperado.toFixed(2)}`, 5, y); y+=7; doc.text(`EFECTIVO FISICO: $${fisico.toFixed(2)}`, 5, y); y+=7; if (diferencia < 0) doc.text(`FALTANTE: $${Math.abs(diferencia).toFixed(2)}`, 5, y); else doc.text(`SOBRANTE: $${diferencia.toFixed(2)}`, 5, y); y+=10; doc.text("------------------------------------------", 5, y); y+=5; const totalReal = document.getElementById('corte-total-real').innerText; doc.text(`GANANCIA NETA: $${totalReal}`, 5, y);
             
             doc.save(`CorteCaja_${folioCorte}.pdf`);
             window.totalesDia = { efectivo: 0, debito: 0, credito: 0, transferencia: 0, gastos: 0 }; localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); document.getElementById('corte-efectivo-fisico').value = 0; window.actualizarVistaCaja(); alert("Corte realizado con éxito.");
@@ -1584,7 +1868,7 @@
     </script>
 
     <!-- ========================================== -->
-    <!-- INTEGACIÓN FIREBASE (SINCRONIZACIÓN EN LA NUBE) -->
+    <!-- INTEGRACIÓN FIREBASE (SINCRONIZACIÓN EN LA NUBE) -->
     <!-- ========================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
