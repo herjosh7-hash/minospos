@@ -8,6 +8,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
+    <!-- Librería para Exportar/Importar Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
         :root {
@@ -145,6 +147,7 @@
     <div id="app-container" style="display: none; width: 100%; height: 100%;">
         <nav id="menu-flotante">
             <a href="#" id="menu-ventas" onclick="window.cambiarModulo('ventas'); return false;" title="Terminal de Ventas">💰</a>
+            <a href="#" id="menu-checador" onclick="window.cambiarModulo('checador'); return false;" title="Checador de Precios">🔍</a>
             <a href="#" id="menu-caja" onclick="window.cambiarModulo('caja'); return false;" title="Corte de Caja">💵</a>
             <a href="#" id="menu-inventario" onclick="window.cambiarModulo('inventario'); return false;" title="Inventario y Kits">📦</a>
             <a href="#" id="menu-compras" onclick="window.cambiarModulo('compras'); return false;" title="Compras y Gastos">🛒</a>
@@ -174,7 +177,7 @@
                 <div style="display: flex; gap: 10px; margin-bottom: 15px;">
                     <input type="text" id="buscador-articulo" placeholder="Escribe el código o presiona Ctrl+B para Búsqueda Avanzada" style="flex: 1;" onkeypress="window.buscarArticuloVenta(event)">
                     <button class="btn-accion" style="border-color: var(--dorado);" onclick="window.abrirBusquedaAvanzada()">🔍 Búsqueda Avanzada</button>
-                    <button onclick="window.iniciarEscaner()">📷 Escanear</button>
+                    <button onclick="window.iniciarEscaner('ventas')">📷 Escanear</button>
                 </div>
                 <table>
                     <thead><tr><th>Cód.</th><th>Artículo</th><th>Cant.</th><th>Precio U.</th><th>Total</th><th>Acción</th></tr></thead>
@@ -201,6 +204,25 @@
                     </div>
                     <input type="text" id="nombre-cliente" placeholder="Nombre del Cliente (Opcional si no está registrado)">
                     <button class="btn-accion" onclick="window.procesarVenta()">💰 Cobrar e Imprimir Ticket</button>
+                </div>
+            </section>
+
+            <!-- CHECADOR DE PRECIOS -->
+            <section id="checador" class="modulo">
+                <h2 style="color: var(--dorado); text-align: center; font-size: 2.5em;">Checador de Precios</h2>
+                <div style="text-align: center; margin-top: 50px;">
+                    <input type="text" id="input-checador" placeholder="Escanea o escribe el código..." style="font-size: 2em; padding: 15px; width: 80%; text-align: center; border-radius: 10px;" onkeypress="window.buscarPrecioChecador(event)">
+                    <br><br>
+                    <button class="btn-accion" style="font-size: 1.5em; padding: 10px 20px;" onclick="window.iniciarEscaner('checador')">📷 Usar Cámara para Escanear</button>
+                </div>
+                <div id="resultado-checador" style="text-align: center; margin-top: 50px; display: none;">
+                    <h1 id="checador-nombre" style="font-size: 3.5em; color: var(--acento); margin-bottom: 20px;"></h1>
+                    <h2 style="font-size: 3em; color: #81c784;">Precio Público: $<span id="checador-pub"></span></h2>
+                    <div style="display: flex; justify-content: center; gap: 40px; margin-top: 30px; flex-wrap: wrap;">
+                        <h3 style="color: #ffb74d;">Mayoreo 1: $<span id="checador-may1"></span></h3>
+                        <h3 style="color: #ffb74d;">Mayoreo 2: $<span id="checador-may2"></span></h3>
+                        <h3 style="color: #ffb74d;">Mayoreo 3: $<span id="checador-may3"></span></h3>
+                    </div>
                 </div>
             </section>
 
@@ -259,10 +281,18 @@
             <section id="inventario" class="modulo">
                 <h2 style="color: var(--dorado);">Gestión de Artículos e Inventario</h2>
                 <div class="seccion-flotante">
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 15px;">
+                        <button onclick="window.exportarExcel()" class="btn-accion" style="background: rgba(33, 115, 70, 0.4); border-color: #217346;">📥 Exportar a Excel</button>
+                        <label class="btn-accion" style="cursor:pointer; display:inline-block; padding:10px; background: rgba(0, 210, 255, 0.4); margin: 5px 0; border-radius: 5px; border: 1px solid var(--acento);">
+                            📤 Importar Excel
+                            <input type="file" id="input-importar-excel" accept=".xlsx, .xls" style="display:none;" onchange="window.importarExcel(event)">
+                        </label>
+                    </div>
                     <h3 id="titulo-form-inv" style="color: var(--acento); margin-top: 0;">Agregar Nuevo Artículo</h3>
                     <div class="grid-auto">
                         <input type="text" id="inv-nombre" placeholder="Nombre del Artículo">
                         <input type="text" id="inv-codigo" placeholder="Código de Barras">
+                        <input type="text" id="inv-sat" placeholder="Clave SAT (Opcional)">
                         <input type="number" id="inv-stock" placeholder="Existencias" step="any">
                         <select id="inv-tipo" onchange="window.toggleConfigKit()">
                             <option value="venta">Para Venta Normal</option>
@@ -303,8 +333,7 @@
                     <tbody id="lista-inventario"></tbody>
                 </table>
             </section>
-
-            <!-- COMPRAS -->
+<!-- COMPRAS -->
             <section id="compras" class="modulo">
                 <h2 style="color: var(--dorado);">Registro de Compras de Mercancía e Insumos</h2>
                 <div class="seccion-flotante">
@@ -317,6 +346,7 @@
                     </div>
                     <div style="margin-top: 15px; display: flex; gap: 10px;">
                         <button onclick="window.agregarFilaCompraManual()">+ Añadir Fila de Compra</button>
+                        <button onclick="window.iniciarEscaner('compras')" class="btn-accion" style="border-color: var(--dorado);">📷 Escanear Artículo</button>
                     </div>
                     <div style="margin-top: 25px; text-align: right; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid var(--dorado);">
                         <p style="font-size: 1.1em; color: var(--acento);">Subtotal (Base sin impuestos): $<span id="compra-subtotal">0.00</span></p>
@@ -494,15 +524,19 @@
                         <input type="text" id="usr-nombre" placeholder="Nombre de Usuario (Login)">
                         <input type="password" id="usr-pass" placeholder="Contraseña">
                         <select id="usr-rol" onchange="window.togglePermisosUI()">
-                            <option value="empleado">Empleado (Permisos Limitados)</option>
-                            <option value="gerente">Gerente (Autoriza + Permisos a elegir)</option>
-                            <option value="admin">Administrador (Acceso Total)</option>
+                            <option value="CAJERO">CAJERO</option>
+                            <option value="GERENTE">GERENTE (Autoriza Modificaciones)</option>
+                            <option value="ENVIOS">ENVIOS</option>
+                            <option value="ADMINISTRADORES">ADMINISTRADORES (Acceso Total)</option>
+                            <option value="CONTADORES">CONTADORES</option>
+                            <option value="CHECADOR DE PRECIOS">CHECADOR DE PRECIOS</option>
                         </select>
                     </div>
                     <div id="usr-permisos-container" style="margin-top: 15px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--acento);">
-                        <h4 style="margin-top: 0;">Selecciona los módulos a los que tendrá acceso:</h4>
+                        <h4 style="margin-top: 0;">Selecciona los módulos a los que tendrá acceso este rol:</h4>
                         <div style="display: flex; flex-wrap: wrap; gap: 5px;">
                             <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="ventas" checked> 💰 Ventas</label>
+                            <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="checador"> 🔍 Checador</label>
                             <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="caja"> 💵 Caja</label>
                             <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="inventario"> 📦 Inventario</label>
                             <label class="permiso-label"><input type="checkbox" class="chk-permiso" value="compras"> 🛒 Compras</label>
@@ -590,8 +624,8 @@
             if (tag === 'input' || tag === 'textarea') {
                 const type = e.target.type ? e.target.type.toLowerCase() : '';
                 const id = e.target.id ? e.target.id.toLowerCase() : '';
-                // Excluimos campos de correo y contraseñas de la conversión a mayúsculas
-                if (type !== 'password' && type !== 'email' && !id.includes('correo') && !id.includes('pass')) {
+                // Se excluyen type 'number' para evitar el bug del salto del cursor en decimales
+                if (type !== 'password' && type !== 'email' && type !== 'number' && !id.includes('correo') && !id.includes('pass')) {
                     const start = e.target.selectionStart;
                     const end = e.target.selectionEnd;
                     e.target.value = e.target.value.toUpperCase();
@@ -605,7 +639,9 @@
         // ==========================================
         window.nombresPrecios = { 'PUB': 'PÚBLICO', 'MAY1': 'MAYOREO 1', 'MAY2': 'MAYOREO 2', 'MAY3': 'MAYOREO 3', 'DUENO': 'DUEÑO' };
         window.configuracionApp = JSON.parse(localStorage.getItem('pos_configuracion')) || { nombreNegocio: 'MINOS', rfc: '', telefono: '', correo: '', direccion: '', notasCotizacion: `PRECIOS EXPRESADOS EN PESOS MEXICANOS.\nCOTIZACIÓN SUJETA A DISPONIBILIDAD DE MERCANCÍA.`, notasTicket: "GRACIAS POR TU COMPRA." };
-        const defaultUsuarios = [{ id: 1, usuario: 'ADMIN', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios'] }];
+        
+        // Se actualizó el rol predeterminado a ADMINISTRADORES
+        const defaultUsuarios = [{ id: 1, usuario: 'ADMIN', password: 'admin123', rol: 'ADMINISTRADORES', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios', 'checador'] }];
         window.usuariosGuardados = JSON.parse(localStorage.getItem('pos_usuarios')); if(!window.usuariosGuardados || window.usuariosGuardados.length === 0) { window.usuariosGuardados = [...defaultUsuarios]; localStorage.setItem('pos_usuarios', JSON.stringify(window.usuariosGuardados)); }
 
         window.inventario = JSON.parse(localStorage.getItem('pos_inventario')) || []; 
@@ -629,7 +665,7 @@
         // SISTEMA DE AUTORIZACIÓN (GERENTES / ADMIN)
         // ==========================================
         window.pedirAutorizacion = function(callback) {
-            if (window.usuarioLogueado && (window.usuarioLogueado.rol === 'admin' || window.usuarioLogueado.rol === 'gerente')) {
+            if (window.usuarioLogueado && (window.usuarioLogueado.rol === 'ADMINISTRADORES' || window.usuarioLogueado.rol === 'admin' || window.usuarioLogueado.rol === 'GERENTE' || window.usuarioLogueado.rol === 'gerente')) {
                 callback(); // Ya tiene permisos, se ejecuta directo
             } else {
                 window.accionPendienteAuth = callback;
@@ -651,9 +687,9 @@
             let authUser = window.usuariosGuardados.find(x => x.usuario.toUpperCase() === u && x.password === p);
             
             // Puerta de emergencia
-            if (!authUser && u === 'ADMIN' && p === 'admin123') authUser = { rol: 'admin' };
+            if (!authUser && u === 'ADMIN' && p === 'admin123') authUser = { rol: 'ADMINISTRADORES' };
 
-            if (authUser && (authUser.rol === 'admin' || authUser.rol === 'gerente')) {
+            if (authUser && (authUser.rol === 'ADMINISTRADORES' || authUser.rol === 'admin' || authUser.rol === 'GERENTE' || authUser.rol === 'gerente')) {
                 document.getElementById('modal-autorizacion').style.display = 'none';
                 if (window.accionPendienteAuth) {
                     window.accionPendienteAuth();
@@ -661,6 +697,96 @@
                 }
             } else {
                 alert("❌ Credenciales incorrectas o el usuario no tiene nivel de Gerente/Administrador.");
+            }
+        };
+
+        // ==========================================
+        // EXPORTAR E IMPORTAR EXCEL (INVENTARIO)
+        // ==========================================
+        window.exportarExcel = function() {
+            if(!window.XLSX) return alert("Cargando librería de Excel, por favor intenta de nuevo en unos segundos.");
+            let data = window.inventario.map(i => ({
+                CODIGO: i.codigo,
+                NOMBRE: i.nombre,
+                TIPO: i.tipo,
+                STOCK: i.stock,
+                CLAVE_SAT: i.claveSat || '',
+                COSTO_COMPRA: window.obtenerCostoArticulo(i),
+                PRECIO_PUB: i.precios?.pub || 0,
+                PRECIO_MAY1: i.precios?.may1 || 0,
+                PRECIO_MAY2: i.precios?.may2 || 0,
+                PRECIO_MAY3: i.precios?.may3 || 0,
+                PRECIO_DUENO: i.precios?.dueno || 0,
+                APLICA_IVA: i.aplicaIva ? 'SI' : 'NO',
+                APLICA_IEPS: i.aplicaIeps ? 'SI' : 'NO'
+            }));
+            let ws = XLSX.utils.json_to_sheet(data);
+            let wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Inventario_Minos");
+            XLSX.writeFile(wb, `Inventario_Minos_${new Date().toLocaleDateString().replace(/\//g,'-')}.xlsx`);
+        };
+
+        window.importarExcel = function(e) {
+            window.pedirAutorizacion(() => {
+                let file = e.target.files[0];
+                if(!file) return;
+                if(!window.XLSX) return alert("Librería de Excel no disponible aún.");
+                let reader = new FileReader();
+                reader.onload = function(evt) {
+                    let data = new Uint8Array(evt.target.result);
+                    let workbook = XLSX.read(data, {type: 'array'});
+                    let worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    let json = XLSX.utils.sheet_to_json(worksheet);
+                    let agregados = 0;
+                    json.forEach(row => {
+                        let cod = (row.CODIGO || '').toString().trim().toUpperCase();
+                        if(!cod) return;
+                        let exist = window.inventario.find(i => i.codigo === cod);
+                        let item = exist || { codigo: cod, precios: {} };
+                        item.nombre = (row.NOMBRE || item.nombre || '').toString().trim().toUpperCase();
+                        item.tipo = (row.TIPO || item.tipo || 'venta').toString().toLowerCase();
+                        item.stock = parseFloat(row.STOCK) || item.stock || 0;
+                        item.claveSat = (row.CLAVE_SAT || item.claveSat || '').toString().trim();
+                        item.costoCompra = parseFloat(row.COSTO_COMPRA) || item.costoCompra || 0;
+                        item.precios.pub = parseFloat(row.PRECIO_PUB) || item.precios.pub || 0;
+                        item.precios.may1 = parseFloat(row.PRECIO_MAY1) || item.precios.may1 || 0;
+                        item.precios.may2 = parseFloat(row.PRECIO_MAY2) || item.precios.may2 || 0;
+                        item.precios.may3 = parseFloat(row.PRECIO_MAY3) || item.precios.may3 || 0;
+                        item.precios.dueno = parseFloat(row.PRECIO_DUENO) || item.precios.dueno || 0;
+                        item.aplicaIva = (row.APLICA_IVA === 'SI') || item.aplicaIva || false;
+                        item.aplicaIeps = (row.APLICA_IEPS === 'SI') || item.aplicaIeps || false;
+                        if(!exist) window.inventario.push(item);
+                        agregados++;
+                    });
+                    localStorage.setItem('pos_inventario', JSON.stringify(window.inventario));
+                    window.renderizarInventario();
+                    alert(`✅ Operación exitosa.\nSe importaron o actualizaron ${agregados} artículos en tu inventario.`);
+                };
+                reader.readAsArrayBuffer(file);
+                e.target.value = ""; // Limpiar input para permitir subir el mismo archivo
+            });
+        };
+
+        // ==========================================
+        // CHECADOR DE PRECIOS
+        // ==========================================
+        window.buscarPrecioChecador = function(e) {
+            if (e.key === 'Enter') {
+                const query = document.getElementById('input-checador').value.toUpperCase().trim();
+                const art = window.inventario.find(a => a.codigo.toUpperCase() === query || a.nombre.toUpperCase().includes(query));
+                if (art && art.tipo !== 'consumo') {
+                    document.getElementById('checador-nombre').innerText = art.nombre;
+                    document.getElementById('checador-pub').innerText = (art.precios.pub || 0).toFixed(2);
+                    document.getElementById('checador-may1').innerText = (art.precios.may1 || 0).toFixed(2);
+                    document.getElementById('checador-may2').innerText = (art.precios.may2 || 0).toFixed(2);
+                    document.getElementById('checador-may3').innerText = (art.precios.may3 || 0).toFixed(2);
+                    document.getElementById('resultado-checador').style.display = 'block';
+                } else {
+                    alert("❌ Artículo no encontrado o no disponible para venta.");
+                    document.getElementById('resultado-checador').style.display = 'none';
+                }
+                document.getElementById('input-checador').value = '';
+                document.getElementById('input-checador').focus();
             }
         };
 
@@ -713,14 +839,14 @@
         // ==========================================
         window.verificarLogin = function() {
             const u = document.getElementById('login-user').value.trim().toUpperCase(); const p = document.getElementById('login-pass').value.trim(); let userF = window.usuariosGuardados.find(x => x.usuario.toUpperCase() === u && x.password === p);
-            if(!userF && u === 'ADMIN' && p === 'admin123') { userF = { id: 1, usuario: 'ADMIN', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios'] }; if(!window.usuariosGuardados.find(x => x.usuario.toUpperCase() === 'ADMIN')) { window.usuariosGuardados.push(userF); localStorage.setItem('pos_usuarios', JSON.stringify(window.usuariosGuardados)); } }
+            if(!userF && u === 'ADMIN' && p === 'admin123') { userF = { id: 1, usuario: 'ADMIN', password: 'admin123', rol: 'ADMINISTRADORES', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios', 'checador'] }; if(!window.usuariosGuardados.find(x => x.usuario.toUpperCase() === 'ADMIN')) { window.usuariosGuardados.push(userF); localStorage.setItem('pos_usuarios', JSON.stringify(window.usuariosGuardados)); } }
             if(userF) { 
                 window.usuarioLogueado = userF; document.getElementById('login-screen').style.display = 'none'; document.getElementById('app-container').style.display = 'block';
                 const d = new Date(); const hoyStr = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0');
                 document.getElementById('filtro-fecha-historial').value = hoyStr; document.getElementById('filtro-fecha-reportes').value = hoyStr;
                 window.cargarConfiguracionDOM(); window.renderizarInventario(); window.renderizarCotizacionesGuardadas(); window.renderizarClientes(); window.renderizarHistorial(); window.renderizarHistorialCompras(); window.actualizarVistaCaja(); window.renderizarUsuarios(); if(window.renderizarReporteGanancias) window.renderizarReporteGanancias();
-                const modulosTodos = ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios']; let primerModuloPermitido = null;
-                modulosTodos.forEach(mod => { const btn = document.getElementById('menu-' + mod); if(btn) { if(userF.rol === 'admin' || userF.rol === 'gerente' || (userF.permisos && userF.permisos.includes(mod))) { btn.style.display = 'flex'; if(!primerModuloPermitido) primerModuloPermitido = mod; } else btn.style.display = 'none'; } });
+                const modulosTodos = ['ventas', 'checador', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios']; let primerModuloPermitido = null;
+                modulosTodos.forEach(mod => { const btn = document.getElementById('menu-' + mod); if(btn) { if(userF.rol === 'ADMINISTRADORES' || userF.rol === 'admin' || userF.rol === 'GERENTE' || userF.rol === 'gerente' || (userF.permisos && userF.permisos.includes(mod))) { btn.style.display = 'flex'; if(!primerModuloPermitido) primerModuloPermitido = mod; } else btn.style.display = 'none'; } });
                 if(primerModuloPermitido) window.cambiarModulo(primerModuloPermitido); if(window.loadFromFirebase) window.loadFromFirebase();
             } else { document.getElementById('login-error').style.display = 'block'; }
         };
@@ -771,7 +897,7 @@
             const resultados = window.inventario.filter(art => {
                 if(art.tipo === 'consumo') return false; 
                 const texto = (art.codigo + " " + art.nombre).toUpperCase();
-                return words.every(w => texto.includes(w)); // Coincidencia de TODAS las palabras sin importar orden
+                return words.every(w => texto.includes(w)); 
             });
 
             resultados.forEach(art => {
@@ -855,18 +981,56 @@
         // ESCÁNER DE CÓDIGOS DE BARRAS / QR
         // ==========================================
         window.html5QrcodeScanner = null;
-        window.iniciarEscaner = function() { document.getElementById('modal-escaner').style.display = 'flex'; if (!window.html5QrcodeScanner) { window.html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 250, height: 150 } }, false); } window.html5QrcodeScanner.render((decodedText, decodedResult) => { window.cerrarEscaner(); document.getElementById('buscador-articulo').value = decodedText; const event = new KeyboardEvent('keypress', { 'key': 'Enter' }); window.buscarArticuloVenta(event); }, (error) => { }); };
+        window.iniciarEscaner = function(modo = 'ventas') { 
+            document.getElementById('modal-escaner').style.display = 'flex'; 
+            if (!window.html5QrcodeScanner) { 
+                window.html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 250, height: 150 } }, false); 
+            } 
+            window.html5QrcodeScanner.render((decodedText, decodedResult) => { 
+                window.cerrarEscaner(); 
+                if (modo === 'ventas') {
+                    document.getElementById('buscador-articulo').value = decodedText; 
+                    const event = new KeyboardEvent('keypress', { 'key': 'Enter' }); 
+                    window.buscarArticuloVenta(event); 
+                } else if (modo === 'compras') {
+                    let index = window.compraDraft.findIndex(c => c.codigo === "");
+                    if(index === -1) { window.agregarFilaCompraManual(); index = window.compraDraft.length - 1; }
+                    window.alCambiarCodigoCompra(index, decodedText);
+                    // Actualizar el valor en la UI visualmente
+                    setTimeout(() => {
+                        const trs = document.querySelectorAll('#lista-articulos-compra tr');
+                        if(trs[index]) { const input = trs[index].querySelector('input[type="text"]'); if(input) input.value = decodedText; }
+                    }, 100);
+                } else if (modo === 'checador') {
+                    document.getElementById('input-checador').value = decodedText;
+                    const event = new KeyboardEvent('keypress', { 'key': 'Enter' }); 
+                    window.buscarPrecioChecador(event);
+                }
+            }, (error) => { }); 
+        };
         window.cerrarEscaner = function() { document.getElementById('modal-escaner').style.display = 'none'; if (window.html5QrcodeScanner) window.html5QrcodeScanner.clear().catch(e => console.error("Error al detener", e)); };
 
         // ==========================================
         // USUARIOS Y PERMISOS
         // ==========================================
-        window.togglePermisosUI = function() { const rol = document.getElementById('usr-rol').value; const container = document.getElementById('usr-permisos-container'); if(rol === 'admin') { container.style.opacity = '0.3'; container.style.pointerEvents = 'none'; } else { container.style.opacity = '1'; container.style.pointerEvents = 'auto'; } };
-        window.guardarUsuario = function() { const usr = document.getElementById('usr-nombre').value.trim().toUpperCase(); const pass = document.getElementById('usr-pass').value.trim(); const rol = document.getElementById('usr-rol').value; if(!usr || !pass) return alert("El usuario y la contraseña son obligatorios."); let permisosArr = []; if(rol === 'admin') { permisosArr = ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios']; } else { document.querySelectorAll('.chk-permiso').forEach(c => { if(c.checked) permisosArr.push(c.value); }); if(permisosArr.length === 0) return alert("El usuario debe tener al menos un permiso."); } if(window.indexUsuarioEditando !== null) { window.usuariosGuardados[window.indexUsuarioEditando] = { ...window.usuariosGuardados[window.indexUsuarioEditando], usuario: usr, password: pass, rol: rol, permisos: permisosArr }; alert("Usuario actualizado."); } else { if(window.usuariosGuardados.find(x => x.usuario === usr)) return alert("Ya existe un usuario con ese nombre."); window.usuariosGuardados.push({ id: Date.now(), usuario: usr, password: pass, rol: rol, permisos: permisosArr }); alert("Usuario creado."); } localStorage.setItem('pos_usuarios', JSON.stringify(window.usuariosGuardados)); window.cancelarEdicionUsuario(); window.renderizarUsuarios(); };
-        window.renderizarUsuarios = function() { const tbody = document.getElementById('lista-usuarios'); tbody.innerHTML = ''; window.usuariosGuardados.forEach((u, idx) => { let badgeRol = u.rol === 'admin' ? '<span style="color:var(--dorado)">ADMINISTRADOR</span>' : (u.rol === 'gerente' ? '<span style="color:var(--acento)">GERENTE</span>' : '<span style="color:#81c784">EMPLEADO</span>'); let btnEliminar = (u.rol === 'admin' && window.usuariosGuardados.filter(x => x.rol === 'admin').length <= 1) ? '<span style="color:gray; font-size:10px;">Protegido</span>' : `<button onclick="window.eliminarUsuario(${idx})">❌</button>`; tbody.innerHTML += `<tr><td>${u.usuario}</td><td>${'*'.repeat(u.password.length)}</td><td>${badgeRol}</td><td style="display:flex; gap:5px;"><button onclick="window.editarUsuario(${idx})">✏️ Editar</button>${btnEliminar}</td></tr>`; }); };
-        window.editarUsuario = function(index) { const u = window.usuariosGuardados[index]; document.getElementById('usr-nombre').value = u.usuario; document.getElementById('usr-pass').value = u.password; document.getElementById('usr-rol').value = u.rol; document.querySelectorAll('.chk-permiso').forEach(c => c.checked = (u.rol === 'admin' || (u.permisos && u.permisos.includes(c.value)))); window.togglePermisosUI(); window.indexUsuarioEditando = index; document.getElementById('titulo-form-usuario').innerText = `Editando Usuario: ${u.usuario}`; document.getElementById('btn-guardar-usuario').innerText = "💾 Actualizar Usuario"; document.getElementById('btn-cancelar-edicion-usuario').style.display = 'inline-block'; document.getElementById('usuarios').scrollTo(0,0); };
-        window.cancelarEdicionUsuario = function() { window.indexUsuarioEditando = null; document.getElementById('usr-nombre').value = ''; document.getElementById('usr-pass').value = ''; document.getElementById('usr-rol').value = 'empleado'; document.querySelectorAll('.chk-permiso').forEach(c => c.checked = false); window.togglePermisosUI(); document.getElementById('titulo-form-usuario').innerText = "Registrar Nuevo Usuario"; document.getElementById('btn-guardar-usuario').innerText = "💾 Guardar Usuario"; document.getElementById('btn-cancelar-edicion-usuario').style.display = 'none'; };
-        window.eliminarUsuario = function(index) { if(confirm("¿Estás seguro de eliminar este usuario del sistema?")) { window.usuariosGuardados.splice(index, 1); localStorage.setItem('pos_usuarios', JSON.stringify(window.usuariosGuardados)); window.renderizarUsuarios(); } };
+        window.togglePermisosUI = function() { const rol = document.getElementById('usr-rol').value; const container = document.getElementById('usr-permisos-container'); if(rol === 'ADMINISTRADORES') { container.style.opacity = '0.3'; container.style.pointerEvents = 'none'; } else { container.style.opacity = '1'; container.style.pointerEvents = 'auto'; } };
+        
+        window.guardarUsuario = function() { 
+            window.pedirAutorizacion(() => {
+                const usr = document.getElementById('usr-nombre').value.trim().toUpperCase(); const pass = document.getElementById('usr-pass').value.trim(); const rol = document.getElementById('usr-rol').value; if(!usr || !pass) return alert("El usuario y la contraseña son obligatorios."); let permisosArr = []; if(rol === 'ADMINISTRADORES') { permisosArr = ['ventas', 'checador', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios']; } else { document.querySelectorAll('.chk-permiso').forEach(c => { if(c.checked) permisosArr.push(c.value); }); if(permisosArr.length === 0) return alert("El usuario debe tener al menos un permiso."); } if(window.indexUsuarioEditando !== null) { window.usuariosGuardados[window.indexUsuarioEditando] = { ...window.usuariosGuardados[window.indexUsuarioEditando], usuario: usr, password: pass, rol: rol, permisos: permisosArr }; alert("Usuario actualizado."); } else { if(window.usuariosGuardados.find(x => x.usuario === usr)) return alert("Ya existe un usuario con ese nombre."); window.usuariosGuardados.push({ id: Date.now(), usuario: usr, password: pass, rol: rol, permisos: permisosArr }); alert("Usuario creado."); } localStorage.setItem('pos_usuarios', JSON.stringify(window.usuariosGuardados)); window.cancelarEdicionUsuario(); window.renderizarUsuarios(); 
+            });
+        };
+        
+        window.renderizarUsuarios = function() { const tbody = document.getElementById('lista-usuarios'); tbody.innerHTML = ''; window.usuariosGuardados.forEach((u, idx) => { let badgeRol = '<span style="color:#81c784">' + u.rol + '</span>'; if(u.rol === 'ADMINISTRADORES') badgeRol = '<span style="color:var(--dorado)">ADMINISTRADOR</span>'; else if(u.rol === 'GERENTE') badgeRol = '<span style="color:var(--acento)">GERENTE</span>'; let btnEliminar = (u.rol === 'ADMINISTRADORES' && window.usuariosGuardados.filter(x => x.rol === 'ADMINISTRADORES').length <= 1) ? '<span style="color:gray; font-size:10px;">Protegido</span>' : `<button onclick="window.eliminarUsuario(${idx})">❌</button>`; tbody.innerHTML += `<tr><td>${u.usuario}</td><td>${'*'.repeat(u.password.length)}</td><td>${badgeRol}</td><td style="display:flex; gap:5px;"><button onclick="window.editarUsuario(${idx})">✏️ Editar</button>${btnEliminar}</td></tr>`; }); };
+        
+        window.editarUsuario = function(index) { const u = window.usuariosGuardados[index]; document.getElementById('usr-nombre').value = u.usuario; document.getElementById('usr-pass').value = u.password; document.getElementById('usr-rol').value = u.rol || 'CAJERO'; document.querySelectorAll('.chk-permiso').forEach(c => c.checked = (u.rol === 'ADMINISTRADORES' || (u.permisos && u.permisos.includes(c.value)))); window.togglePermisosUI(); window.indexUsuarioEditando = index; document.getElementById('titulo-form-usuario').innerText = `Editando Usuario: ${u.usuario}`; document.getElementById('btn-guardar-usuario').innerText = "💾 Actualizar Usuario"; document.getElementById('btn-cancelar-edicion-usuario').style.display = 'inline-block'; document.getElementById('usuarios').scrollTo(0,0); };
+        window.cancelarEdicionUsuario = function() { window.indexUsuarioEditando = null; document.getElementById('usr-nombre').value = ''; document.getElementById('usr-pass').value = ''; document.getElementById('usr-rol').value = 'CAJERO'; document.querySelectorAll('.chk-permiso').forEach(c => c.checked = false); window.togglePermisosUI(); document.getElementById('titulo-form-usuario').innerText = "Registrar Nuevo Usuario"; document.getElementById('btn-guardar-usuario').innerText = "💾 Guardar Usuario"; document.getElementById('btn-cancelar-edicion-usuario').style.display = 'none'; };
+        
+        window.eliminarUsuario = function(index) { 
+            window.pedirAutorizacion(() => {
+                if(confirm("¿Estás seguro de eliminar este usuario del sistema?")) { window.usuariosGuardados.splice(index, 1); localStorage.setItem('pos_usuarios', JSON.stringify(window.usuariosGuardados)); window.renderizarUsuarios(); } 
+            });
+        };
 
         // CONFIGURACIÓN Y COLORES PDF (Mármol Oscuro, Dorado, Cyan)
         const dark = [20, 20, 20];
@@ -955,14 +1119,37 @@
             document.getElementById('abono-nombre-cliente').innerText = cliente.nombre; document.getElementById('abono-deuda-actual').innerText = `$${cliente.deuda.toFixed(2)}`; document.getElementById('abono-monto').value = ''; document.getElementById('abono-metodo').value = 'efectivo'; document.getElementById('modal-abono').style.display = 'flex'; setTimeout(() => document.getElementById('abono-monto').focus(), 100);
         };
         window.cerrarModalAbono = function() { document.getElementById('modal-abono').style.display = 'none'; window.indexClienteAbonando = null; };
+        
         window.confirmarAbonoDeuda = function() {
             if (window.indexClienteAbonando === null) return; const cliente = window.clientesGuardados[window.indexClienteAbonando]; const monto = parseFloat(document.getElementById('abono-monto').value); const metodo = document.getElementById('abono-metodo').value;
             if (isNaN(monto) || monto <= 0) return alert("Ingresa un monto válido mayor a $0.00."); if (monto > cliente.deuda + 0.001) return alert("El abono no puede ser mayor a la deuda actual del cliente.");
+            
             cliente.deuda = Math.max(0, cliente.deuda - monto); localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados));
             const etiquetasMetodo = { efectivo: 'EFECTIVO', debito: 'TARJETA DE DÉBITO', credito: 'TARJETA DE CRÉDITO', transferencia: 'TRANSFERENCIA' };
             if (metodo === 'efectivo') window.totalesDia.efectivo += monto; else if (metodo === 'debito') window.totalesDia.debito += monto; else if (metodo === 'credito') window.totalesDia.credito += monto; else if (metodo === 'transferencia') window.totalesDia.transferencia += monto;
-            localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); window.actualizarVistaCaja(); window.renderizarClientes(); window.cerrarModalAbono(); alert(`✅ Abono de $${monto.toFixed(2)} registrado exitosamente mediante ${etiquetasMetodo[metodo]}.`);
+            localStorage.setItem('pos_totales_dia', JSON.stringify(window.totalesDia)); window.actualizarVistaCaja(); window.renderizarClientes(); window.cerrarModalAbono(); 
+            alert(`✅ Abono de $${monto.toFixed(2)} registrado exitosamente mediante ${etiquetasMetodo[metodo]}.`);
+            
+            // GENERAR TICKET DE ABONO EN PDF
+            const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [80, 150] });
+            const folioAbono = window.generarNuevoFolio('tickets');
+            const conf = window.configuracionApp || {}; const logoData = localStorage.getItem('pos_logo_base64');
+            let y = 10;
+            if(logoData) { try { doc.addImage(logoData, 'PNG', 25, y, 30, 30); y += 35; } catch(e){} }
+            doc.setFontSize(14); doc.text((conf.nombreNegocio || 'MINOS').toUpperCase(), 40, y, {align:"center"}); y+=8;
+            doc.setFontSize(12); doc.text("COMPROBANTE DE ABONO", 40, y, {align:"center"}); y+=8;
+            doc.setFontSize(10);
+            doc.text(`FECHA: ${new Date().toLocaleString()}`, 5, y); y+=6;
+            doc.text(`FOLIO: ${folioAbono}`, 5, y); y+=6;
+            doc.text(`CLIENTE: ${cliente.nombre}`, 5, y); y+=6;
+            doc.text(`MÉTODO DE PAGO: ${etiquetasMetodo[metodo]}`, 5, y); y+=6;
+            doc.text("------------------------------------------", 5, y); y+=6;
+            doc.text(`CANTIDAD ABONADA: $${monto.toFixed(2)}`, 5, y); y+=6;
+            doc.text(`NUEVO SALDO (DEUDA): $${cliente.deuda.toFixed(2)}`, 5, y); y+=10;
+            doc.text("GRACIAS POR SU PAGO.", 40, y, {align:"center"});
+            doc.save(`Abono_${cliente.nombre.replace(/\s+/g, '')}_${folioAbono}.pdf`);
         };
+        
         window.eliminarCliente = function(index) { 
             window.pedirAutorizacion(() => {
                 if(confirm("¿Eliminar a este cliente?")) { window.clientesGuardados.splice(index, 1); localStorage.setItem('pos_clientes', JSON.stringify(window.clientesGuardados)); window.renderizarClientes(); } 
@@ -1023,19 +1210,21 @@
         window.actualizarListaDraftKit = function() { const ul = document.getElementById('lista-draft-kit'); ul.innerHTML = ''; window.kitDraftComponentes.forEach((c, idx) => { ul.innerHTML += `<li>${c.cant}x ${c.nombre} <button onclick="window.kitDraftComponentes.splice(${idx},1); window.actualizarListaDraftKit()" style="padding: 2px 5px; font-size:10px;">❌</button></li>`; }); };
 
         window.editarArticuloInv = function(index) {
-            const item = window.inventario[index]; document.getElementById('inv-codigo').value = item.codigo; document.getElementById('inv-nombre').value = item.nombre; document.getElementById('inv-tipo').value = item.tipo; document.getElementById('inv-stock').value = item.stock; document.getElementById('inv-precio-pub').value = item.precios.pub || ''; document.getElementById('inv-precio-may1').value = item.precios.may1 || ''; document.getElementById('inv-precio-may2').value = item.precios.may2 || ''; document.getElementById('inv-precio-may3').value = item.precios.may3 || ''; document.getElementById('inv-precio-dueno').value = item.precios.dueno || ''; document.getElementById('inv-iva').checked = item.aplicaIva || false; document.getElementById('inv-ieps').checked = item.aplicaIeps || false;
+            const item = window.inventario[index]; document.getElementById('inv-codigo').value = item.codigo; document.getElementById('inv-sat').value = item.claveSat || ''; document.getElementById('inv-nombre').value = item.nombre; document.getElementById('inv-tipo').value = item.tipo; document.getElementById('inv-stock').value = item.stock; document.getElementById('inv-precio-pub').value = item.precios.pub || ''; document.getElementById('inv-precio-may1').value = item.precios.may1 || ''; document.getElementById('inv-precio-may2').value = item.precios.may2 || ''; document.getElementById('inv-precio-may3').value = item.precios.may3 || ''; document.getElementById('inv-precio-dueno').value = item.precios.dueno || ''; document.getElementById('inv-iva').checked = item.aplicaIva || false; document.getElementById('inv-ieps').checked = item.aplicaIeps || false;
             if(item.tipo === 'kit') { window.kitDraftComponentes = item.componentes ? [...item.componentes] : []; document.getElementById('config-kit').style.display = 'block'; window.llenarSelectInsumos(); window.actualizarListaDraftKit(); } else { window.kitDraftComponentes = []; document.getElementById('config-kit').style.display = 'none'; } window.indexInventarioEditando = index; document.getElementById('titulo-form-inv').innerText = `Editando Artículo: ${item.nombre}`; document.getElementById('btn-guardar-inv').innerText = "💾 Actualizar Artículo"; document.getElementById('btn-cancelar-inv').style.display = 'inline-block'; document.getElementById('inventario').scrollTo(0,0);
         };
         window.cancelarEdicionInv = function() {
-            window.indexInventarioEditando = null; document.getElementById('inv-codigo').value = ''; document.getElementById('inv-nombre').value = ''; document.getElementById('inv-stock').value = ''; document.getElementById('inv-tipo').value = 'venta'; document.getElementById('inv-precio-pub').value = ''; document.getElementById('inv-precio-may1').value = ''; document.getElementById('inv-precio-may2').value = ''; document.getElementById('inv-precio-may3').value = ''; document.getElementById('inv-precio-dueno').value = ''; document.getElementById('inv-iva').checked = false; document.getElementById('inv-ieps').checked = false; window.kitDraftComponentes = []; window.actualizarListaDraftKit(); document.getElementById('config-kit').style.display = 'none'; document.getElementById('sel-insumo-kit').value = ''; document.getElementById('cant-insumo-kit').value = ''; document.getElementById('titulo-form-inv').innerText = "Agregar Nuevo Artículo"; document.getElementById('btn-guardar-inv').innerText = "💾 Guardar en Inventario"; document.getElementById('btn-cancelar-inv').style.display = 'none';
+            window.indexInventarioEditando = null; document.getElementById('inv-codigo').value = ''; document.getElementById('inv-sat').value = ''; document.getElementById('inv-nombre').value = ''; document.getElementById('inv-stock').value = ''; document.getElementById('inv-tipo').value = 'venta'; document.getElementById('inv-precio-pub').value = ''; document.getElementById('inv-precio-may1').value = ''; document.getElementById('inv-precio-may2').value = ''; document.getElementById('inv-precio-may3').value = ''; document.getElementById('inv-precio-dueno').value = ''; document.getElementById('inv-iva').checked = false; document.getElementById('inv-ieps').checked = false; window.kitDraftComponentes = []; window.actualizarListaDraftKit(); document.getElementById('config-kit').style.display = 'none'; document.getElementById('sel-insumo-kit').value = ''; document.getElementById('cant-insumo-kit').value = ''; document.getElementById('titulo-form-inv').innerText = "Agregar Nuevo Artículo"; document.getElementById('btn-guardar-inv').innerText = "💾 Guardar en Inventario"; document.getElementById('btn-cancelar-inv').style.display = 'none';
         };
         
         window.guardarArticulo = function() {
-            const art = { codigo: document.getElementById('inv-codigo').value.trim().toUpperCase(), nombre: document.getElementById('inv-nombre').value.trim().toUpperCase(), tipo: document.getElementById('inv-tipo').value, stock: parseFloat(document.getElementById('inv-stock').value) || 0, aplicaIva: document.getElementById('inv-iva').checked, aplicaIeps: document.getElementById('inv-ieps').checked, precios: { pub: parseFloat(document.getElementById('inv-precio-pub').value) || 0, may1: parseFloat(document.getElementById('inv-precio-may1').value) || 0, may2: parseFloat(document.getElementById('inv-precio-may2').value) || 0, may3: parseFloat(document.getElementById('inv-precio-may3').value) || 0, dueno: parseFloat(document.getElementById('inv-precio-dueno').value) || 0 } };
-            if(!art.nombre || !art.codigo) return alert("Nombre y Código obligatorios"); if(art.tipo === 'kit') { if(window.kitDraftComponentes.length === 0) return alert("Un kit debe tener componentes."); art.componentes = [...window.kitDraftComponentes]; art.stock = 0; }
-            if (window.indexInventarioEditando !== null) { const prevCosto = window.inventario[window.indexInventarioEditando].costoCompra; if (prevCosto !== undefined) art.costoCompra = prevCosto; window.inventario[window.indexInventarioEditando] = art; alert("Artículo actualizado correctamente."); window.cancelarEdicionInv(); } 
-            else { let existente = window.inventario.find(i => i.codigo === art.codigo); if (existente) { existente.stock += art.stock; existente.nombre = art.nombre; existente.tipo = art.tipo; existente.aplicaIva = art.aplicaIva; existente.aplicaIeps = art.aplicaIeps; existente.precios = art.precios; if(art.tipo === 'kit') existente.componentes = art.componentes; alert(`Artículo existente actualizado.\nSe sumaron ${art.stock} a las existencias actuales.`); window.cancelarEdicionInv(); } else { window.inventario.push(art); alert("Artículo nuevo guardado exitosamente."); window.cancelarEdicionInv(); } }
-            localStorage.setItem('pos_inventario', JSON.stringify(window.inventario)); window.renderizarInventario();
+            window.pedirAutorizacion(() => {
+                const art = { codigo: document.getElementById('inv-codigo').value.trim().toUpperCase(), claveSat: document.getElementById('inv-sat').value.trim(), nombre: document.getElementById('inv-nombre').value.trim().toUpperCase(), tipo: document.getElementById('inv-tipo').value, stock: parseFloat(document.getElementById('inv-stock').value) || 0, aplicaIva: document.getElementById('inv-iva').checked, aplicaIeps: document.getElementById('inv-ieps').checked, precios: { pub: parseFloat(document.getElementById('inv-precio-pub').value) || 0, may1: parseFloat(document.getElementById('inv-precio-may1').value) || 0, may2: parseFloat(document.getElementById('inv-precio-may2').value) || 0, may3: parseFloat(document.getElementById('inv-precio-may3').value) || 0, dueno: parseFloat(document.getElementById('inv-precio-dueno').value) || 0 } };
+                if(!art.nombre || !art.codigo) return alert("Nombre y Código obligatorios"); if(art.tipo === 'kit') { if(window.kitDraftComponentes.length === 0) return alert("Un kit debe tener componentes."); art.componentes = [...window.kitDraftComponentes]; art.stock = 0; }
+                if (window.indexInventarioEditando !== null) { const prevCosto = window.inventario[window.indexInventarioEditando].costoCompra; if (prevCosto !== undefined) art.costoCompra = prevCosto; window.inventario[window.indexInventarioEditando] = art; alert("Artículo actualizado correctamente."); window.cancelarEdicionInv(); } 
+                else { let existente = window.inventario.find(i => i.codigo === art.codigo); if (existente) { existente.stock += art.stock; existente.claveSat = art.claveSat; existente.nombre = art.nombre; existente.tipo = art.tipo; existente.aplicaIva = art.aplicaIva; existente.aplicaIeps = art.aplicaIeps; existente.precios = art.precios; if(art.tipo === 'kit') existente.componentes = art.componentes; alert(`Artículo existente actualizado.\nSe sumaron ${art.stock} a las existencias actuales.`); window.cancelarEdicionInv(); } else { window.inventario.push(art); alert("Artículo nuevo guardado exitosamente."); window.cancelarEdicionInv(); } }
+                localStorage.setItem('pos_inventario', JSON.stringify(window.inventario)); window.renderizarInventario();
+            });
         };
 
         // ==========================================
@@ -1491,7 +1680,7 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     if(data.pos_inventario) originalSetItem.call(localStorage, 'pos_inventario', data.pos_inventario); if(data.pos_clientes) originalSetItem.call(localStorage, 'pos_clientes', data.pos_clientes); if(data.pos_totales_dia) originalSetItem.call(localStorage, 'pos_totales_dia', data.pos_totales_dia); if(data.pos_historial_tickets) originalSetItem.call(localStorage, 'pos_historial_tickets', data.pos_historial_tickets); if(data.pos_historial_compras) originalSetItem.call(localStorage, 'pos_historial_compras', data.pos_historial_compras); if(data.pos_cotizaciones) originalSetItem.call(localStorage, 'pos_cotizaciones', data.pos_cotizaciones); if(data.pos_configuracion) originalSetItem.call(localStorage, 'pos_configuracion', data.pos_configuracion); if(data.pos_logo_base64) originalSetItem.call(localStorage, 'pos_logo_base64', data.pos_logo_base64); if(data.pos_contadores_folios) originalSetItem.call(localStorage, 'pos_contadores_folios', data.pos_contadores_folios);
-                    if(data.pos_usuarios && data.pos_usuarios !== '[]') { originalSetItem.call(localStorage, 'pos_usuarios', data.pos_usuarios); } else { const defaultUsr = [{ id: 1, usuario: 'ADMIN', password: 'admin123', rol: 'admin', permisos: ['ventas', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios'] }]; originalSetItem.call(localStorage, 'pos_usuarios', JSON.stringify(defaultUsr)); }
+                    if(data.pos_usuarios && data.pos_usuarios !== '[]') { originalSetItem.call(localStorage, 'pos_usuarios', data.pos_usuarios); } else { const defaultUsr = [{ id: 1, usuario: 'ADMIN', password: 'admin123', rol: 'ADMINISTRADORES', permisos: ['ventas', 'checador', 'caja', 'inventario', 'compras', 'cotizaciones', 'clientes', 'envios', 'historial', 'reportes', 'configuracion', 'usuarios'] }]; originalSetItem.call(localStorage, 'pos_usuarios', JSON.stringify(defaultUsr)); }
                     
                     window.inventario = JSON.parse(localStorage.getItem('pos_inventario')) || window.inventario; window.totalesDia = JSON.parse(localStorage.getItem('pos_totales_dia')) || window.totalesDia; window.historialTickets = JSON.parse(localStorage.getItem('pos_historial_tickets')) || window.historialTickets; window.historialCompras = JSON.parse(localStorage.getItem('pos_historial_compras')) || window.historialCompras; window.clientesGuardados = JSON.parse(localStorage.getItem('pos_clientes')) || window.clientesGuardados; window.cotizacionesGuardadas = JSON.parse(localStorage.getItem('pos_cotizaciones')) || window.cotizacionesGuardadas; window.configuracionApp = JSON.parse(localStorage.getItem('pos_configuracion')) || window.configuracionApp; window.usuariosGuardados = JSON.parse(localStorage.getItem('pos_usuarios')) || window.usuariosGuardados; window.contadoresFolios = JSON.parse(localStorage.getItem('pos_contadores_folios')) || window.contadoresFolios;
                     
